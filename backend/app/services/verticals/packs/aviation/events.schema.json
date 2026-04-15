@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aviation Event Entry v1",
+  "type": "object",
+  "required": ["type", "at", "authority"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "ISSUED",
+        "INSTALLED",
+        "INSPECTED",
+        "REMOVED",
+        "TRANSFERRED",
+        "REVOKED",
+        "CUSTODY_CHECKPOINT",
+        "USAGE_REPORTED"
+      ]
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO-8601 timestamp"
+    },
+    "authority": {
+      "type": "object",
+      "required": ["role", "actor"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["ISSUER", "OPERATOR", "MAINTENANCE"]
+        },
+        "actor": {
+          "type": "string",
+          "description": "Authority identifier (address/user/org id)"
+        },
+        "scope": {
+          "type": ["string", "null"],
+          "description": "Optional scope hint (e.g. site, tail, region). Not used for enforcement in v1."
+        }
+      },
+      "additionalProperties": true
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

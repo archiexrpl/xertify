@@ -1,0 +1,14 @@
+<div class="space-y-3">
+  <h4 class="font-semibold text-red-400">{{ title or "Error" }}</h4>
+  <p class="text-slate-300 text-sm">{{ message }}</p>
+  {% if hint %}
+    <p class="text-slate-400 text-xs">{{ hint }}</p>
+  {% endif %}
+  {% if details %}
+    <pre class="text-xs whitespace-pre-wrap bg-slate-950/50 p-2 rounded border border-slate-800">{{ details }}</pre>
+  {% endif %}
+  <div class="flex gap-2 justify-end">
+    <button class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sm"
+            onclick="document.getElementById('wallet-modal')?.remove()">Close</button>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+{
+  "version": "1.0.0",
+  "domains": [
+    {
+      "domain_id": "supply_chain",
+      "label": "Supply Chain",
+      "description": "Chain-of-custody and compliance truth.",
+      "templates": [
+        {
+          "template_id": "pharma_batch_passport",
+          "label": "Pharma Batch Passport",
+          "vertical_id": "pharma"
+        },
+        {
+          "template_id": "aviation_part_passport",
+          "label": "Aviation Part Passport",
+          "vertical_id": "aviation"
+        }
+      ]
+    },
+    {
+      "domain_id": "access",
+      "label": "Access",
+      "description": "Permission to enter a place or use a system.",
+      "templates": [
+        {
+          "template_id": "employee_badge",
+          "label": "Employee Badge",
+          "vertical_id": "access"
+        },
+        {
+          "template_id": "contractor_pass",
+          "label": "Contractor Pass",
+          "vertical_id": "access"
+        },
+        {
+          "template_id": "vip_pass",
+          "label": "VIP Pass",
+          "vertical_id": "access"
+        },
+        {
+          "template_id": "facility_access",
+          "label": "Building / Facility Access",
+          "vertical_id": "access"
+        }
+      ]
+    },
+    {
+      "domain_id": "membership",
+      "label": "Membership",
+      "description": "Subscription/entitlement truth over time.",
+      "templates": [
+        {
+          "template_id": "membership_pass",
+          "label": "Membership Pass",
+          "vertical_id": "membership"
+        },
+        {
+          "template_id": "subscription_pass",
+          "label": "Subscription Pass",
+          "vertical_id": "membership"
+        }
+      ]
+    },
+    {
+      "domain_id": "identity",
+      "label": "Identity",
+      "description": "Credentials about a subject that must remain verifiable.",
+      "templates": [
+        {
+          "template_id": "kyc_credential",
+          "label": "KYC / Verification Credential",
+          "vertical_id": "identity"
+        },
+        {
+          "template_id": "certificate",
+          "label": "Certificate",
+          "vertical_id": "identity"
+        }
+      ]
+    },
+    {
+      "domain_id": "governance",
+      "label": "Governance",
+      "description": "Membership and voting truth.",
+      "templates": [
+        {
+          "template_id": "dao_membership",
+          "label": "DAO Membership",
+          "vertical_id": "governance"
+        },
+        {
+          "template_id": "voting_pass",
+          "label": "Voting Pass",
+          "vertical_id": "governance"
+        }
+      ]
+    }
+  ]
+}

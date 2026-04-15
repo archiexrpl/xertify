@@ -1,0 +1,2427 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  /* =========================================================
+     XERTIFY VERIFY — TRUST TERMINAL (PASS)
+     Scoped to .x-pass so it never breaks other pages
+     Uses base.html brand vars (indigo) + truth colors
+     ========================================================= */
+
+  .x-pass{
+    --x-bg0:#020617;
+    --x-bg1:#0b1224;
+    --x-card: rgba(2,6,23,0.74);
+
+    /* truth colors (keep) */
+    --ok: rgba(16,185,129,1);
+    --bad: rgba(239,68,68,1);
+    --warn: rgba(245,158,11,1);
+
+    --x-text: rgba(226,232,240,0.92);
+    --x-muted: rgba(226,232,240,0.70);
+  }
+
+  .x-pass *{ box-sizing:border-box; }
+  .x-pass a{ color: inherit; }
+
+  .x-pass .wrap{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Main grid */
+  .x-pass .grid{
+  display:grid;
+  grid-template-columns: 560px 1fr;
+  gap: 18px;
+  margin-top: 18px;
+  align-items: stretch; /* ✅ stretch so both columns can match height */
+}
+
+/* ✅ Match-height cards (preview + right panel) */
+.x-pass{
+  --panel-h: 640px; /* tweak if you want slightly taller/shorter */
+}
+
+.x-pass .panel-h{
+  height: var(--panel-h);
+}
+
+/* Left card: keep preview on top, status pill at bottom */
+.x-pass .pass-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.x-pass .pass-left .preview-shell{
+  flex: 0 0 auto;
+}
+
+/* Right card: scroll content, keep actions pinned to bottom */
+.x-pass .pass-right{
+  display:flex;
+  flex-direction:column;
+}
+
+.x-pass .right-scroll{
+  flex: 1 1 auto;
+  overflow:auto;
+  /* subtle */
+  scrollbar-width: thin;
+}
+
+/* Actions pinned inside the right panel */
+.x-pass .actions-sticky{
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.82);
+  backdrop-filter: blur(10px);
+}
+
+  @media (max-width: 1020px){
+    .x-pass .grid{ grid-template-columns: 1fr; }
+  }
+
+  .x-pass .card{
+    border-radius: 22px;
+    border: 1px solid var(--brand-border-soft);
+    background: linear-gradient(to bottom right, rgba(2,6,23,0.78), rgba(15,23,42,0.62));
+    box-shadow: 0 20px 70px rgba(2,6,23,0.65);
+  }
+  .x-pass .card.pad{ padding: 16px; }
+
+  /* Accent glow logic (truth glow) */
+  .x-pass .glow-ok{
+    box-shadow:
+      0 0 0 1px rgba(79,70,229,0.10) inset,
+      0 18px 70px rgba(2,6,23,0.62),
+      0 0 0 1px rgba(16,185,129,0.12),
+      0 0 28px rgba(16,185,129,0.22),
+      0 0 42px rgba(79,70,229,0.16);
+  }
+  .x-pass .glow-bad{
+    box-shadow:
+      0 0 0 1px rgba(79,70,229,0.10) inset,
+      0 18px 70px rgba(2,6,23,0.62),
+      0 0 0 1px rgba(239,68,68,0.12),
+      0 0 30px rgba(239,68,68,0.22),
+      0 0 42px rgba(79,70,229,0.14);
+  }
+
+  /* ===============================
+     Pass Preview (same as studio)
+     =============================== */
+  .x-pass .preview-shell{
+    width: 512px;
+    height: 512px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1020px){
+    .x-pass .preview-shell{ width: min(512px, 92vw); height: auto; aspect-ratio: 1/1; }
+  }
+
+  .x-pass .nft-pass-preview{
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--brand-border-soft);
+    background: #020617;
+    color: #f8fafc;
+  }
+  .x-pass .nft-pass-bg{
+    position:absolute; inset:0;
+    background-size: cover;
+    background-position: center;
+    filter: saturate(1.05);
+  }
+  .x-pass .nft-pass-overlay{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at top left, rgba(79,70,229,0.25), transparent 45%),
+      radial-gradient(circle at bottom right, rgba(99,102,241,0.18), transparent 45%),
+      linear-gradient(to bottom, rgba(2,6,23,0.10), rgba(2,6,23,0.65));
+  }
+  .x-pass .nft-pass-content{
+    position:relative;
+    z-index:2;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    padding: 17px;
+    gap: 12px;
+  }
+
+  .x-pass .nft-pass-top{
+    display:flex;
+    justify-content:space-between;
+    gap: 10px;
+    align-items:flex-start;
+  }
+  .x-pass .nft-pass-brand{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+    min-width:0;
+  }
+  .x-pass .nft-pass-logo{
+    width: 54px; height:54px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--brand-border-soft);
+    overflow:hidden;
+    flex: 0 0 auto;
+    background-size: contain;
+    background-repeat:no-repeat;
+    background-position:center;
+  }
+  .x-pass .nft-pass-brandtext{ min-width:0; }
+  .x-pass .nft-pass-brand-name{
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+  }
+  .x-pass .nft-pass-brand-sub{
+    margin-top: 2px;
+    font-size: 11px;
+    opacity: 0.70;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+  }
+
+  .x-pass .nft-pass-guestphoto{
+    width: 54px; height:54px;
+    border-radius: 999px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(255,255,255,0.06);
+    overflow:hidden;
+    flex: 0 0 auto;
+    background-size: cover;
+    background-position: center;
+    background-repeat:no-repeat;
+    display:none;
+  }
+
+  .x-pass .nft-pass-mid{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding-top: 4px;
+    gap: 0;
+  }
+  .x-pass .nft-pass-title{
+    font-size: 26px;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .x-pass .nft-pass-leftstack{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  .x-pass .nft-pass-line{
+    font-size: 13px;
+    opacity: 0.90;
+  }
+  .x-pass .nft-pass-notes{
+    font-size: 12px;
+    opacity: 0.85;
+    line-height: 1.25;
+    max-height: 4.2em;
+    overflow:hidden;
+  }
+
+  .x-pass .nft-pass-bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap: 12px;
+  }
+  .x-pass .nft-pass-qr{
+    width: 104px;
+    height: 104px;
+    border-radius: 18px;
+    padding: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--brand-border-soft);
+    display:flex;
+  }
+  .x-pass .nft-pass-qr-inner{
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.96);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  /* ===============================
+     Flip (metadata)
+     =============================== */
+  .x-pass .flipwrap{ width:100%; height:100%; perspective:1200px; }
+  .x-pass .flip{
+    position:relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .55s ease;
+  }
+  .x-pass .flip.is-flipped{ transform: rotateY(180deg); }
+  .x-pass .flip-face{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    backface-visibility: hidden;
+  }
+  .x-pass .flip-back{
+    transform: rotateY(180deg);
+    border-radius: 18px;
+    overflow:hidden;
+  }
+
+  .x-pass .meta-card{
+    height:100%;
+    border-radius: 18px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.62);
+    padding: 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .x-pass .meta-title{
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.72);
+  }
+  .x-pass .meta-grid{
+    margin-top: 12px;
+    display:grid;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(226,232,240,0.92);
+  }
+  .x-pass .meta-k{ color: rgba(226,232,240,0.70); font-size: 12px; }
+  .x-pass .meta-box{
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.45);
+    padding: 10px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    color: rgba(226,232,240,0.88);
+    line-height: 1.35;
+    max-height: 140px;
+    overflow:auto;
+  }
+
+  /* Buttons (match base brand) */
+  .x-pass .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--brand-border);
+    background: var(--brand-bg);
+    color: var(--brand-ink);
+    cursor:pointer;
+    transition: 0.15s ease;
+    user-select:none;
+    text-decoration:none;
+  }
+  .x-pass .btn:hover{ background: var(--brand-bg-2); }
+
+  .x-pass .btn-ghost{
+    border-color: var(--brand-border-soft);
+    background: rgba(2,6,23,0.35);
+    color: rgba(226,232,240,0.92);
+  }
+  .x-pass .btn-danger{
+    border-color: rgba(239,68,68,0.60);
+    background: rgba(239,68,68,0.16);
+    color: rgba(254,226,226,0.98);
+  }
+  .x-pass .btn-danger:hover{ background: rgba(239,68,68,0.22); }
+
+  /* Right column sections */
+  .x-pass .section{ padding: 16px; }
+  .x-pass .section + .section{ border-top: 1px solid var(--brand-border-soft); }
+
+  .x-pass .h{
+    margin:0 0 10px;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.72);
+  }
+
+  .x-pass .kv{
+    display:grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+    color: rgba(226,232,240,0.88);
+    align-items: baseline;
+  }
+  .x-pass .kv .k{ color: rgba(226,232,240,0.62); font-size: 12px; }
+  .x-pass .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    color: rgba(226,232,240,0.88);
+    overflow:hidden;
+    text-overflow: ellipsis;
+  }
+
+  .x-pass .audit{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .x-pass .audit-row{
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.45);
+    padding: 10px 12px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap: 12px;
+  }
+  .x-pass .audit-left{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap: 4px;
+  }
+  .x-pass .audit-evt{
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.90);
+  }
+  .x-pass .audit-meta{
+    font-size: 12px;
+    color: rgba(226,232,240,0.70);
+  }
+  .x-pass .audit-ts{
+    font-size: 11px;
+    color: rgba(226,232,240,0.55);
+    white-space: nowrap;
+  }
+
+  /* form input (use brand ring) */
+  .x-pass .in{
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.55);
+    color: rgba(241,245,249,1);
+    padding: 10px 12px;
+    outline:none;
+    font-size: 13px;
+  }
+  .x-pass .in:focus{
+    border-color: var(--brand-border);
+    box-shadow: 0 0 0 3px var(--brand-ring);
+  }
+
+  .x-pass .muted{ color: rgba(226,232,240,0.70); font-size: 12px; }
+  .x-pass .row{ display:flex; gap: 10px; align-items:center; flex-wrap: wrap; }
+  .x-pass .spacer{ height: 10px; }
+
+  /* FLIP FIX — POINTER EVENTS */
+  .x-pass .flip:not(.is-flipped) .flip-back{ pointer-events:none; }
+  .x-pass .flip.is-flipped .flip-face:not(.flip-back){ pointer-events:none; }
+
+  .x-pass .pass-top-actions{
+    position:absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    display:flex;
+    gap: 10px;
+  }
+  .x-pass .nft-pass-preview{ position:relative; }
+
+  /* TRUST 2x2 MINI SQUARES (BOTTOM RIGHT) */
+  .x-pass .trust-strip{
+    position:absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 6;
+
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+
+    width: 156px;
+    height: 156px;
+  }
+
+  .x-pass .trust-chip{
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.42);
+    color: rgba(226,232,240,0.92);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+
+    padding: 8px 8px;
+    line-height: 1.1;
+    backdrop-filter: blur(6px);
+  }
+
+  .x-pass .trust-chip .k{
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.72);
+  }
+
+  .x-pass .trust-chip .v{
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+  }
+
+  .x-pass .trust-chip.ok{
+    border-color: rgba(16,185,129,0.55);
+    background: rgba(16,185,129,0.14);
+    color: rgba(209,250,229,0.96);
+  }
+  .x-pass .trust-chip.warn{
+    border-color: rgba(245,158,11,0.55);
+    background: rgba(245,158,11,0.14);
+    color: rgba(254,243,199,0.96);
+  }
+  .x-pass .trust-chip.bad{
+    border-color: rgba(239,68,68,0.60);
+    background: rgba(239,68,68,0.14);
+    color: rgba(254,226,226,0.96);
+  }
+
+  .x-pass .trust-mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    font-weight: 900;
+    font-size: 11px;
+    margin-top: 6px;
+    letter-spacing: 0;
+    opacity: 0.95;
+  }
+
+  .x-pass .trust-copy{
+    margin-top: 6px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(2,6,23,0.30);
+    color: inherit;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 4px 8px;
+    font-weight: 950;
+    font-size: 11px;
+  }
+  .x-pass .trust-copy:hover{ background: rgba(2,6,23,0.45); }
+
+  /* Brand/Indigo chip (Network) */
+.x-pass .trust-chip.brand{
+  border-color: var(--brand-border);
+  background: var(--brand-bg);
+  color: var(--brand-ink);
+}
+.x-pass .trust-chip.brand .k{
+  color: rgba(255,255,255,0.82); /* keeps label readable on indigo */
+}
+
+/* Make audit span full width under both columns */
+.x-pass .audit-full{
+  grid-column: 1 / -1;
+}
+
+
+.x-pass .date-wrap{
+  position: relative;
+  width: 100%;
+}
+
+.x-pass .in-date{
+  padding-right: 44px; /* space for the icon button */
+}
+
+.x-pass .date-btn{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 12px;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.35);
+  color: rgba(226,232,240,0.92);
+  cursor: pointer;
+  padding: 6px 10px;
+  font-size: 14px;
+  line-height: 1;
+}
+.x-pass .date-btn:hover{
+  background: rgba(2,6,23,0.52);
+}
+
+
+</style>
+
+{% set p = pass or {} %}
+{% set meta_obj = (pass_metadata or p.get('metadata') or p.get('pass_metadata') or {}) %}
+{% set attrs = (meta_obj.get('attributes') or []) %}
+{% set props = (meta_obj.get('properties') or {}) %}
+{% set lifecycle = (props.get('lifecycle') or {}) %}
+{% set visual = (props.get('visual') or {}) %}
+{% set preset = (props.get('preset') or {}) %}
+{% set custody = (props.get('custody') or {}) %}
+{% set conds = (props.get('conditions') or []) %}
+{% set attr_map = {} %}
+{% for a in attrs %}
+  {% if a and a.get('trait_type') %}
+    {% set _ = attr_map.update({a.get('trait_type'): a.get('value')}) %}
+  {% endif %}
+{% endfor %}
+
+{% set _status = (verdict_status or 'valid')|lower %}
+{% set is_ok = _status in ['valid','live','ready'] %}
+
+{% set state = state or p.get('state') or p.get('status') %}
+{% set valid_until = valid_until or p.get('valid_until') or p.get('expires_at') %}
+{% set owner_address = owner_address or p.get('owner_address') or p.get('owner') %}
+{% set creator_address = creator_address or p.get('creator_address') or p.get('creator') %}
+{% set issuer_address = issuer_address or p.get('issuer_address') or p.get('issuer') %}
+{% set sequence = sequence or p.get('sequence') %}
+{% set updated_at = updated_at or p.get('updated_at') %}
+{% set minted_at = minted_at or p.get('minted_at') %}
+{% set pass_id = pass_id or p.get('id') %}
+{% set nft_id = nft_id or p.get('nft_id') %}
+{% set mint_tx_hash = mint_tx_hash or p.get('mint_tx_hash') or p.get('tx_hash') %}
+{% set xumm_uuid = xumm_uuid or p.get('xumm_uuid') %}
+{# Latest external verification facts from backend (supply-chain / sensors / recall) #}
+{% set facts = external_facts or {} %}
+
+
+<div class="x-pass">
+  <div class="wrap">
+
+    <div class="grid">
+
+      <!-- LEFT: Premium pass preview (flippable) -->
+<div class="card pad panel-h pass-left {{ 'glow-ok' if is_ok else 'glow-bad' }}">
+
+        <div class="preview-shell">
+          <div class="flipwrap">
+            <div class="flip" data-role="flip-card">
+
+              <!-- FRONT -->
+              <div class="flip-face">
+                <div class="nft-pass-preview">
+
+                  <!-- Top-right action -->
+                  <div class="pass-top-actions">
+                    <button class="btn btn-ghost" type="button" data-role="flip-open">
+                      View metadata
+                    </button>
+                  </div>
+
+                  {# Trust chips — 2x2 mini squares (bottom-right) #}
+                  <div class="trust-strip">
+
+                    {# 1) STATUS #}
+                    {% if is_ok %}
+                      <div class="trust-chip ok">
+                        <div class="k">Status</div>
+                        <div class="v">VALID</div>
+                      </div>
+                    {% else %}
+                      <div class="trust-chip bad">
+                        <div class="k">Status</div>
+                        <div class="v">{{ (verdict_status or state or 'INVALID')|upper }}</div>
+                      </div>
+                    {% endif %}
+
+                    {# 2) PROOF #}
+                    {% if verdict and verdict.get('ok') %}
+                      <div class="trust-chip ok">
+                        <div class="k">Proof</div>
+                        <div class="v">CHAIN OK</div>
+                      </div>
+                    {% else %}
+                      <div class="trust-chip warn">
+                        <div class="k">Proof</div>
+                        <div class="v">CHECK</div>
+                      </div>
+                    {% endif %}
+
+                    {# 3) MINT TX / NFT / PASS ID (never "pending") #}
+                    {% if mint_tx_hash %}
+                      <div class="trust-chip ok" title="{{ mint_tx_hash }}">
+                        <div class="k">Mint TX</div>
+                        <div class="trust-mono">{{ mint_tx_hash[:6] }}…{{ mint_tx_hash[-6:] }}</div>
+                        <button class="trust-copy" type="button" onclick="copyText('{{ mint_tx_hash }}')">⧉</button>
+                      </div>
+                    {% elif nft_id %}
+                      <div class="trust-chip ok" title="{{ nft_id }}">
+                        <div class="k">NFT</div>
+                        <div class="trust-mono">{{ nft_id[:6] }}…{{ nft_id[-6:] }}</div>
+                        <button class="trust-copy" type="button" onclick="copyText('{{ nft_id }}')">⧉</button>
+                      </div>
+                    {% else %}
+                      <div class="trust-chip warn" title="{{ pass_id }}">
+                        <div class="k">Pass</div>
+                        <div class="trust-mono">{{ pass_id[:6] }}…{{ pass_id[-6:] }}</div>
+                        <button class="trust-copy" type="button" onclick="copyText('{{ pass_id }}')">⧉</button>
+                      </div>
+                    {% endif %}
+
+                    {# 4) NETWORK (brand indigo) #}
+                    <div class="trust-chip brand">
+                      <div class="k">Network</div>
+                      <div class="v">XRPL</div>
+                    </div>
+
+                  </div>
+
+                  <div class="nft-pass-bg"
+                    style="background-image: {{ ('url(' ~ visual.get('bg_image_url') ~ ')') if visual.get('bg_image_url') else 'none' }};">
+                  </div>
+                  <div class="nft-pass-overlay"></div>
+
+                  <div class="nft-pass-content">
+
+                    <div class="nft-pass-top">
+                      <div class="nft-pass-brand">
+                        <div class="nft-pass-logo"
+                          style="background-image: {{ ('url(' ~ visual.get('logo_url') ~ ')') if visual.get('logo_url') else 'none' }};">
+                        </div>
+
+                        <div class="nft-pass-brandtext">
+                          <div class="nft-pass-brand-name">{{ (meta_obj.get('name') or 'XERTIFY Pass') }}</div>
+                          <div class="nft-pass-brand-sub">{{ (attr_map.get('context') or preset.get('category') or 'XRPL') }} • XRPL</div>
+                        </div>
+                      </div>
+
+                      {% if visual.get('guest_photo_url') %}
+                        <div class="nft-pass-guestphoto" style="display:block;background-image:url('{{ visual.get('guest_photo_url') }}');"></div>
+                      {% else %}
+                        <div class="nft-pass-guestphoto"></div>
+                      {% endif %}
+                    </div>
+
+                    <div class="nft-pass-mid">
+                      <div class="nft-pass-title">{{ (attr_map.get('holder_name') or '—') }}</div>
+
+                      <div class="nft-pass-leftstack">
+                        <div class="k">Valid until</div>
+<div id="lifecycleValidUntilLeft">{{ valid_until or lifecycle.get('expires_at') or '—' }}</div>
+
+                        <div class="nft-pass-notes">{{ (attr_map.get('notes') or 'Notes will appear here.') }}</div>
+                      </div>
+                    </div>
+
+                    <div class="nft-pass-bottom">
+                      <div class="nft-pass-qr">
+                        <div id="qrInner" class="nft-pass-qr-inner"></div>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;"></div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- BACK -->
+              <div class="flip-face flip-back">
+                <div class="meta-card">
+                  <div class="meta-title">Metadata</div>
+
+                  <div class="meta-grid">
+                    <div><span class="meta-k">Name:</span> {{ meta_obj.get('name') or '—' }}</div>
+                    <div><span class="meta-k">Template:</span> {{ props.get('template') or '—' }}</div>
+                    <div><span class="meta-k">Lifecycle:</span> {{ lifecycle.get('kind') or '—' }}</div>
+                    <div><span class="meta-k">Preset:</span> {{ preset.get('preset_key') or attr_map.get('preset') or '—' }}</div>
+                    <div><span class="meta-k">Context:</span> {{ attr_map.get('context') or '—' }}</div>
+
+                    <div>
+                      <span class="meta-k">Custody:</span>
+                      {% if custody.get('mode') %}
+                        {{ custody.get('mode') }}
+                        {% if custody.get('holder_address') %}
+                          ({{ custody.get('holder_address') }})
+                        {% endif %}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <div class="meta-k" style="margin-bottom:6px;">Conditions</div>
+                      <div class="meta-box">
+                        {% if conds and conds|length %}
+                          {% for c in conds %}
+                            • {{ c.get('key') }} {{ c.get('op') }} {{ c.get('value') }}{% if not loop.last %}<br>{% endif %}
+                          {% endfor %}
+                        {% else %}
+                          No conditions.
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="btn btn-ghost" type="button" data-role="flip-close"
+                    style="position:absolute;top:12px;right:12px;">
+                    Back to pass
+                  </button>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div
+          style="
+           margin-top:12px;
+           padding:12px 14px;
+           border-radius:14px;
+           text-align:center;
+           font-weight:900;
+           letter-spacing:0.12em;
+           text-transform:uppercase;
+           border:1px solid {{ 'rgba(16,185,129,0.55)' if is_ok else 'rgba(239,68,68,0.55)' }};
+           background: {{ 'rgba(16,185,129,0.14)' if is_ok else 'rgba(239,68,68,0.14)' }};
+           color: {{ 'rgba(209,250,229,0.96)' if is_ok else 'rgba(254,226,226,0.96)' }}; ">
+          {{ 'Valid pass' if is_ok else 'Invalid / revoked pass' }}
+        </div>
+
+      </div>
+
+      <!-- RIGHT: lifecycle + actions (match height of preview card) -->
+<!-- RIGHT: lifecycle + supply chain + actions (same height as preview) -->
+<div class="card panel-h pass-right">
+    <div class="right-scroll">
+
+
+        <div class="section">
+          <h3 class="h">Lifecycle</h3>
+          <div class="kv">
+            <div class="k">State</div>
+            <div>{{ state or '—' }}</div>
+
+            <div class="k">Valid until</div>
+<div id="lifecycleValidUntilRight">{{ valid_until or lifecycle.get('expires_at') or '—' }}</div>
+
+
+            <div class="k">Owner</div>
+            <div class="mono" title="{{ owner_address }}">{{ owner_address or '—' }}</div>
+
+            <div class="k">Creator</div>
+            <div class="mono" title="{{ creator_address }}">{{ creator_address or '—' }}</div>
+
+            <div class="k">Issuer</div>
+            <div class="mono" title="{{ issuer_address }}">{{ issuer_address or '—' }}</div>
+
+            <div class="k">Sequence</div>
+            <div class="mono">{{ sequence or '—' }}</div>
+
+            <div class="k">Updated</div>
+            <div class="mono">{{ updated_at or '—' }}</div>
+
+            <div class="k">Minted</div>
+            <div class="mono">{{ minted_at or '—' }}</div>
+
+            <div class="k">NFT</div>
+            <div class="mono" title="{{ nft_id }}">{{ nft_id or '—' }}</div>
+
+            <div class="k">Mint TX</div>
+            <div class="mono" title="{{ mint_tx_hash }}">{{ mint_tx_hash or '—' }}</div>
+          </div>
+        </div>
+
+
+{# ===========================
+   Pharma / Supply Chain Panel
+   =========================== #}
+
+
+
+
+<div class="section">
+  <h3 class="h">Supply chain</h3>
+
+  {% set batch_id = attr_map.get('batch_id') %}
+  {% set gtin = attr_map.get('gtin') %}
+  {% set drug_name = attr_map.get('drug_name') %}
+  {% set manufacturer = attr_map.get('manufacturer') %}
+  {% set mfg_date = attr_map.get('mfg_date') %}
+  {% set expiry_date = attr_map.get('expiry_date') %}
+  {% set temp_min = attr_map.get('temp_min') %}
+  {% set temp_max = attr_map.get('temp_max') %}
+  {% set initial_qty = attr_map.get('initial_qty') %}
+
+  <div class="kv">
+    <div class="k">Batch</div>
+    <div class="mono" title="{{ batch_id }}">{{ batch_id or '—' }}</div>
+
+    <div class="k">GTIN</div>
+    <div class="mono" title="{{ gtin }}">{{ gtin or '—' }}</div>
+
+    <div class="k">Drug</div>
+    <div>{{ drug_name or '—' }}</div>
+
+    <div class="k">Manufacturer</div>
+    <div>{{ manufacturer or '—' }}</div>
+
+    <div class="k">MFG date</div>
+    <div class="mono">{{ mfg_date or '—' }}</div>
+
+    <div class="k">Expiry date</div>
+    <div class="mono">{{ expiry_date or '—' }}</div>
+
+    <div class="k">Cold chain</div>
+    <div>
+      {% if props.get('supply_chain') and props.get('supply_chain').get('cold_chain_required') %}
+        Required ✅
+      {% else %}
+        —
+      {% endif %}
+    </div>
+
+    <div class="k">Temp range</div>
+    <div class="mono">
+      {% if temp_min or temp_max %}
+        {{ temp_min or '?' }}°C → {{ temp_max or '?' }}°C
+      {% else %}
+        —
+      {% endif %}
+    </div>
+        <div class="k">Latest temp</div>
+    <div class="mono" id="sc_latest_temp">
+      {% if facts.get('temp_c') is not none %}
+        {{ facts.get('temp_c') }}°C
+      {% else %}
+        —
+      {% endif %}
+    </div>
+
+    <div class="k">Recall state</div>
+    <div id="sc_latest_recall">
+      {% set rs = (facts.get('recall_status') or '')|lower %}
+      {% if facts.get('recalled') %}
+        <span style="color:rgba(239,68,68,1); font-weight:900;">RECALLED</span>
+      {% elif rs == 'ok' %}
+        <span style="color:rgba(16,185,129,1); font-weight:900;">OK</span>
+      {% elif rs %}
+        <span style="color:rgba(245,158,11,1); font-weight:900;">{{ rs|upper }}</span>
+      {% else %}
+        —
+      {% endif %}
+    </div>
+
+    <div class="k">Cold-chain ok</div>
+    <div class="mono" id="sc_latest_coldok">
+      {% if facts.get('cold_chain_ok') is sameas true %}
+        TRUE
+      {% elif facts.get('cold_chain_ok') is sameas false %}
+        FALSE
+      {% else %}
+        —
+      {% endif %}
+    </div>
+
+    <div class="k">Custodian</div>
+    <div class="mono" id="sc_latest_custodian" title="{{ facts.get('custodian') or facts.get('custodian_address') or '' }}">
+      {{ facts.get('custodian') or facts.get('custodian_address') or '—' }}
+    </div>
+
+
+    <div class="k">Initial qty</div>
+    <div class="mono">{{ initial_qty or '—' }}</div>
+
+    <div class="k">Verdict</div>
+<div id="sc_verdict_label">
+  {% set vs = (verdict_status or '')|lower %}
+  {% if vs in ['valid','live','ready'] %}
+    <span style="color:rgba(16,185,129,1); font-weight:900;">COMPLIANT</span>
+  {% elif vs in ['recalled','recall','recalled_batch'] %}
+    <span style="color:rgba(239,68,68,1); font-weight:900;">RECALLED</span>
+  {% elif vs in ['cold_chain_failed','cold_chain_fail','temp_breach'] %}
+    <span style="color:rgba(239,68,68,1); font-weight:900;">COLD-CHAIN FAIL</span>
+  {% elif vs in ['expired'] %}
+    <span style="color:rgba(239,68,68,1); font-weight:900;">EXPIRED</span>
+  {% elif vs in ['conditions_failed'] %}
+    <span style="color:rgba(245,158,11,1); font-weight:900;">CONDITIONS FAIL</span>
+  {% else %}
+    <span style="color:rgba(245,158,11,1); font-weight:900;">CHECK</span>
+  {% endif %}
+</div>
+
+
+    <div class="k">Verdict detail</div>
+    <div id="sc_verdict_detail" class="muted" style="line-height:1.35;">
+
+      {% if verdict and verdict.get('reason') %}
+        {{ verdict.get('reason') }}
+      {% else %}
+        —
+      {% endif %}
+    </div>
+  </div><!-- ✅ CLOSE .kv -->
+
+  <!-- ✅ Put checkpoint box OUTSIDE the kv grid so it spans nicely -->
+    {# ============================
+     Supply Chain Controls (creator-only)
+     ============================ #}
+  {% if is_creator %}
+    <div style="margin-top:12px; border-radius:14px; border:1px solid var(--brand-border-soft); background: rgba(2,6,23,0.45); padding:12px;">
+      <div class="muted" style="margin-bottom:10px;">
+        Supply-chain controls are creator-only. Add checkpoints or recall this batch.
+      </div>
+
+      <div class="row">
+        <button type="button" class="btn" onclick="openScCheckpointModal()">➕ Add checkpoint</button>
+        <button type="button" class="btn btn-danger" onclick="openScRecallModal()">🚨 Recall batch</button>
+      </div>
+
+      <div id="sc_controls_status" class="muted" style="margin-top:10px;"></div>
+    </div>
+  {% endif %}
+
+</div> <!-- /section Supply chain -->
+
+</div> <!-- /right-scroll -->
+
+
+
+
+
+
+        <div class="section actions-sticky">
+  <h3 class="h">Actions</h3>
+
+
+          <div class="row">
+            <button class="btn btn-danger" onclick="revokePass('{{ pass.id }}')">🔴 Revoke</button>
+            <button class="btn btn-ghost" onclick="resetPass('{{ pass.id }}')">♻ Reset</button>
+<button type="button" class="btn" onclick="openReassignModal('{{ pass_id }}')">🔁 Reassign</button>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="row" style="align-items:flex-end;">
+  <div class="date-wrap" style="flex:1;min-width:240px;">
+    <input id="extendExpiryInput" class="in in-date" type="date" />
+    <button type="button" class="date-btn" onclick="openDatePicker('extendExpiryInput')" aria-label="Pick a date">
+      📅
+    </button>
+  </div>
+  <button class="btn" onclick="extendExpiry('{{ pass.id }}')">⏱ Extend</button>
+</div>
+
+        </div>
+
+      </div>
+
+      <!-- FULL WIDTH: audit trail under both columns -->
+      <div class="card audit-full">
+        <div class="section">
+          <h3 class="h">Audit trail</h3>
+
+          {% if audit_events and audit_events|length %}
+<div class="audit" id="auditTrail">
+              {% for ev in audit_events %}
+                <div class="audit-row">
+                  <div class="audit-left">
+                    <div class="audit-evt">{{ ev.get('event') or 'EVENT' }}</div>
+                    <div class="audit-meta">{{ ev.get('detail') or '' }}</div>
+                  </div>
+<div class="audit-ts" data-ts="{{ ev.get('ts') or '' }}"></div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="muted">No audit events yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Supply Chain: Add checkpoint modal -->
+<div id="scCheckpointModal" class="sc-modal-backdrop" style="display:none;">
+  <div class="sc-modal-card">
+    <div class="sc-modal-head">
+      <div>
+        <div class="sc-modal-title">Add checkpoint</div>
+        <div class="sc-modal-sub">Manual checkpoint (scan / sensor feed). Updates compliance verdict.</div>
+      </div>
+      <button type="button" class="sc-modal-x" onclick="closeScCheckpointModal()">✕</button>
+    </div>
+
+    <div class="sc-modal-body">
+      <div class="sc-grid">
+        <label>
+          <div class="sc-lbl">Temperature (°C)</div>
+          <input id="scm_temp_c" class="sc-in" type="number" step="0.1" placeholder="e.g. 4.0" />
+        </label>
+
+        <label>
+          <div class="sc-lbl">Recall status</div>
+          <select id="scm_recall" class="sc-in">
+            <option value="">Unknown</option>
+            <option value="ok">OK</option>
+            <option value="recalled">Recalled</option>
+          </select>
+        </label>
+
+        <label style="display:flex; gap:10px; align-items:center; padding-top:22px;">
+          <input id="scm_cold_ok" type="checkbox" />
+          <span class="mono">cold_chain_ok = true</span>
+        </label>
+
+        <label>
+          <div class="sc-lbl">Custodian (optional)</div>
+          <input id="scm_custodian" class="sc-in" type="text" placeholder="e.g. DC #2 / r..." />
+        </label>
+
+        <label style="grid-column:1 / -1;">
+          <div class="sc-lbl">Note</div>
+          <input id="scm_note" class="sc-in" type="text" placeholder="e.g. Arrived at distribution center" />
+        </label>
+      </div>
+
+      <div class="sc-row">
+        <button type="button" class="btn" onclick="submitScCheckpoint()">Submit checkpoint</button>
+        <button type="button" class="btn btn-ghost" onclick="closeScCheckpointModal()">Cancel</button>
+      </div>
+
+      <div id="scm_status" class="muted" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Supply Chain: Recall batch modal -->
+<div id="scRecallModal" class="sc-modal-backdrop" style="display:none;">
+  <div class="sc-modal-card">
+    <div class="sc-modal-head">
+      <div>
+        <div class="sc-modal-title">Recall batch</div>
+        <div class="sc-modal-sub">This will mark the batch as recalled (checkpoint event).</div>
+      </div>
+      <button type="button" class="sc-modal-x" onclick="closeScRecallModal()">✕</button>
+    </div>
+
+    <div class="sc-modal-body">
+      <label>
+        <div class="sc-lbl">Recall reason / note</div>
+        <input id="scr_note" class="sc-in" type="text" placeholder="e.g. Quality issue detected in batch testing" />
+      </label>
+
+      <div class="sc-row" style="margin-top:14px;">
+        <button type="button" class="btn btn-danger" onclick="submitScRecall()">Confirm recall</button>
+        <button type="button" class="btn btn-ghost" onclick="closeScRecallModal()">Cancel</button>
+      </div>
+
+      <div id="scr_status" class="muted" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Reassign Modal -->
+<div id="reassignModalBackdrop" class="modal-backdrop" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Reassign Pass</div>
+        <div class="modal-sub">Fill once, then sign in XUMM.</div>
+      </div>
+      <button type="button" class="modal-x" onclick="closeReassignModal()">✕</button>
+    </div>
+
+    <div id="reassignStepForm">
+      <div class="modal-body">
+        <div class="grid">
+          <label>
+            <div class="lbl">Holder name *</div>
+            <input id="ra_holder_name" type="text" placeholder="e.g. Alice Johnson" />
+          </label>
+
+          <label>
+            <div class="lbl">Destination address (optional)</div>
+            <input id="ra_destination" type="text" placeholder="r..." />
+            <div class="hint">Leave blank for custodial mode.</div>
+          </label>
+
+          <label>
+            <div class="lbl">Custody mode</div>
+            <select id="ra_custody_mode">
+              <option value="">Auto (recommended)</option>
+              <option value="self">Self-held</option>
+              <option value="custodial">Custodial</option>
+            </select>
+          </label>
+
+          <label>
+            <div class="lbl">Access level (optional)</div>
+            <input id="ra_access_level" type="text" placeholder="Standard / VIP / Staff" />
+          </label>
+
+          <label>
+            <div class="lbl">Valid until (optional)</div>
+            <input id="ra_valid_until" type="date" />
+          </label>
+
+          <label style="grid-column: 1 / -1;">
+            <div class="lbl">Notes (optional)</div>
+            <input id="ra_notes" type="text" placeholder="e.g. Room 113" />
+          </label>
+        </div>
+
+        <div class="row">
+          <button type="button" class="btn" onclick="submitReassign()">Create Reassign QR</button>
+          <button type="button" class="btn ghost" onclick="closeReassignModal()">Cancel</button>
+        </div>
+
+        <div id="ra_error" class="error" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div id="reassignStepQR" style="display:none;">
+      <div class="modal-body">
+        <div class="qr-wrap">
+          <img id="ra_qr_img" alt="XUMM QR" style="max-width:260px; width:100%; border-radius:12px;" />
+        </div>
+        <div id="ra_status" class="status">Waiting for signature…</div>
+
+        <div class="row">
+          <button type="button" class="btn ghost" onclick="closeReassignModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:18px; }
+  .modal-card{ width: min(680px, 96vw); background:#0f1220; color:#fff; border:1px solid rgba(255,255,255,.10); border-radius:18px; box-shadow: 0 25px 80px rgba(0,0,0,.45); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; padding:16px 18px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .modal-title{ font-size:18px; font-weight:700; }
+  .modal-sub{ font-size:13px; opacity:.75; margin-top:2px; }
+  .modal-x{ background:transparent; border:0; color:#fff; font-size:18px; cursor:pointer; opacity:.8; }
+  .modal-body{ padding:18px; }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .lbl{ font-size:12px; opacity:.8; margin-bottom:6px; }
+  input, select{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0b0e1a; color:#fff; outline:none; }
+  .hint{ font-size:12px; opacity:.65; margin-top:6px; }
+  .row{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+  .btn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.16); background:#1b2350; color:#fff; cursor:pointer; }
+  .btn.ghost{ background:transparent; }
+  .error{ margin-top:12px; padding:10px 12px; border-radius:12px; background:rgba(255,0,0,.12); border:1px solid rgba(255,0,0,.25); font-size:13px; }
+  .status{ margin-top:12px; text-align:center; opacity:.85; }
+  .qr-wrap{ display:flex; justify-content:center; margin-top:6px; }
+</style>
+
+<style>
+  .sc-modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.62); display:flex; align-items:center; justify-content:center; z-index:10000; padding:18px; }
+  .sc-modal-card{ width: min(720px, 96vw); background:#0f1220; color:#fff; border:1px solid rgba(255,255,255,.10); border-radius:18px; box-shadow: 0 25px 80px rgba(0,0,0,.45); }
+  .sc-modal-head{ display:flex; justify-content:space-between; align-items:flex-start; padding:16px 18px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .sc-modal-title{ font-size:18px; font-weight:900; }
+  .sc-modal-sub{ font-size:13px; opacity:.75; margin-top:2px; }
+  .sc-modal-x{ background:transparent; border:0; color:#fff; font-size:18px; cursor:pointer; opacity:.85; }
+  .sc-modal-body{ padding:18px; }
+  .sc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .sc-lbl{ font-size:12px; opacity:.8; margin-bottom:6px; }
+  .sc-in{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0b0e1a; color:#fff; outline:none; }
+  .sc-row{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+  @media (max-width: 720px){
+    .sc-grid{ grid-template-columns:1fr; }
+  }
+</style>
+
+
+
+<!-- QRCode library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+/* Flip logic (VERIFY PAGE) */
+(function(){
+  const flip = document.querySelector('[data-role="flip-card"]');
+  if (!flip) return;
+
+  function setFlipped(on){
+    flip.classList.toggle('is-flipped', !!on);
+  }
+
+  document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest('[data-role="flip-open"]');
+    const closeBtn = e.target.closest('[data-role="flip-close"]');
+
+    if (openBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      setFlipped(true);
+    }
+    if (closeBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      setFlipped(false);
+    }
+  });
+})();
+</script>
+
+<script>
+/* Canonical Share QR (verify page) */
+(function(){
+  const qrEl = document.getElementById("qrInner");
+  if (!qrEl) return;
+
+  const meta = {{ (meta_obj or {})|tojson }};
+  const props = (meta.properties && typeof meta.properties === "object") ? meta.properties : {};
+
+  function stableStringify(obj){
+    const seen = new WeakSet();
+    const norm = (v) => {
+      if (v && typeof v === "object"){
+        if (seen.has(v)) return null;
+        seen.add(v);
+        if (Array.isArray(v)) return v.map(norm);
+        const out = {};
+        Object.keys(v).sort().forEach(k => out[k] = norm(v[k]));
+        return out;
+      }
+      return v;
+    };
+    return JSON.stringify(norm(obj));
+  }
+
+  const passId = "{{ pass_id or (pass and pass.get('id')) or '' }}";
+  let canonicalUrl = "";
+
+  try{
+    const origin = new URL("{{ request.url }}").origin;
+    canonicalUrl = passId ? `${origin}/v/${encodeURIComponent(passId)}` : origin;
+  }catch(e){
+    canonicalUrl = passId ? `/v/${encodeURIComponent(passId)}` : "/";
+  }
+
+  let payload = props.qr_payload ?? null;
+  let text = "";
+
+  if (typeof payload === "string" && payload.trim()){
+    text = payload.trim();
+  } else if (payload && typeof payload === "object"){
+    const urlLike = payload.url || payload.share_url || payload.link || payload.verify_url || "";
+    if (typeof urlLike === "string" && urlLike.trim()){
+      text = urlLike.trim();
+    } else {
+      text = stableStringify(payload);
+    }
+  } else {
+    text = canonicalUrl;
+  }
+
+  try{
+    qrEl.innerHTML = "";
+    new QRCode(qrEl, { text, width: 96, height: 96, correctLevel: QRCode.CorrectLevel.L });
+  }catch(e){
+    console.warn("QR render failed", e);
+    qrEl.textContent = "QR";
+  }
+})();
+</script>
+
+
+
+<script>
+  function openScCheckpointModal(){
+    const m = document.getElementById("scCheckpointModal");
+    const s = document.getElementById("scm_status");
+    if (s) s.textContent = "";
+    if (m) m.style.display = "flex";
+  }
+  function closeScCheckpointModal(){
+    const m = document.getElementById("scCheckpointModal");
+    if (m) m.style.display = "none";
+  }
+
+  function openScRecallModal(){
+    const m = document.getElementById("scRecallModal");
+    const s = document.getElementById("scr_status");
+    if (s) s.textContent = "";
+    if (m) m.style.display = "flex";
+  }
+  function closeScRecallModal(){
+    const m = document.getElementById("scRecallModal");
+    if (m) m.style.display = "none";
+  }
+
+  async function _postCheckpoint(payload){
+    const passId = "{{ pass_id }}";
+    const res = await fetch(`/v/${encodeURIComponent(passId)}/supply_chain/checkpoint`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const outText = await res.text();
+    let out = null;
+    try { out = JSON.parse(outText); } catch { out = { ok:false, error: outText.slice(0,200) }; }
+    return out;
+  }
+
+ async function submitScCheckpoint(){
+  const status = document.getElementById("scm_status");
+  const controlsStatus = document.getElementById("sc_controls_status");
+
+  const tempInp = document.getElementById("scm_temp_c");
+  const recallSel = document.getElementById("scm_recall");
+  const coldOk = document.getElementById("scm_cold_ok");
+  const noteInp = document.getElementById("scm_note");
+  const custInp = document.getElementById("scm_custodian");
+
+  // the button in your modal HTML does NOT have an id,
+  // so this will usually be null (fine).
+  const submitBtn = document.getElementById("scm_submit_btn");
+  const originalBtnText = submitBtn ? submitBtn.textContent : "";
+
+  try{
+    if (submitBtn){
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+    }
+
+    if (status) status.textContent = "Submitting…";
+    if (controlsStatus) controlsStatus.textContent = "Submitting checkpoint…";
+
+    const payload = {
+      checkpoint_type: "manual",
+      note: (noteInp?.value || "").trim() || null,
+    };
+
+    const t = (tempInp?.value ?? "").toString().trim();
+    if (t !== ""){
+      const n = Number(t);
+      if (!Number.isNaN(n)) payload.temp_c = n;
+    }
+
+    const rs = (recallSel?.value || "").trim().toLowerCase();
+    if (rs){
+      payload.recall_status = rs;
+      payload.recalled = (rs === "recalled");
+    }
+
+    if (coldOk && coldOk.checked) payload.cold_chain_ok = true;
+
+    const cust = (custInp?.value || "").trim();
+    if (cust) payload.custodian = cust;
+
+    // 1) submit
+    const out = await _postCheckpoint(payload);
+    if (!out || !out.ok) throw new Error(out?.error || "Checkpoint failed");
+
+    // 2) close modal immediately (your real modal helper)
+    closeScCheckpointModal();
+
+    // 3) refresh UI immediately (no reload)
+    // your backend now returns the proof bundle directly (with events)
+    const bundle = out;
+
+    // update supply chain summary fields (optional but nice)
+    if (bundle.external_facts){
+      const facts = bundle.external_facts;
+
+      const elTemp = document.getElementById("sc_latest_temp");
+      if (elTemp){
+        elTemp.textContent = (facts.temp_c !== undefined && facts.temp_c !== null)
+          ? `${facts.temp_c}°C`
+          : "—";
+      }
+
+      const elCold = document.getElementById("sc_latest_coldok");
+      if (elCold){
+        elCold.textContent =
+          (facts.cold_chain_ok === true) ? "TRUE" :
+          (facts.cold_chain_ok === false) ? "FALSE" : "—";
+      }
+
+      const elCust = document.getElementById("sc_latest_custodian");
+      if (elCust){
+        elCust.textContent = facts.custodian || facts.custodian_address || "—";
+      }
+
+      const elRecall = document.getElementById("sc_latest_recall");
+      if (elRecall){
+        const rs2 = String(facts.recall_status || "").toLowerCase();
+        if (facts.recalled === true || rs2 === "recalled"){
+          elRecall.innerHTML = `<span style="color:rgba(239,68,68,1); font-weight:900;">RECALLED</span>`;
+        } else if (rs2 === "ok"){
+          elRecall.innerHTML = `<span style="color:rgba(16,185,129,1); font-weight:900;">OK</span>`;
+        } else if (rs2){
+          elRecall.innerHTML = `<span style="color:rgba(245,158,11,1); font-weight:900;">${rs2.toUpperCase()}</span>`;
+        } else {
+          elRecall.textContent = "—";
+        }
+      }
+    }
+
+    // update verdict display text (optional)
+    // (your page renders verdict server-side; this just updates the status line)
+    if (controlsStatus) controlsStatus.textContent = "Checkpoint saved ✓";
+    if (status) status.textContent = "Saved ✓";
+
+    // update audit trail instantly
+    const host = document.getElementById("auditTrail");
+    if (host && Array.isArray(bundle.events)){
+      host.innerHTML = bundle.events.map((ev) => {
+        const evt = ev.event_type || ev.event || "EVENT";
+        const detail = ev.detail || "";
+        const ts = ev.ts || ev.created_at || "";
+
+        return `
+          <div class="audit-row">
+            <div class="audit-left">
+              <div class="audit-evt">${evt}</div>
+              <div class="audit-meta">${detail}</div>
+            </div>
+            <div class="audit-ts" data-ts="${ts}"></div>
+          </div>
+        `;
+      }).join("");
+
+      // reuse your existing formatter logic for timestamps
+      (function(){
+        function fmt(s){
+          if(!s) return "";
+          const d = new Date(s);
+          if (isNaN(d.getTime())) return s;
+          return d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        }
+        host.querySelectorAll(".audit-ts[data-ts]").forEach(el => {
+          el.textContent = fmt(el.getAttribute("data-ts"));
+        });
+      })();
+    }
+
+  }catch(e){
+    if (status) status.textContent = `Error: ${e?.message || e}`;
+    if (controlsStatus) controlsStatus.textContent = `Error: ${e?.message || e}`;
+  }finally{
+    if (submitBtn){
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText || "Submit checkpoint";
+    }
+  }
+}
+
+
+
+async function submitScRecall(){
+  const status = document.getElementById("scr_status");
+  const controlsStatus = document.getElementById("sc_controls_status");
+  const noteInp = document.getElementById("scr_note");
+
+  // where to paint results (already exists in your HTML)
+  const auditHost = document.getElementById("auditTrail");
+
+  // supply-chain field nodes (already exist in your HTML)
+  const elTemp = document.getElementById("sc_latest_temp");
+  const elRecall = document.getElementById("sc_latest_recall");
+  const elColdOk = document.getElementById("sc_latest_coldok");
+  const elCustodian = document.getElementById("sc_latest_custodian");
+
+  function fmtTs(s){
+    if(!s) return "";
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return s;
+    return d.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  function renderAuditTrail(events){
+    if (!auditHost || !Array.isArray(events)) return;
+
+    auditHost.innerHTML = events
+      .slice()
+      .reverse() // newest first
+      .map((ev) => {
+        const ts = ev.ts || ev.created_at || "";
+        const eventName = ev.event || ev.event_type || "EVENT";
+        const detail = ev.detail || ev.meta_summary || "";
+
+        return `
+          <div class="audit-row">
+            <div class="audit-left">
+              <div class="audit-evt">${String(eventName)}</div>
+              <div class="audit-meta">${detail ? String(detail) : ""}</div>
+            </div>
+            <div class="audit-ts">${fmtTs(ts)}</div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function paintFacts(facts){
+    facts = (facts && typeof facts === "object") ? facts : {};
+
+    // Latest temp
+    if (elTemp){
+      if (facts.temp_c !== undefined && facts.temp_c !== null && String(facts.temp_c).trim() !== ""){
+        elTemp.textContent = `${facts.temp_c}°C`;
+      } else {
+        elTemp.textContent = "—";
+      }
+    }
+
+    // Recall status
+    if (elRecall){
+      const rs = String(facts.recall_status || "").trim().toLowerCase();
+      const recalled = (facts.recalled === true) || (rs === "recalled");
+
+      if (recalled){
+        elRecall.innerHTML = `<span style="color:rgba(239,68,68,1); font-weight:900;">RECALLED</span>`;
+      } else if (rs === "ok"){
+        elRecall.innerHTML = `<span style="color:rgba(16,185,129,1); font-weight:900;">OK</span>`;
+      } else if (rs){
+        elRecall.innerHTML = `<span style="color:rgba(245,158,11,1); font-weight:900;">${rs.toUpperCase()}</span>`;
+      } else {
+        elRecall.textContent = "—";
+      }
+    }
+
+    // Cold-chain ok
+    if (elColdOk){
+      if (facts.cold_chain_ok === true) elColdOk.textContent = "TRUE";
+      else if (facts.cold_chain_ok === false) elColdOk.textContent = "FALSE";
+      else elColdOk.textContent = "—";
+    }
+
+    // Custodian
+    if (elCustodian){
+      const c = facts.custodian || facts.custodian_address || "";
+      elCustodian.textContent = c ? String(c) : "—";
+      elCustodian.title = c ? String(c) : "";
+    }
+  }
+
+  // pass id for proof.json fallback fetch
+  const passId =
+    window.__PASS_ID__ ||
+    document.body?.dataset?.passId ||
+    (window.location.pathname.match(/\/v\/([^/]+)/)?.[1] ?? "");
+
+  try{
+    if (status) status.textContent = "Submitting recall…";
+    if (controlsStatus) controlsStatus.textContent = "Submitting recall…";
+
+    const payload = {
+      checkpoint_type: "manual",
+      recall_status: "recalled",
+      recalled: true,
+      note: (noteInp?.value || "").trim() || "Recall initiated",
+    };
+
+    // 1) submit checkpoint (recall)
+    const out = await _postCheckpoint(payload);
+    if (!out || !out.ok) throw new Error(out?.error || "Recall failed");
+
+    // 2) close modal instantly (uses your existing function)
+    closeScRecallModal();
+
+    // 3) use returned bundle; fallback fetch proof.json if needed
+    let bundle = out;
+    if (!bundle.events && passId){
+      const r = await fetch(`/v/${encodeURIComponent(passId)}/proof.json`, {
+        credentials: "include",
+        cache: "no-store"
+      });
+      const txt = await r.text();
+      try { bundle = JSON.parse(txt); } catch { bundle = null; }
+    }
+
+    if (bundle && bundle.ok){
+      if (Array.isArray(bundle.events)) renderAuditTrail(bundle.events);
+      paintFacts(bundle.external_facts || {});
+
+      if (controlsStatus) controlsStatus.textContent = "Recall saved ✓";
+      if (status) status.textContent = "Saved ✓";
+    } else {
+      if (controlsStatus) controlsStatus.textContent = "Recall saved ✓ (refresh pending)";
+      if (status) status.textContent = "Saved ✓";
+    }
+
+  }catch(e){
+    if (status) status.textContent = `Error: ${e?.message || e}`;
+    if (controlsStatus) controlsStatus.textContent = `Error: ${e?.message || e}`;
+  }
+}
+
+
+
+  // Close modals on backdrop click
+  document.addEventListener("click", (e) => {
+    const b1 = e.target.closest("#scCheckpointModal");
+    if (b1 && e.target === b1) closeScCheckpointModal();
+
+    const b2 = e.target.closest("#scRecallModal");
+    if (b2 && e.target === b2) closeScRecallModal();
+  });
+</script>
+
+
+<script>
+/*
+  ACTION ENDPOINTS
+  New: /v/:id/...
+*/
+
+function copyText(txt){
+  try{
+    navigator.clipboard.writeText(txt);
+  }catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+}
+
+
+
+let __xummPollTimer = null;
+
+function closeXummModal(){
+  const m = document.getElementById("xummModal");
+  const body = document.getElementById("xummModalBody");
+  const status = document.getElementById("xummModalStatus");
+
+  if (__xummPollTimer){
+    clearInterval(__xummPollTimer);
+    __xummPollTimer = null;
+  }
+
+  if (body) body.innerHTML = "";
+  if (status) status.textContent = "";
+  if (m) m.style.display = "none";
+}
+
+function _pickXummUrl(payload){
+  // accept either payload root or payload.xrpl
+  const p = payload && payload.xrpl ? payload.xrpl : payload;
+  if (!p || typeof p !== "object") return "";
+
+  // common locations
+  return (
+    (p.next && p.next.always) ||
+    (p.next && p.next.no_push) ||
+    p.next ||
+    p.redirect_url ||
+    p.open_url ||
+    ""
+  );
+}
+
+async function refreshExpiryUI(passId){
+  try{
+    const r = await fetch(`/v/${encodeURIComponent(passId)}/proof.json`, { cache: "no-store" });
+    const text = await r.text();
+    let j = null;
+    try { j = JSON.parse(text); } catch { return; }
+    if(!j || !j.ok) return;
+
+    const expires = String(
+      j.valid_until ||
+      (j.metadata_snapshot?.properties?.lifecycle?.expires_at) ||
+      ""
+    ).trim();
+
+    const left = document.getElementById("lifecycleValidUntilLeft");
+    if (left) left.textContent = expires || "—";
+
+    const right = document.getElementById("lifecycleValidUntilRight");
+    if (right) right.textContent = expires || "—";
+
+    const cardEl = document.getElementById("cardValidUntil"); // optional if you add it later
+    if(cardEl) cardEl.textContent = expires ? `Valid until ${expires}` : "Valid until —";
+  }catch(e){
+    // silent
+  }
+}
+
+
+
+
+
+function _pickXummQr(payload){
+  const p = payload && payload.xrpl ? payload.xrpl : payload;
+  if (!p || typeof p !== "object") return "";
+  return (
+    p.qr_png ||
+    p.qr_png_url ||
+    p.qr_url ||
+    (p.refs && p.refs.qr_png) ||
+    (p.refs && p.refs.qr_png_url) ||
+    ""
+  );
+}
+
+function _pickUuid(payload, explicitUuid){
+  if (explicitUuid) return explicitUuid;
+  const p = payload && payload.xrpl ? payload.xrpl : payload;
+  if (!p || typeof p !== "object") return "";
+  return (
+    p.uuid ||
+    p.uuidv4 ||
+    p.payload_uuidv4 ||
+    (p.payload && p.payload.uuidv4) ||
+    ""
+  );
+}
+
+function openXummModal(payload, explicitUuid){
+  const m = document.getElementById("xummModal");
+  const body = document.getElementById("xummModalBody");
+  const status = document.getElementById("xummModalStatus");
+
+  if (!m || !body) {
+    alert("Xumm modal missing in HTML. Add #xummModal block.");
+    return;
+  }
+
+  const url = _pickXummUrl(payload);
+  const qr = _pickXummQr(payload);
+  const uuid = _pickUuid(payload, explicitUuid);
+
+  m.style.display = "block";
+  body.innerHTML = "";
+  if (status) status.textContent = uuid ? `Waiting for signature… (${uuid.slice(0,8)}…)` : "Waiting for signature…";
+
+  // 1) On mobile: open deep link immediately if possible
+  // 2) On desktop: show button + QR fallback
+  if (url) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.className = "btn";
+    a.textContent = "Open Xumm to Sign";
+    body.appendChild(a);
+
+    const hint = document.createElement("div");
+    hint.style.marginTop = "10px";
+    hint.style.fontSize = "12px";
+    hint.style.color = "rgba(226,232,240,0.70)";
+    hint.textContent = "If you’re on desktop, open Xumm on your phone and scan the QR if needed.";
+    body.appendChild(hint);
+  }
+
+  // QR fallback (best UX for desktop)
+  if (qr) {
+    const wrap = document.createElement("div");
+    wrap.style.marginTop = "14px";
+    wrap.style.display = "flex";
+    wrap.style.justifyContent = "center";
+
+    const img = document.createElement("img");
+    img.src = qr;
+    img.alt = "Xumm QR";
+    img.style.width = "280px";
+    img.style.height = "280px";
+    img.style.borderRadius = "16px";
+    img.style.border = "1px solid rgba(255,255,255,0.12)";
+    img.style.background = "rgba(255,255,255,0.04)";
+    wrap.appendChild(img);
+
+    body.appendChild(wrap);
+  }
+
+  // If we have neither, show debug
+  if (!url && !qr) {
+    const pre = document.createElement("pre");
+    pre.style.marginTop = "12px";
+    pre.style.maxHeight = "240px";
+    pre.style.overflow = "auto";
+    pre.style.padding = "10px";
+    pre.style.borderRadius = "12px";
+    pre.style.border = "1px solid rgba(255,255,255,0.12)";
+    pre.style.background = "rgba(2,6,23,0.45)";
+    pre.textContent = JSON.stringify(payload, null, 2);
+    body.appendChild(pre);
+  }
+
+  // Poll backend for status (requires Step 4 backend route)
+  if (uuid) {
+    pollXumm(uuid);
+  } else {
+    if (status) status.textContent = "No uuid found in payload. Backend must return uuid/uuidv4.";
+  }
+}
+
+
+function openDatePicker(inputId){
+  const el = document.getElementById(inputId);
+  if (!el) return;
+
+  // Chrome/Edge support showPicker()
+  if (typeof el.showPicker === "function") {
+    el.showPicker();
+    return;
+  }
+
+  // Safari fallback: focus/click triggers native UI as available
+  el.focus();
+  el.click();
+}
+
+
+function pollXumm(uuid){
+  // Step 8 tightening:
+  // We DO NOT finalize UI on "signed" or even "validated".
+  // We finalize only when backend reports: applied === true
+  // (meaning webhook has applied the action + updated DB/metadata).
+
+  if (__xummPollTimer) clearInterval(__xummPollTimer);
+
+  const statusEl = document.getElementById("xummModalStatus");
+
+  function setStatus(msg){
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  __xummPollTimer = setInterval(() => {
+    fetch(`/studio/actions/xrpl/xumm/payload/${encodeURIComponent(uuid)}`)
+      .then(async (r) => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return { ok: false, error: text.slice(0, 200) };
+        }
+      })
+      .then(async (j) => {
+        if (!j || !j.ok) {
+          setStatus(`⚠️ Poll error: ${String(j && j.error ? j.error : "unknown").slice(0, 140)}`);
+          return;
+        }
+
+        // If action record isn't found yet, keep polling
+        if (j.found === false) {
+          setStatus("⏳ Waiting for action record…");
+          return;
+        }
+
+        const applied = !!j.applied;
+        const signed  = !!j.signed;
+        const txid    = (j.txid || "").trim();
+
+        // ✅ FINALIZE ONLY WHEN WEBHOOK APPLIED
+        if (applied) {
+          clearInterval(__xummPollTimer);
+          __xummPollTimer = null;
+
+          setStatus("✅ Confirmed. Finalizing…");
+
+          // same behavior as before: refresh proof bundle + reload fallback
+          (async () => {
+            for (let i = 0; i < 12; i++) {
+              const ok = await refreshFromProofBundle(__PASS_ID);
+              if (ok) return;
+              await new Promise(r => setTimeout(r, 500));
+            }
+            location.reload();
+          })();
+
+          // expiry UI refresh loop (keep your existing behavior)
+          const oldRight = (document.getElementById("lifecycleValidUntilRight")?.textContent || "").trim();
+          const oldLeft  = (document.getElementById("lifecycleValidUntilLeft")?.textContent  || "").trim();
+
+          setTimeout(async () => {
+            if (!__PASS_ID || typeof refreshExpiryUI !== "function") {
+              location.reload();
+              return;
+            }
+
+            for (let i = 0; i < 12; i++) {
+              await refreshExpiryUI(__PASS_ID);
+
+              const newRight = (document.getElementById("lifecycleValidUntilRight")?.textContent || "").trim();
+              const newLeft  = (document.getElementById("lifecycleValidUntilLeft")?.textContent  || "").trim();
+
+              const changed =
+                (newRight && newRight !== oldRight) ||
+                (newLeft && newLeft !== oldLeft);
+
+              if (changed) return;
+
+              await new Promise(res => setTimeout(res, 500));
+            }
+
+            location.reload();
+          }, 900);
+
+          return;
+        }
+
+        // Helpful status while waiting:
+        if (!signed) {
+          setStatus("Waiting for signature…");
+          return;
+        }
+
+        // signed but not applied yet => ledger validated + webhook applying OR still processing
+        if (signed && !applied) {
+          if (txid) {
+            setStatus(`⏳ Signed. Waiting for confirmation… (${txid.slice(0, 10)}…)`);
+          } else {
+            setStatus("⏳ Signed. Waiting for transaction hash…");
+          }
+          return;
+        }
+
+        setStatus("Working…");
+      })
+      .catch((err) => {
+        setStatus(`⚠️ Network error: ${String(err).slice(0, 120)}`);
+      });
+  }, 1200);
+}
+
+
+
+async function refreshFromProofBundle(passId) {
+  if (!passId) return false;
+
+  try {
+    const res = await fetch(`/v/${encodeURIComponent(passId)}/proof.json`, {
+      cache: "no-store",
+      credentials: "include"
+    });
+
+    const text = await res.text();
+    let bundle;
+    try {
+      bundle = JSON.parse(text);
+    } catch {
+      return false;
+    }
+
+    if (!bundle || !bundle.ok) return false;
+
+    /* =========================
+       1) Audit trail
+       ========================= */
+    if (Array.isArray(bundle.events)) {
+      const host = document.getElementById("auditTrail");
+      if (host) {
+        host.innerHTML = bundle.events.map(ev => `
+          <div class="audit-row">
+            <div class="audit-left">
+              <div class="audit-evt">${ev.event || ev.event_type || "EVENT"}</div>
+              <div class="audit-meta">${ev.detail || ""}</div>
+            </div>
+            <div class="audit-ts" data-ts="${ev.ts || ""}"></div>
+          </div>
+        `).join("");
+
+        // re-format timestamps
+        host.querySelectorAll(".audit-ts[data-ts]").forEach(el => {
+          const s = el.getAttribute("data-ts");
+          if (!s) return;
+          const d = new Date(s);
+          el.textContent = isNaN(d) ? s : d.toLocaleString();
+        });
+      }
+    }
+
+    /* =========================
+       2) Lifecycle (expiry)
+       ========================= */
+    const expires =
+      bundle.valid_until ||
+      bundle.metadata_snapshot?.properties?.lifecycle?.expires_at ||
+      "";
+
+    const left = document.getElementById("lifecycleValidUntilLeft");
+    const right = document.getElementById("lifecycleValidUntilRight");
+    if (left) left.textContent = expires || "—";
+    if (right) right.textContent = expires || "—";
+
+    /* =========================
+       3) Supply-chain facts
+       ========================= */
+    const facts = bundle.external_facts || {};
+
+    const tempEl = document.getElementById("sc_latest_temp");
+    if (tempEl) {
+      tempEl.textContent =
+        facts.temp_c !== undefined && facts.temp_c !== null
+          ? `${facts.temp_c}°C`
+          : "—";
+    }
+
+    const recallEl = document.getElementById("sc_latest_recall");
+    if (recallEl) {
+      if (facts.recalled) {
+        recallEl.innerHTML = `<span style="color:rgba(239,68,68,1);font-weight:900;">RECALLED</span>`;
+      } else if (facts.recall_status) {
+        recallEl.textContent = facts.recall_status.toUpperCase();
+      } else {
+        recallEl.textContent = "—";
+      }
+    }
+
+    const coldEl = document.getElementById("sc_latest_coldok");
+    if (coldEl) {
+      if (facts.cold_chain_ok === true) coldEl.textContent = "TRUE";
+      else if (facts.cold_chain_ok === false) coldEl.textContent = "FALSE";
+      else coldEl.textContent = "—";
+    }
+
+    const custEl = document.getElementById("sc_latest_custodian");
+    if (custEl) {
+      custEl.textContent =
+        facts.custodian || facts.custodian_address || "—";
+    }
+
+    /* =========================
+       4) Verdict block
+       ========================= */
+    if (bundle.status) {
+      // simplest safe option: refresh verdict badge text
+      // (full color repaint can come later)
+      console.debug("Verdict refreshed:", bundle.status);
+    }
+
+    return true;
+  } catch (e) {
+    console.warn("refreshFromProofBundle failed", e);
+    return false;
+  }
+}
+
+
+
+function revokePass(passId){
+  if(!confirm("Revoke this pass?")) return;
+
+  fetch(`/v/${passId}/revoke`, { method:"POST" })
+    .then(r => r.json())
+    .then(j => {
+      if(!j || !j.ok) return alert(j && j.error ? j.error : "Failed to revoke");
+
+      // DB-only fallback (rare)
+      if (j.warning && !j.xrpl) {
+        alert(j.warning);
+        return location.reload();
+      }
+
+      // SIGN REQUIRED
+      if (j.xrpl || j.uuid) {
+        return openXummModal(j.xrpl || j, j.uuid);
+      }
+
+      // if server returned ok but no payload, that’s a bug
+      alert("Revoke returned ok but no signing payload.");
+    })
+    .catch(e => alert("Error: " + e));
+}
+
+function resetPass(passId){
+  if(!confirm("Reset this pass to READY?")) return;
+
+  fetch(`/v/${passId}/reset`, { method:"POST" })
+    .then(r => r.json())
+    .then(j => {
+      if(!j || !j.ok) return alert(j && j.error ? j.error : "Failed to reset");
+
+      if (j.warning && !j.xrpl) {
+        alert(j.warning);
+        return location.reload();
+      }
+
+      if (j.xrpl || j.uuid) {
+        return openXummModal(j.xrpl || j, j.uuid);
+      }
+
+      alert("Reset returned ok but no signing payload.");
+    })
+    .catch(e => alert("Error: " + e));
+}
+
+function reassignPass(passId){
+  const holder_name = (prompt("Holder name (required):") || "").trim();
+  if(!holder_name) return alert("holder_name required");
+
+  const destination = (prompt("Destination (XRPL address) — optional (leave blank for custodial):") || "").trim();
+  const access_level = (prompt("Access level — optional:") || "").trim();
+  const valid_until = (prompt("Valid until (YYYY-MM-DD or ISO) — optional:") || "").trim();
+  const notes = (prompt("Notes — optional:") || "").trim();
+
+  const custody_mode = destination ? "self" : "custodial";
+
+  fetch(`/v/${passId}/reassign`, {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ holder_name, destination, access_level, valid_until, notes, custody_mode })
+  })
+  .then(r => r.json())
+  .then(j => {
+    if(!j || !j.ok) return alert(j && j.error ? j.error : "Failed to reassign");
+
+    if (j.xrpl || j.uuid) {
+      return openXummModal(j.xrpl || j, j.uuid);
+    }
+
+    // if you keep a DB-only mode, you can still reload here
+    location.reload();
+  })
+  .catch(e => alert("Error: " + e));
+}
+
+function extendExpiry(passId){
+  const expires_at = (document.getElementById("extendExpiryInput").value || "").trim();
+  if(!expires_at) return alert("Enter an expiry date");
+
+  const form = new FormData();
+  form.append("expires_at", expires_at);
+
+  fetch(`/v/${passId}/extend`, { method:"POST", body: form })
+    .then(r => r.json())
+    .then(j => {
+      if(!j || !j.ok) return alert(j && j.error ? j.error : "Failed to extend expiry");
+
+      // SIGN REQUIRED (after our backend update)
+      if (j.xrpl || j.uuid) {
+        return openXummModal(j.xrpl || j, j.uuid);
+      }
+
+      alert("Extend returned ok but no signing payload.");
+    })
+    .catch(e => alert("Error: " + e));
+}
+
+</script>
+<script>
+  // ✅ set this from your template (example below)
+  // const __PASS_ID = "{{ pass_id }}";
+
+  let __PASS_ID = "{{ pass_id or (pass and pass.get('id')) or '' }}";
+
+function openReassignModal(passId) {
+  // allow explicit passId override from the button
+  if (passId) __PASS_ID = passId;
+
+  const err = document.getElementById("ra_error");
+  if (err) { err.style.display = "none"; err.textContent = ""; }
+
+  document.getElementById("reassignStepForm").style.display = "block";
+  document.getElementById("reassignStepQR").style.display = "none";
+  document.getElementById("reassignModalBackdrop").style.display = "flex";
+}
+
+
+  function closeReassignModal() {
+    document.getElementById("reassignModalBackdrop").style.display = "none";
+  }
+
+  async function submitReassign() {
+    const err = document.getElementById("ra_error");
+    err.style.display = "none";
+    err.textContent = "";
+
+    const holder_name = (document.getElementById("ra_holder_name").value || "").trim();
+    const destination = (document.getElementById("ra_destination").value || "").trim();
+    const access_level = (document.getElementById("ra_access_level").value || "").trim();
+    const valid_until = (document.getElementById("ra_valid_until").value || "").trim();
+    const notes = (document.getElementById("ra_notes").value || "").trim();
+    const custody_mode = (document.getElementById("ra_custody_mode").value || "").trim();
+
+    if (!holder_name) {
+      err.textContent = "holder_name is required";
+      err.style.display = "block";
+      return;
+    }
+
+    // Build request body exactly how your backend expects it
+    const body = {
+      holder_name,
+      destination,
+      access_level,
+      valid_until,
+      notes,
+      custody_mode
+    };
+
+    let j;
+try {
+  if (!__PASS_ID) throw new Error("Missing pass id");
+
+  const r = await fetch(`/v/${encodeURIComponent(__PASS_ID)}/reassign`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const text = await r.text();
+  try {
+    j = JSON.parse(text);
+  } catch {
+    // backend returned HTML/plaintext
+    throw new Error(text.slice(0, 200));
+  }
+} catch (e) {
+  err.textContent = `Network/Response error: ${String(e).slice(0, 180)}`;
+  err.style.display = "block";
+  return;
+}
+
+
+    if (!j || !j.ok) {
+      err.textContent = (j && j.error) ? j.error : "Reassign failed";
+      err.style.display = "block";
+      return;
+    }
+
+    // Extract the xumm payload from { ok:true, xrpl:{...} }
+    const xrpl = j.xrpl || {};
+    const uuid = xrpl.uuid || xrpl.payload_uuidv4 || j.uuid || "";
+    const qr = xrpl.qr_url || xrpl.qr_png || xrpl.refs?.qr_png || xrpl.refs?.qr || "";
+
+    if (!uuid) {
+      err.textContent = "Missing XUMM uuid in response";
+      err.style.display = "block";
+      return;
+    }
+
+    // Switch modal to QR step
+    document.getElementById("reassignStepForm").style.display = "none";
+    document.getElementById("reassignStepQR").style.display = "block";
+
+    // Show QR if we have it
+    const img = document.getElementById("ra_qr_img");
+    if (qr) img.src = qr;
+
+    // Update status element used by pollXumm
+    const s = document.getElementById("ra_status");
+    if (s) s.textContent = "Waiting for signature…";
+
+    // ✅ reuse your existing pollXumm(uuid) but point it at ra_status if you want:
+    // easiest: just let it reload on signed
+    pollXumm(uuid);
+  }
+</script>
+
+
+<script>
+(function(){
+  function fmt(s){
+    if(!s) return "";
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return s; // fallback if parse fails
+    // user's browser locale + timezone
+    return d.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  document.querySelectorAll(".audit-ts[data-ts]").forEach(el => {
+    el.textContent = fmt(el.getAttribute("data-ts"));
+  });
+})();
+</script>
+
+<!-- =========================
+     XUMM SIGNING MODAL (Step 4)
+     Add this near the bottom of the page, 
+     ========================= -->
+<div id="xummModal" style="display:none; position:fixed; inset:0; z-index:9999;">
+  <div style="position:absolute; inset:0; background:rgba(0,0,0,0.65);" onclick="closeXummModal()"></div>
+
+  <div style="
+    position:relative;
+    width:min(520px, 92vw);
+    margin: 8vh auto 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(2,6,23,0.96);
+    color: rgba(226,232,240,0.92);
+    box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+    padding: 16px;
+  ">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+      <div style="font-weight:950; letter-spacing:0.08em; text-transform:uppercase; font-size:12px;">
+        Sign in Xumm
+      </div>
+      <button class="btn btn-ghost" type="button" onclick="closeXummModal()">Close</button>
+    </div>
+
+    <div style="margin-top:12px; font-size:13px; color: rgba(226,232,240,0.75);">
+      Approve the action in Xumm to write an XRPL proof trail.
+    </div>
+
+    <div id="xummModalBody" style="margin-top:14px;">
+      <!-- QR or links injected here -->
+    </div>
+
+    <div id="xummModalStatus" style="margin-top:12px; font-size:12px; color: rgba(226,232,240,0.70);"></div>
+  </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,126 @@
+{
+  "name": "Break pad x206 – Aviation parts cert",
+  "description": "Aviation parts cert — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "custom"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "Break pad x206"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-02-01"
+    },
+    {
+      "trait_type": "notes",
+      "value": "Break pad certified by dunlop"
+    },
+    {
+      "trait_type": "context",
+      "value": "aviation"
+    },
+    {
+      "trait_type": "preset",
+      "value": "custom"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "true"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "aviation_part_passport"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "aviation_part_passport"
+    },
+    {
+      "trait_type": "part_number",
+      "value": "1234"
+    },
+    {
+      "trait_type": "serial_number",
+      "value": "4321"
+    },
+    {
+      "trait_type": "manufacturer",
+      "value": "ACME"
+    },
+    {
+      "trait_type": "mfg_date",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "aircraft_tail",
+      "value": "g432"
+    },
+    {
+      "trait_type": "install_ts",
+      "value": "2026-02-02"
+    },
+    {
+      "trait_type": "life_limit_hours",
+      "value": "50000"
+    },
+    {
+      "trait_type": "life_limit_cycles",
+      "value": "1"
+    }
+  ],
+  "properties": {
+    "vertical": "aviation",
+    "template_key": "aviation_part_passport",
+    "template": "generic",
+    "lifecycle": {
+      "kind": "standard"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260128125747_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "custom",
+      "category": "custom",
+      "rules": {
+        "category": "custom",
+        "allow_custom_rules": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "permissioned_domain_gate": {
+      "enabled": false,
+      "domain_label": "",
+      "domain_purpose": "supply_chain",
+      "credential_issuer": "",
+      "credential_type": "",
+      "domain_mode": "create_new",
+      "existing_domain_id": ""
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_f1de30b4135b43aa",
+      "sig": "98cb7a74a434f98e7f12f4cb831acd38e9474809062b6f9bebff5be85f3604c1"
+    },
+    "verification": {
+      "pass_id": "f1de30b4135b43aa",
+      "public_id": "x_f1de30b4135b43aa",
+      "verify_url": "http://127.0.0.1:8000/v/f1de30b4135b43aa",
+      "share_url": "http://127.0.0.1:8000/s/x_f1de30b4135b43aa"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260128125747_nft_preview_nft-preview.png"
+}

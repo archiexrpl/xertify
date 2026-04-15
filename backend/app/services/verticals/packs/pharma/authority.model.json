@@ -1,0 +1,75 @@
+{
+  "authority_model_version": "1.0.0",
+  "vertical_id": "pharma",
+
+  "roles": {
+    "ISSUER": { "description": "Company authority that mints/revokes. Ultimate controller." },
+    "OPERATOR": { "description": "Day-to-day operator allowed to log custody and handling events." },
+    "QA": { "description": "Quality assurance allowed to record inspections, batch tests, and holds." },
+    "REGULATOR": { "description": "External authority allowed to issue recalls/alerts." }
+  },
+
+  "issuer_can_override": true,
+
+  "event_authority": {
+    "ISSUED": { "allowed_roles": ["ISSUER"] },
+    "TRANSFERRED": { "allowed_roles": ["ISSUER"] },
+    "REVOKED": { "allowed_roles": ["ISSUER"] },
+
+    "CUSTODY_CHECKPOINT": { "allowed_roles": ["OPERATOR", "QA"] },
+    "HANDLING_REPORTED": { "allowed_roles": ["OPERATOR", "QA"] },
+
+    "QA_TEST_RECORDED": { "allowed_roles": ["QA"] },
+    "BATCH_HELD": { "allowed_roles": ["QA"] },
+
+    "RECALL_ISSUED": { "allowed_roles": ["REGULATOR", "ISSUER"] },
+
+    "SC_CHECKPOINT": { "allowed_roles": ["OPERATOR", "QA", "ISSUER"] },
+    "SC_CUSTODY": { "allowed_roles": ["OPERATOR", "QA", "ISSUER"] },
+    "SC_COLD_CHAIN_POLICY": { "allowed_roles": ["QA", "ISSUER"] },
+    "SC_RECALL": { "allowed_roles": ["REGULATOR", "ISSUER", "QA"] },
+
+    "RESET": { "allowed_roles": ["ISSUER"] },
+    "EXTEND_EXPIRY": { "allowed_roles": ["ISSUER"] },
+    "REASSIGN": { "allowed_roles": ["ISSUER"] },
+    "ANCHOR": { "allowed_roles": ["ISSUER"] },
+    "PERM_DOMAIN_SET": { "allowed_roles": ["ISSUER"] }
+  },
+
+  "event_aliases": {
+    "ph_checkpoint": "CUSTODY_CHECKPOINT",
+    "checkpoint": "CUSTODY_CHECKPOINT",
+    "CUSTODY_CHECKPOINT": "CUSTODY_CHECKPOINT",
+
+    "ph_handling": "HANDLING_REPORTED",
+    "usage_updated": "HANDLING_REPORTED",
+    "HANDLING_REPORTED": "HANDLING_REPORTED",
+
+    "qa_test": "QA_TEST_RECORDED",
+    "QA_TEST_RECORDED": "QA_TEST_RECORDED",
+
+    "hold": "BATCH_HELD",
+    "BATCH_HELD": "BATCH_HELD",
+
+    "recall": "RECALL_ISSUED",
+    "RECALL_ISSUED": "RECALL_ISSUED",
+
+    "sc_checkpoint": "SC_CHECKPOINT",
+    "SC_CHECKPOINT": "SC_CHECKPOINT",
+
+    "sc_custody": "SC_CUSTODY",
+    "SC_CUSTODY": "SC_CUSTODY",
+
+    "sc_cold_chain_policy": "SC_COLD_CHAIN_POLICY",
+    "SC_COLD_CHAIN_POLICY": "SC_COLD_CHAIN_POLICY",
+
+    "sc_recall": "SC_RECALL",
+    "SC_RECALL": "SC_RECALL",
+
+    "RESET": "RESET",
+    "EXTEND_EXPIRY": "EXTEND_EXPIRY",
+    "REASSIGN": "REASSIGN",
+    "ANCHOR": "ANCHOR",
+    "PERM_DOMAIN_SET": "PERM_DOMAIN_SET"
+  }
+}

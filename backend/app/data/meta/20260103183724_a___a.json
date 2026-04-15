@@ -1,0 +1,86 @@
+{
+  "name": "a – a",
+  "description": "a — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "access"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "a"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "context",
+      "value": "hotel"
+    },
+    {
+      "trait_type": "preset",
+      "value": "access_pass"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "false"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "hotel_room"
+    }
+  ],
+  "properties": {
+    "template": "generic",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "brand_primary": "#22c55e",
+      "brand_accent": "#ef4444",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260103183724_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "access_pass",
+      "category": "access",
+      "rules": {
+        "category": "access",
+        "requires_holder_name": true,
+        "transferable": false,
+        "expires": true,
+        "revocable": true,
+        "reissuable": true,
+        "lifecycle": "escrow_ticket",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "validate"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "qr_payload": {
+      "t": "P",
+      "v": 1,
+      "h": "a",
+      "vu": "2026-01-01",
+      "k": "escrow_ticket"
+    },
+    "verification": {
+      "pass_id": "e4a97013834742f6",
+      "verify_url": "http://127.0.0.1:8000/v/e4a97013834742f6"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260103183724_nft_preview_nft-preview.png"
+}

@@ -1,0 +1,48 @@
+{
+  "name": "Jamie for Hotel",
+  "description": "Jamie for Hotel – digital ticket granting VIP access. Valid from 2025-12-18T20:42 until 2025-12-08T20:42. Notes: rooom 113",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "Ticket"
+    },
+    {
+      "trait_type": "access_level",
+      "value": "VIP"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "Jamie"
+    },
+    {
+      "trait_type": "valid_from",
+      "value": "2025-12-18T20:42"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2025-12-08T20:42"
+    },
+    {
+      "trait_type": "notes",
+      "value": "rooom 113"
+    }
+  ],
+  "properties": {
+    "template": "ticket",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "valid_from": "2025-12-18T20:42",
+      "expires_at": "2025-12-08T20:42"
+    },
+    "visual": {
+      "template": "ticket",
+      "brand_primary": "#4f46e5",
+      "brand_accent": "#22c55e",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20251208204309_logo_logo__1_.png",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20251208204314_background_castle-mountain-valley-sunset-medieval-600nw-1856819368.webp",
+      "show_qr": true,
+      "show_badge": true
+    }
+  }
+}

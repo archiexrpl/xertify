@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pharma Events v1",
+  "type": "object",
+  "required": ["event_type", "occurred_at"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "SCANNED",
+        "EXTERNAL_FACTS_UPDATED",
+        "TEMP_RECORDED",
+        "CUSTODY_TRANSFERRED",
+        "RECALL_ISSUED"
+      ]
+    },
+    "occurred_at": { "type": "string", "description": "ISO-8601 UTC timestamp" },
+    "actor": { "type": ["string", "null"] },
+    "meta": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

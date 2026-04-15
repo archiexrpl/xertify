@@ -1,0 +1,60 @@
+{
+  "authority_model_version": "1.0.0",
+  "vertical_id": "aviation",
+
+  "roles": {
+    "ISSUER": { "description": "Issuer-controlled authority that mints, can revoke, can override." },
+    "OPERATOR": { "description": "Day-to-day operator allowed to report usage and custody checkpoints." },
+    "MAINTENANCE": { "description": "MRO/maintenance authority allowed to record inspections, install/remove events." }
+  },
+
+  "issuer_can_override": true,
+
+  "event_authority": {
+    "ISSUED": { "allowed_roles": ["ISSUER"] },
+    "TRANSFERRED": { "allowed_roles": ["ISSUER"] },
+    "REVOKED": { "allowed_roles": ["ISSUER"] },
+
+    "CUSTODY_CHECKPOINT": { "allowed_roles": ["OPERATOR", "MAINTENANCE"] },
+    "USAGE_REPORTED": { "allowed_roles": ["OPERATOR", "MAINTENANCE"] },
+    "INSPECTED": { "allowed_roles": ["MAINTENANCE"] },
+    "INSTALLED": { "allowed_roles": ["MAINTENANCE"] },
+    "REMOVED": { "allowed_roles": ["MAINTENANCE"] },
+    "RESET": { "allowed_roles": ["ISSUER"] },
+    "EXTEND_EXPIRY": { "allowed_roles": ["ISSUER"] },
+
+
+    "inspection_logged": { "allowed_roles": ["MAINTENANCE"] },
+    "maintenance_performed": { "allowed_roles": ["MAINTENANCE"] },
+    "part_installed": { "allowed_roles": ["MAINTENANCE"] },
+    "operational_status_reported": { "allowed_roles": ["OPERATOR"] },
+
+    "grounded": { "allowed_roles": ["ISSUER"] },
+    "ungrounded": { "allowed_roles": ["ISSUER"] },
+    "record_corrected": { "allowed_roles": ["ISSUER"] }
+    
+  },
+
+  "event_aliases": {
+    "av_checkpoint": "CUSTODY_CHECKPOINT",
+    "checkpoint": "CUSTODY_CHECKPOINT",
+    "CUSTODY_CHECKPOINT": "CUSTODY_CHECKPOINT",
+
+    "av_usage": "USAGE_REPORTED",
+    "usage_updated": "USAGE_REPORTED",
+    "USAGE_REPORTED": "USAGE_REPORTED",
+
+    "av_inspection": "INSPECTED",
+    "inspection_logged": "INSPECTED",
+    "INSPECTED": "INSPECTED",
+
+    "part_installed": "INSTALLED",
+    "INSTALLED": "INSTALLED",
+
+    "part_removed": "REMOVED",
+    "REMOVED": "REMOVED",
+
+    "RESET": "RESET",
+    "EXTEND_EXPIRY": "EXTEND_EXPIRY"
+  }
+}

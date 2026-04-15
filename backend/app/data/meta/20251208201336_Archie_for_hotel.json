@@ -1,0 +1,48 @@
+{
+  "name": "Archie for hotel",
+  "description": "Archie for hotel – digital ticket granting VIP access. Valid from 2025-12-09T20:08 until 2025-12-08T20:10. Notes: Room 113",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "Ticket"
+    },
+    {
+      "trait_type": "access_level",
+      "value": "VIP"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "Archie"
+    },
+    {
+      "trait_type": "valid_from",
+      "value": "2025-12-09T20:08"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2025-12-08T20:10"
+    },
+    {
+      "trait_type": "notes",
+      "value": "Room 113"
+    }
+  ],
+  "properties": {
+    "template": "ticket",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "valid_from": "2025-12-09T20:08",
+      "expires_at": "2025-12-08T20:10"
+    },
+    "visual": {
+      "template": "ticket",
+      "brand_primary": "#4f46e5",
+      "brand_accent": "#22c55e",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20251208201227_logo_logo__1_.png",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20251208201232_background_castle-mountain-valley-sunset-medieval-600nw-1856819368.webp",
+      "show_qr": true,
+      "show_badge": true
+    }
+  }
+}

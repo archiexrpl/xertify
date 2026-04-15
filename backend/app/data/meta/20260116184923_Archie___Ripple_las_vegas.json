@@ -1,0 +1,107 @@
+{
+  "name": "Archie – Ripple las vegas",
+  "description": "Ripple las vegas — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "access"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "Archie"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "notes",
+      "value": "Seat 123a"
+    },
+    {
+      "trait_type": "context",
+      "value": "event"
+    },
+    {
+      "trait_type": "preset",
+      "value": "access_pass"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "true"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "event_ticket"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "event_ticket"
+    }
+  ],
+  "properties": {
+    "template_key": "event_ticket",
+    "template": "generic",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20260116184810_logo_8B6BBD50-735F-485B-A545-2AA81F658C82.jpeg",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20260116184826_background_ChatGPT_Image_Jan_7__2026__01_44_41_PM.png",
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260116184923_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "access_pass",
+      "category": "access",
+      "rules": {
+        "category": "access",
+        "requires_holder_name": true,
+        "transferable": false,
+        "expires": true,
+        "revocable": true,
+        "reissuable": true,
+        "lifecycle": "escrow_ticket",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "validate"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "permissioned_domain_gate": {
+      "enabled": false,
+      "domain_label": "",
+      "domain_purpose": "supply_chain",
+      "credential_issuer": "",
+      "credential_type": "",
+      "domain_mode": "create_new",
+      "existing_domain_id": ""
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_c9f9a3f963aa4600",
+      "sig": "d9553b63cd6217b74b39a9d97f1badfc3298afe38520378f5a9bbf0368d3c93f"
+    },
+    "verification": {
+      "pass_id": "c9f9a3f963aa4600",
+      "public_id": "x_c9f9a3f963aa4600",
+      "verify_url": "http://127.0.0.1:8000/v/c9f9a3f963aa4600",
+      "share_url": "http://127.0.0.1:8000/s/x_c9f9a3f963aa4600"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260116184923_nft_preview_nft-preview.png"
+}

@@ -1,0 +1,41 @@
+<div class="w-full max-w-md" id="tx-modal">
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl">
+    <div class="flex items-center justify-between">
+      <h3 class="font-semibold">{{ title or "Approve Transaction" }}</h3>
+      <button onclick="document.getElementById('tx-modal').remove()" class="text-slate-400 hover:text-white">✕</button>
+    </div>
+    <div class="mt-3 flex flex-col items-center">
+      <img src="{{ qr_png }}" alt="QR" class="w-56 h-56 rounded-lg border border-slate-800">
+      <p id="tx-status" class="mt-2 text-sm text-slate-400">Waiting for signature…</p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const uuid = "{{ uuid }}";
+      const planId = (document.querySelector('input[name="id"]')?.value) || '';
+      async function poll(){
+        try{
+          const u = `/dca/tx-status?uuid=${encodeURIComponent(uuid)}&plan_id=${encodeURIComponent(planId)}`;
+          const r = await fetch(u);
+          const j = await r.json();
+          if(!j.resolved){ setTimeout(poll, 1500); return; }
+          const el = document.getElementById('tx-status');
+          if(j.signed){
+            el.textContent = "Signed ✅";
+            setTimeout(()=>{
+              document.getElementById('tx-modal').remove();
+              // refresh plans inline if present
+              const pl = document.querySelector('#plans-inline');
+              if(pl){ pl.setAttribute('hx-get','/profile/dca-plans'); pl.click(); }
+            }, 800);
+          }else{
+            el.textContent = "Rejected ❌";
+            setTimeout(()=>document.getElementById('tx-modal').remove(), 1000);
+          }
+        }catch(e){ setTimeout(poll, 1500); }
+      }
+      poll();
+    })();
+  </script>
+</div>

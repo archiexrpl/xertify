@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .canvas { background:
+      linear-gradient(90deg, rgba(30,41,59,0.8) 1px, transparent 1px) 0 0/20px 20px,
+      linear-gradient(0deg,  rgba(30,41,59,0.8) 1px, transparent 1px) 0 0/20px 20px;
+      min-height: 520px;
+  }
+  .sel { border-color: rgb(99 102 241) !important; box-shadow: 0 0 0 1px rgb(99 102 241); }
+</style>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-semibold">Studio</h1>
+  <div class="flex gap-2">
+    <input id="proj-name" class="px-3 py-2 rounded bg-slate-800 border border-slate-700" placeholder="Untitled"/>
+    <button class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500" onclick="saveBlueprint()">Save</button>
+  </div>
+</div>
+
+<div class="grid grid-cols-12 gap-6">
+  <!-- Palette -->
+  <aside class="col-span-12 md:col-span-3 space-y-4">
+    <div class="p-4 rounded-xl border border-slate-800 bg-slate-900">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Palette</div>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <button class="px-2 py-2 rounded bg-slate-800 hover:bg-slate-700 text-sm" onclick="addFromPalette('Text')">Text</button>
+        <button class="px-2 py-2 rounded bg-slate-800 hover:bg-slate-700 text-sm" onclick="addFromPalette('Button')">Button</button>
+        <button class="px-2 py-2 rounded bg-slate-800 hover:bg-slate-700 text-sm" onclick="addFromPalette('Image')">Image</button>
+        <button class="px-2 py-2 rounded bg-slate-800 hover:bg-slate-700 text-sm" onclick="addFromPalette('ConnectWallet')">ConnectWallet</button>
+        <button class="px-2 py-2 rounded bg-slate-800 hover:bg-slate-700 text-sm" onclick="addFromPalette('PayButton')">PayButton</button>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl border border-slate-800 bg-slate-900">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Explainability</div>
+      <label class="mt-3 inline-flex items-center gap-2 text-sm">
+        <input type="checkbox" id="exp-toggle" checked class="accent-indigo-500">
+        <span>Show “what this does” & code</span>
+      </label>
+    </div>
+
+    <div class="p-4 rounded-xl border border-slate-800 bg-slate-900">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Console</div>
+      <pre id="console" class="mt-2 max-h-56 overflow-auto text-xs text-slate-300"></pre>
+    </div>
+  </aside>
+
+  <!-- Canvas -->
+  <section class="col-span-12 md:col-span-6">
+    <div id="canvas" class="canvas relative rounded-xl border border-slate-800 bg-slate-900 p-4"></div>
+  </section>
+
+  <!-- Inspector -->
+  <aside class="col-span-12 md:col-span-3 space-y-4">
+    <div class="p-4 rounded-xl border border-slate-800 bg-slate-900">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Inspector</div>
+      <div id="inspector" class="mt-3 text-sm text-slate-300">Select a component…</div>
+    </div>
+
+    <div class="p-4 rounded-xl border border-slate-800 bg-slate-900" id="explain-box" style="display:none;">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Explainability</div>
+      <div id="explain" class="mt-3 text-xs text-slate-300 whitespace-pre-wrap"></div>
+    </div>
+  </aside>
+</div>
+
+<!-- Modal root for QR, etc. -->
+<div id="studio-modal-root"></div>
+
+<script>
+  const initial = {{ blueprint_json|safe }};
+  let blueprint = initial;
+  let selectedId = null;
+
+  function log(msg){ const c = document.getElementById('console'); c.textContent += msg + "\\n"; c.scrollTop = c.scrollHeight; }
+  function genId(prefix){ return prefix + '_' + Math.random().toString(36).slice(2,8); }
+
+  function addFromPalette(type){
+    const page = blueprint.pages[0];
+    const id = genId(type.toLowerCase());
+    const base = { id, type, props: {}, frame:{x:40,y:40,w:220,h:48}, actions: [] };
+    if(type==='Text'){ base.props = { text:'Hello world', variant:'p' }; base.frame.h=32; }
+    if(type==='Button'){ base.props = { label:'Click me' }; }
+    if(type==='Image'){ base.props = { src:'https://placehold.co/320x180', alt:'placeholder' }; base.frame={x:40,y:40,w:320,h:180}; }
+    if(type==='ConnectWallet'){ base.props = { label:'Connect Wallet' }; }
+    if(type==='PayButton'){ base.props = { label:'Pay 1 XRP', amount_xrp:1, destination:'' };
+      base.actions.push({ event:'onClick', type:'XummSignPayment', params:{ amount_xrp:1, destination:'', memo:'PROJXHUB PayButton' }});
+    }
+    page.components.push(base);
+    renderCanvas(); select(id); log('Added '+type);
+  }
+
+  function renderCanvas(){
+    const el = document.getElementById('canvas');
+    el.innerHTML = '';
+    const comps = blueprint.pages[0].components;
+    for(const c of comps){
+      const node = document.createElement('div');
+      node.className = 'absolute border border-slate-700 rounded cursor-move ' + (selectedId===c.id?'sel':'');
+      node.style.left = c.frame.x+'px'; node.style.top = c.frame.y+'px';
+      node.style.width = c.frame.w+'px'; node.style.height = c.frame.h+'px';
+      node.onclick = (e)=>{ e.stopPropagation(); select(c.id); };
+
+      if(c.type==='Text'){ node.innerHTML = '<div class="p-2">'+(c.props.text||'Text')+'</div>'; }
+      if(c.type==='Button'){ node.innerHTML = '<button class="m-2 px-3 py-2 rounded bg-slate-800">'+(c.props.label||'Button')+'</button>'; }
+      if(c.type==='Image'){ node.innerHTML = '<img class="w-full h-full object-cover rounded" src="'+(c.props.src||'')+'" alt="'+(c.props.alt||'')+'"/>'; }
+      if(c.type==='ConnectWallet'){ node.innerHTML = '<button class="m-2 px-3 py-2 rounded bg-emerald-600">Connect Wallet</button>'; }
+      if(c.type==='PayButton'){ node.innerHTML = '<button class="m-2 px-3 py-2 rounded bg-indigo-600">'+(c.props.label||'Pay')+'</button>'; }
+
+      // simple drag
+      let offX=0, offY=0, dragging=false;
+      node.addEventListener('mousedown',(e)=>{ dragging=true; offX=e.offsetX; offY=e.offsetY; });
+      window.addEventListener('mouseup',()=> dragging=false);
+      window.addEventListener('mousemove',(e)=>{
+        if(!dragging) return;
+        const rect = el.getBoundingClientRect();
+        const nx = Math.max(0, Math.round((e.clientX-rect.left-offX)/10)*10);
+        const ny = Math.max(0, Math.round((e.clientY-rect.top-offY)/10)*10);
+        node.style.left = nx+'px'; node.style.top = ny+'px';
+        c.frame.x = nx; c.frame.y = ny;
+      });
+
+      el.appendChild(node);
+    }
+    el.onclick = ()=>{ selectedId=null; renderInspector(); toggleExplain(false); renderCanvas(); };
+  }
+
+  function fieldsFor(type){
+    return {
+      Text: [['text','Text'],['variant','Variant (h1,h2,p)']],
+      Button: [['label','Label']],
+      Image: [['src','Image URL'],['alt','Alt Text']],
+      ConnectWallet: [['label','Label']],
+      PayButton: [['label','Label'], ['amount_xrp','Amount XRP'], ['destination','Destination (optional)']]
+    }[type] || [];
+  }
+
+  function renderInspector(){
+    const wrap = document.getElementById('inspector');
+    if(!selectedId){ wrap.innerHTML = 'Select a component…'; return; }
+    const c = blueprint.pages[0].components.find(x=>x.id===selectedId);
+    if(!c){ wrap.innerHTML = 'Select a component…'; return; }
+
+    let html = '<div class="space-y-2">';
+    html += `<div class="text-slate-200 font-medium">${c.type}</div>`;
+
+    for(const [key,label] of fieldsFor(c.type)){
+      const val = (c.props[key] ?? '');
+      html += `
+        <label class="block text-xs text-slate-400">${label}</label>
+        <input data-k="${key}" value="${val}" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700"/>`;
+    }
+
+    html += `
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <div>
+          <label class="block text-xs text-slate-400">W</label>
+          <input data-size="w" value="${c.frame.w}" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700"/>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400">H</label>
+          <input data-size="h" value="${c.frame.h}" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700"/>
+        </div>
+      </div>
+    `;
+
+    // Actions tab (basic)
+    if(!Array.isArray(c.actions)) c.actions = [];
+    html += `<div class="mt-3 border-t border-slate-800 pt-3">
+      <div class="text-xs uppercase tracking-wide text-slate-400">Actions</div>
+      ${renderActionsSection(c)}
+    </div>`;
+
+    html += `
+      <button class="mt-3 px-3 py-1 rounded bg-red-600" onclick="removeSelected()">Delete</button>
+    `;
+    html += '</div>';
+    wrap.innerHTML = html;
+
+    // Wire prop inputs
+    wrap.querySelectorAll('input[data-k]').forEach(inp=>{
+      inp.addEventListener('input', (e)=>{
+        const k = e.target.getAttribute('data-k');
+        c.props[k] = (k==='amount_xrp') ? Number(e.target.value||0) : e.target.value;
+        // keep action params in sync for PayButton
+        if(c.type==='PayButton'){
+          const act = c.actions.find(a=>a.type==='XummSignPayment');
+          if(act){
+            if(k==='amount_xrp') act.params.amount_xrp = Number(e.target.value||0);
+            if(k==='destination') act.params.destination = e.target.value || '';
+          }
+        }
+        renderCanvas(); maybeExplain(c);
+      });
+    });
+    wrap.querySelectorAll('input[data-size]').forEach(inp=>{
+      inp.addEventListener('input', (e)=>{
+        const k = e.target.getAttribute('data-size');
+        c.frame[k] = Math.max(20, Number(e.target.value||0));
+        renderCanvas();
+      });
+    });
+  }
+
+  function renderActionsSection(c){
+    const hasPay = c.actions.some(a=>a.type==='XummSignPayment');
+    if(c.type==='PayButton'){
+      const a = c.actions.find(x=>x.type==='XummSignPayment') || {event:'onClick', type:'XummSignPayment', params:{amount_xrp:c.props.amount_xrp||1, destination:c.props.destination||'', memo:'PROJXHUB PayButton'}};
+      if(!hasPay) c.actions.push(a);
+      return `
+        <div class="text-sm mt-2">onClick → <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">XummSignPayment</span></div>
+        <div class="mt-2 grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-400">Amount (XRP)</label>
+            <input id="act-amount" value="${a.params.amount_xrp}" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700"/>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400">Destination</label>
+            <input id="act-dest" value="${a.params.destination||''}" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700" placeholder="optional"/>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-3">
+          <button class="px-3 py-2 rounded bg-emerald-600 hover:bg-emerald-500" onclick="testPayAction()">Test Action</button>
+          <button class="px-3 py-2 rounded bg-slate-800 border border-slate-700" onclick="showExplain()">Show Code</button>
+        </div>
+      `;
+    }
+    return `<div class="text-xs text-slate-400 mt-2">No actions for this component.</div>`;
+  }
+
+  function maybeExplain(c){
+    const on = document.getElementById('exp-toggle').checked;
+    toggleExplain(on && !!c);
+    if(on && c) renderExplain(c);
+  }
+  function showExplain(){ const c = getSelected(); if(!c) return; toggleExplain(true); renderExplain(c); }
+  function toggleExplain(show){ document.getElementById('explain-box').style.display = show ? '' : 'none'; }
+
+  function renderExplain(c){
+    const el = document.getElementById('explain');
+    if(c.type==='PayButton'){
+      const amt = c.props.amount_xrp || 1;
+      const dest = c.props.destination || "{{user.address}}";
+      el.textContent =
+`What it does:
+- Creates a XUMM Payment payload for ${amt} XRP
+- Shows a QR/deeplink to sign
+- Waits for a signed result, then reports success
+
+Backend (FastAPI):
+POST /studio/actions/xumm/pay (form: amount_xrp, destination?)
+→ uses xumm.create_payment_payload()
+
+Python helper (xumm.py):
+create_payment_payload(destination, amount_xrp, memo)
+
+HTMX/JS:
+- Open modal with qr_png, poll /auth/xrpl/status?uuid=... until success.`;
+    } else {
+      el.textContent = 'This component currently has no explainable actions.';
+    }
+  }
+
+  function getSelected(){
+    return blueprint.pages[0].components.find(x=>x.id===selectedId) || null;
+  }
+
+  async function testPayAction(){
+    const c = getSelected();
+    if(!c || c.type!=='PayButton') return;
+    const a = c.actions.find(x=>x.type==='XummSignPayment');
+    const amount = Number(document.getElementById('act-amount').value||0) || 0;
+    const dest = (document.getElementById('act-dest').value||'').trim();
+
+    const fd = new FormData();
+    fd.append('amount_xrp', String(amount));
+    fd.append('destination', dest);
+
+    const res = await fetch('/studio/actions/xumm/pay', { method:'POST', body: fd, credentials:'same-origin' });
+    const j = await res.json();
+    if(!j.ok){ alert(j.error || 'Failed to create XUMM payload'); return; }
+
+    openQrModal(j.qr_png, j.uuid, j.deeplink);
+  }
+
+  function openQrModal(qr, uuid, deeplink){
+    const host = document.getElementById('studio-modal-root');
+    host.innerHTML = `
+      <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div class="w-[420px] bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">Sign with XUMM</div>
+            <button class="text-slate-400 hover:text-slate-200" onclick="closeModal()">✕</button>
+          </div>
+          <div class="mt-4 text-sm text-slate-400">Scan the QR in XUMM or open the deeplink.</div>
+          <div class="mt-4 flex items-center justify-center">
+            <img src="${qr}" alt="QR" class="w-48 h-48 rounded border border-slate-700"/>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <a href="${deeplink}" class="px-3 py-2 rounded bg-indigo-600 hover:bg-indigo-500">Open in XUMM</a>
+            <button class="px-3 py-2 rounded bg-slate-800 border border-slate-700" onclick="pollStatus('${uuid}')">I signed</button>
+          </div>
+          <div id="sign-status" class="mt-3 text-xs text-slate-400">Waiting for signature…</div>
+        </div>
+      </div>`;
+  }
+
+  function closeModal(){ document.getElementById('studio-modal-root').innerHTML = ''; }
+
+  async function pollStatus(uuid){
+    const r = await fetch(`/auth/xrpl/status?uuid=${uuid}`, { credentials:'same-origin' });
+    const j = await r.json();
+    const s = document.getElementById('sign-status');
+    if(j.success){
+      s.textContent = 'Signed ✓';
+      setTimeout(closeModal, 800);
+      log('Payment signed.');
+    } else if(j.expired || j.cancelled){
+      s.textContent = 'Cancelled / expired.';
+    } else {
+      s.textContent = 'Still waiting…';
+      setTimeout(()=>pollStatus(uuid), 1200);
+    }
+  }
+
+  function select(id){ selectedId=id; renderInspector(); renderCanvas(); const c = getSelected(); maybeExplain(c); }
+  function removeSelected(){
+    if(!selectedId) return;
+    const comps = blueprint.pages[0].components;
+    const idx = comps.findIndex(x=>x.id===selectedId);
+    if(idx>=0){ comps.splice(idx,1); }
+    selectedId=null; renderInspector(); renderCanvas(); log('Deleted component');
+  }
+
+  async function saveBlueprint(){
+    const name = document.getElementById('proj-name').value || 'Untitled';
+    const fd = new FormData();
+    fd.append('name', name);
+    fd.append('blueprint', JSON.stringify(blueprint));
+    const res = await fetch('/build/studio/save', { method:'POST', body: fd, credentials:'same-origin' });
+    const j = await res.json();
+    if(j.ok){ alert('Saved project #'+j.id); log('Saved project #'+j.id); }
+    else { alert(j.error || 'Failed to save'); }
+  }
+
+  renderCanvas();
+</script>
+{% endblock %}

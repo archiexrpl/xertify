@@ -1,0 +1,83 @@
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" id="wallet-modal">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold">Connect with Xaman (XUMM)</h3>
+      <button class="text-slate-400 hover:text-slate-200" onclick="document.getElementById('wallet-modal').remove()">✕</button>
+    </div>
+
+    <div id="xumm-container" class="mt-4 space-y-3">
+      <p class="text-slate-400 text-sm">Preparing sign-in…</p>
+    </div>
+
+    <script>
+      (async function () {
+        const root = document.getElementById('xumm-container');
+
+        // 1) ask backend to create a payload
+        const r = await fetch('/auth/xrpl/request.json');
+        const j = await r.json();
+        if (!j.ok) {
+          root.innerHTML = `
+            <div class="space-y-3">
+              <h4 class="font-semibold text-red-400">XUMM error</h4>
+              <p class="text-slate-300 text-sm">${(j.error||'Could not start sign-in.')}</p>
+            </div>`;
+          return;
+        }
+        const { uuid, qr_png, deeplink, ws } = j;
+
+        // 2) render QR + open link
+        root.innerHTML = `
+          <div class="space-y-3">
+            ${qr_png ? `<img alt="Scan with XUMM" src="${qr_png}" class="w-48 h-48 mx-auto rounded-md border border-slate-700"/>` : ``}
+            ${deeplink ? `<a href="${deeplink}" target="_blank" class="block text-center px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500">Open in XUMM</a>` : ``}
+            <p id="xumm-status" class="text-center text-slate-400 text-sm min-h-[1.5rem]">Waiting for signature…</p>
+          </div>
+        `;
+
+        // 3) subscribe to XUMM websocket status
+        if (ws) {
+          try {
+            const sock = new WebSocket(ws);
+            sock.onopen = () => { /* console.log('WS open'); */ };
+            sock.onmessage = async (ev) => {
+              try {
+                const data = JSON.parse(ev.data);
+                // XUMM WS emits various events; look for resolved/signed
+                // Examples often use: data.signed, data.expired, data.opened, data.resolved
+                if (data.signed || data.resolved) {
+                  // tell backend to set session
+                  const done = await fetch('/auth/xrpl/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uuid })
+                  }).then(r => r.json());
+                  if (done.ok) {
+                    document.getElementById('wallet-modal')?.remove();
+                    window.location.reload();
+                  } else if (done.pending) {
+                    // keep waiting; XUMM sometimes races; let another WS msg arrive
+                  } else {
+                    document.getElementById('xumm-status').textContent = 'Still waiting…';
+                  }
+                } else if (data.expired || data.cancelled) {
+                  document.getElementById('xumm-status').textContent = 'Cancelled or expired. Try again.';
+                } else if (data.opened) {
+                  // Optionally: show "opened on device"
+                  document.getElementById('xumm-status').textContent = 'Opened on device…';
+                }
+              } catch (e) {
+                // ignore parse errors
+              }
+            };
+            sock.onerror = () => {
+              // fallback: nothing—user can click "Open in XUMM"
+            };
+          } catch (e) {
+            // No WS? The user can still scan the QR or click "Open in XUMM"
+          }
+        }
+      })();
+    </script>
+  </div>
+</div>

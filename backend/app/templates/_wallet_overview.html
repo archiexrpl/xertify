@@ -1,0 +1,79 @@
+{% set xrp_total = (data.xrp.total if data and data.xrp and data.xrp.total is not none else 0.0) %}
+{% set funded = (data.funded if data is not none and data.funded is not none else false) %}
+
+<div style="
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+">
+
+  <!-- XRP -->
+  <div style="
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,253,0.12);
+    background: rgba(2,6,23,0.30);
+    padding: 8px 10px;
+  ">
+    <div style="
+      font-size:10px;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color: rgba(148,163,253,0.70);
+    ">XRP</div>
+
+    <div style="
+      margin-top:4px;
+      font-size:14px;
+      font-weight:950;
+      color: rgba(226,232,240,0.95);
+      line-height:1.1;
+    ">
+      {{ "%.4f"|format(xrp_total) }}
+    </div>
+
+    <div style="
+      margin-top:2px;
+      font-size:10px;
+      color: rgba(226,232,240,0.55);
+    ">
+      {% if funded %}Live{% else %}—{% endif %}
+    </div>
+  </div>
+
+  <!-- DNFTs -->
+  <div style="
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,253,0.12);
+    background: rgba(2,6,23,0.30);
+    padding: 8px 10px;
+  ">
+    <div style="
+      font-size:10px;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color: rgba(148,163,253,0.70);
+    ">DNFTs</div>
+
+    <div style="
+      margin-top:4px;
+      font-size:14px;
+      font-weight:950;
+      color: rgba(226,232,240,0.95);
+      line-height:1.1;
+    ">
+      {{ minted_count or 0 }}
+      <span style="font-size:10px; font-weight:900; color: rgba(226,232,240,0.55);">
+        /{{ created_count or 0 }}
+      </span>
+    </div>
+
+    <div style="
+      margin-top:2px;
+      font-size:10px;
+      color: rgba(226,232,240,0.55);
+    ">Minted</div>
+  </div>
+
+</div>

@@ -1,0 +1,23 @@
+{
+  "name": "Generic Test Pass",
+  "description": "This is a generic pass for safety testing",
+  "image": "https://placehold.co/600x350?text=Generic",
+  "properties": {
+    "visual": {
+      "preview_image": "https://placehold.co/600x350?text=Generic+Preview"
+    },
+    "vertical": "generic",
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_528987fbcbae42cc",
+      "sig": "417acd07d80430f06b92cead302074e5498b992be7d7875bbdafb76f6d60987c"
+    },
+    "verification": {
+      "pass_id": "528987fbcbae42cc",
+      "public_id": "x_528987fbcbae42cc",
+      "verify_url": "http://127.0.0.1:8000/v/528987fbcbae42cc",
+      "share_url": "http://127.0.0.1:8000/s/x_528987fbcbae42cc"
+    }
+  }
+}

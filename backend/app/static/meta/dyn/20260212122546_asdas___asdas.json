@@ -1,0 +1,106 @@
+{
+  "name": "asdas – asdas",
+  "description": "asdas — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "supply_chain"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "asdas"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-03-01"
+    },
+    {
+      "trait_type": "context",
+      "value": "supply_chain"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "pharma_batch_passport"
+    },
+    {
+      "trait_type": "domain_id",
+      "value": "supply_chain"
+    },
+    {
+      "trait_type": "template_id",
+      "value": "pharma_batch_passport"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "pharma_batch_passport"
+    },
+    {
+      "trait_type": "batch_id",
+      "value": "dsadasds"
+    },
+    {
+      "trait_type": "gtin",
+      "value": "sdasdasd"
+    },
+    {
+      "trait_type": "drug_name",
+      "value": "sdas"
+    },
+    {
+      "trait_type": "manufacturer",
+      "value": "asdas"
+    },
+    {
+      "trait_type": "expiry_date",
+      "value": "2026-03-02"
+    }
+  ],
+  "properties": {
+    "vertical": "pharma",
+    "permissioned_domain_gate": {
+      "enabled": false,
+      "domain_label": "",
+      "domain_purpose": "supply_chain",
+      "credential_issuer": "",
+      "credential_type": "",
+      "domain_mode": "create_new",
+      "existing_domain_id": ""
+    },
+    "domain_id": "supply_chain",
+    "template_key": "pharma_batch_passport",
+    "template_id": "pharma_batch_passport",
+    "template": {
+      "template_key": "pharma_batch_passport",
+      "template_id": "pharma_batch_passport",
+      "domain_id": "supply_chain",
+      "category": "supply_chain",
+      "lifecycle": {}
+    },
+    "lifecycle": {
+      "kind": "standard"
+    },
+    "visual": {
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260212122546_nft_preview_nft-preview.png"
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_bf0cbca011aa416a",
+      "sig": "9f4c7b77516cf24e045b3d43b8a4a307b620dcf19d8297da32dd8f4c8e2c5cda"
+    },
+    "verification": {
+      "pass_id": "bf0cbca011aa416a",
+      "public_id": "x_bf0cbca011aa416a",
+      "verify_url": "http://127.0.0.1:8000/v/bf0cbca011aa416a",
+      "share_url": "http://127.0.0.1:8000/s/x_bf0cbca011aa416a"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260212122546_nft_preview_nft-preview.png"
+}

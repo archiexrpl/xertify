@@ -1,0 +1,49 @@
+{
+"policy_pack_id": "aviation.policy",
+  "policy_pack_version": "1.0.0",
+  "inputs": ["snapshot", "events", "now_iso"],
+  "rules": [
+    {
+      "id": "fail_if_revoked",
+      "when": { "path": "snapshot.facts.revoked", "op": "eq", "value": true },
+      "verdict": { "ok": false, "status": "revoked", "reason": "Object has been revoked." }
+    },
+    {
+      "id": "fail_if_removed",
+      "when": { "path": "snapshot.facts.removed_at", "op": "present" },
+      "verdict": { "ok": false, "status": "removed", "reason": "Component has been removed from service." }
+    },
+    {
+      "id": "require_install_to_be_airworthy",
+      "when": { "path": "snapshot.facts.installed_at", "op": "absent" },
+      "verdict": { "ok": false, "status": "not_installed", "reason": "Component is not installed." }
+    },
+    {
+      "id": "inspection_required_if_interval_set",
+      "when_all": [
+        { "path": "snapshot.facts.inspection_interval_days", "op": "present" }
+      ],
+      "verdict": {
+        "ok": true,
+        "status": "airworthy",
+        "reason": "Installed; inspection interval configured. Inspection timeliness must be evaluated."
+      }
+    },
+
+    {
+  "id": "fail_if_inspection_overdue",
+  "when": { "path": "snapshot.facts.inspection_overdue", "op": "eq", "value": true },
+  "verdict": {
+    "ok": false,
+    "status": "maintenance_overdue",
+    "reason": "Inspection window expired."
+  }
+}
+
+  ],
+  "default_verdict": {
+    "ok": true,
+    "status": "airworthy",
+    "reason": "No blocking conditions found."
+  }
+}

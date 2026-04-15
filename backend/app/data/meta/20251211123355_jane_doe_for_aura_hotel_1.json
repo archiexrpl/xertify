@@ -1,0 +1,54 @@
+{
+  "name": "junior – jane doe for aura hotel",
+  "description": "jane doe for aura hotel – digital ticket granting Standard access. Valid from 2025-12-01 until 2026-01-01. Notes: room 113",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "Ticket"
+    },
+    {
+      "trait_type": "access_level",
+      "value": "Standard"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "junior"
+    },
+    {
+      "trait_type": "valid_from",
+      "value": "2025-12-01"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "notes",
+      "value": "112"
+    }
+  ],
+  "properties": {
+    "template": "ticket",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "valid_from": "2025-12-01",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "template": "ticket",
+      "brand_primary": "#4f46e5",
+      "brand_accent": "#22c55e",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20251211123255_logo_logo__1_.png",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20251211123305_background_castle-mountain-valley-sunset-medieval-600nw-1856819368.webp",
+      "show_qr": true,
+      "show_badge": true
+    },
+    "batch": {
+      "index": 1,
+      "holder_name": "junior",
+      "address": "rUTmG9nys1X1An6kK6ZAgUkpgede9EVhWG"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20251211123305_background_castle-mountain-valley-sunset-medieval-600nw-1856819368.webp"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Aviation Test Pass",
+  "description": "Aviation pass for authority testing",
+  "image": "https://placehold.co/600x350?text=Aviation",
+  "properties": {
+    "visual": {
+      "preview_image": "https://placehold.co/600x350?text=Aviation+Preview"
+    },
+    "vertical": "aviation",
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_3c623332a96f489c",
+      "sig": "fc7275d18e8f10c07cbf49d1164bd3c5fc80a8dbac0121998850c77fc9e53d51"
+    },
+    "verification": {
+      "pass_id": "3c623332a96f489c",
+      "public_id": "x_3c623332a96f489c",
+      "verify_url": "http://127.0.0.1:8000/v/3c623332a96f489c",
+      "share_url": "http://127.0.0.1:8000/s/x_3c623332a96f489c"
+    }
+  }
+}

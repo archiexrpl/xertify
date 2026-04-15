@@ -1,0 +1,82 @@
+{
+  "name": "– dd",
+  "description": "dd — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "custom"
+    },
+    {
+      "trait_type": "context",
+      "value": "pharma"
+    },
+    {
+      "trait_type": "preset",
+      "value": "custom"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "true"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "pharma_batch_passport"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "pharma_batch_passport"
+    }
+  ],
+  "properties": {
+    "vertical": "pharma",
+    "template_key": "pharma_batch_passport",
+    "template": "generic",
+    "lifecycle": {
+      "kind": "standard"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260205164038_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "custom",
+      "category": "custom",
+      "rules": {
+        "category": "custom",
+        "allow_custom_rules": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "permissioned_domain_gate": {
+      "enabled": false,
+      "domain_label": "",
+      "domain_purpose": "supply_chain",
+      "credential_issuer": "",
+      "credential_type": "",
+      "domain_mode": "create_new",
+      "existing_domain_id": ""
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_bbe91513f7ec46c2",
+      "sig": "bc8327b92372f922c08a5e8518e165820d61dd38f4a7d548a3250e417f97c51d"
+    },
+    "verification": {
+      "pass_id": "bbe91513f7ec46c2",
+      "public_id": "x_bbe91513f7ec46c2",
+      "verify_url": "http://127.0.0.1:8000/v/bbe91513f7ec46c2",
+      "share_url": "http://127.0.0.1:8000/s/x_bbe91513f7ec46c2"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260205164038_nft_preview_nft-preview.png"
+}

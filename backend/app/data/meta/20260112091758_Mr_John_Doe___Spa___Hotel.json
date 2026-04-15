@@ -1,0 +1,98 @@
+{
+  "name": "Mr John Doe – Spa & Hotel",
+  "description": "Spa & Hotel — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "asset"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "Mr John Doe"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "notes",
+      "value": "Seat 123"
+    },
+    {
+      "trait_type": "context",
+      "value": "license"
+    },
+    {
+      "trait_type": "preset",
+      "value": "asset"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "false"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "license"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "license"
+    }
+  ],
+  "properties": {
+    "template_key": "license",
+    "template": "asset",
+    "lifecycle": {
+      "kind": "standard",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20260112090458_logo_8B6BBD50-735F-485B-A545-2AA81F658C82.jpeg",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20260112090507_background_ChatGPT_Image_Jan_7__2026__01_44_41_PM.png",
+      "guest_photo_url": "http://127.0.0.1:8000/uploads/20260112090515_guest_photo_ChatGPT_Image_Dec_29__2025__09_45_00_PM.png",
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260112091758_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "asset",
+      "category": "asset",
+      "rules": {
+        "category": "asset",
+        "requires_holder_name": false,
+        "transferable": true,
+        "expires": false,
+        "revocable": false,
+        "lifecycle": "standard",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "view"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_8ac0ee4930e34045",
+      "sig": "a3478d57a2bdba31dd77c70e130d15851f77e5554e149feefede5e019a01ba8e"
+    },
+    "verification": {
+      "pass_id": "8ac0ee4930e34045",
+      "public_id": "x_8ac0ee4930e34045",
+      "verify_url": "http://127.0.0.1:8000/v/8ac0ee4930e34045",
+      "share_url": "http://127.0.0.1:8000/s/x_8ac0ee4930e34045"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260112091758_nft_preview_nft-preview.png"
+}

@@ -1,0 +1,96 @@
+{
+  "name": "w – w",
+  "description": "w — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "access"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "dd"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-07-08"
+    },
+    {
+      "trait_type": "context",
+      "value": "event"
+    },
+    {
+      "trait_type": "preset",
+      "value": "access_pass"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "true"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "event_ticket"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "event_ticket"
+    },
+    {
+      "trait_type": "status",
+      "value": "live"
+    }
+  ],
+  "properties": {
+    "template_key": "event_ticket",
+    "template": "generic",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "expires_at": "2026-07-08"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260114114756_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "access_pass",
+      "category": "access",
+      "rules": {
+        "category": "access",
+        "requires_holder_name": true,
+        "transferable": false,
+        "expires": true,
+        "revocable": true,
+        "reissuable": true,
+        "lifecycle": "escrow_ticket",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "validate"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_a2e0e368561d4b13",
+      "sig": "209dcdd3f97aa58baf2b3c162b740c587d3a0c3ae85b09807ebf24f764601f70"
+    },
+    "verification": {
+      "pass_id": "a2e0e368561d4b13",
+      "public_id": "x_a2e0e368561d4b13",
+      "verify_url": "http://127.0.0.1:8000/v/a2e0e368561d4b13",
+      "share_url": "http://127.0.0.1:8000/s/x_a2e0e368561d4b13"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260114114756_nft_preview_nft-preview.png"
+}

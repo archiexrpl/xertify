@@ -1,0 +1,71 @@
+{% set max_items = 5 %}
+{% set items2 = items[:max_items] if items else [] %}
+
+{% macro state_badge(p) %}
+  {% set st = (p.state or "active")|lower %}
+  {% if st in ["live","active"] %}
+    <span class="badge badge--active">ACTIVE</span>
+  {% elif st == "expired" %}
+    <span class="badge badge--expired">EXPIRED</span>
+  {% elif st == "revoked" %}
+    <span class="badge badge--revoked">REVOKED</span>
+  {% elif st == "consumed" %}
+    <span class="badge badge--consumed">CONSUMED</span>
+  {% else %}
+    <span class="badge badge--pending">{{ st|upper }}</span>
+  {% endif %}
+{% endmacro %}
+
+{% if not items2 or items2|length == 0 %}
+  <div class="text-slate-400 text-sm">No passes referencing this wallet yet.</div>
+{% else %}
+  <div class="space-y-2">
+    {% for p in items2 %}
+      {% set nm = (p.metadata_json.name if p.metadata_json and p.metadata_json.name else "Pass") %}
+      {% set tpl = (p.metadata_json.template_key if p.metadata_json and p.metadata_json.template_key else None) %}
+
+      <div class="row">
+        <div class="row-top">
+          <div class="min-w-0">
+            <div class="row-title truncate">
+              {{ nm }}
+              <span class="mono" style="opacity:.6; font-size:11px; margin-left:8px;">{{ p.id }}</span>
+            </div>
+
+            <div class="row-sub">
+              {{ state_badge(p) }}
+
+              {% if tpl %}
+                <span class="pill">{{ tpl }}</span>
+              {% endif %}
+
+              {% if p.creator_address %}
+                <span class="mono" style="opacity:.8;">
+                  creator: {{ p.creator_address[:6] }}…{{ p.creator_address[-6:] }}
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row-actions">
+            <a class="mini-btn mini-btn--brand" href="/v/{{ p.id }}">Verify</a>
+            <button class="mini-btn" type="button" onclick="navigator.clipboard.writeText('{{ p.id }}')">Copy ID</button>
+          </div>
+        </div>
+
+        <div class="row-sub" style="margin-top:8px; justify-content:space-between;">
+          <span class="mono" style="opacity:.65;">seen: {{ p.created_at }}</span>
+          {% if p.nft_id %}
+            <span class="mono" style="opacity:.65;">nft: {{ p.nft_id[:10] }}…</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if items and (items|length > max_items) %}
+    <div class="mt-3 text-slate-400 text-xs">
+      Showing {{ max_items }} of {{ items|length }}.
+    </div>
+  {% endif %}
+{% endif %}

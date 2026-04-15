@@ -1,0 +1,605 @@
+{
+  "_meta": {
+    "version": 1,
+    "title": "XERTIFY Template Registry",
+    "notes": "Templates define UI + schema + lifecycle defaults. They do NOT change minting primitives."
+  },
+
+  "categories": [
+    { "key": "access_entry", "label": "Access & Entry", "accent": "indigo" },
+    { "key": "membership", "label": "Membership & Subscriptions", "accent": "blue" },
+    { "key": "identity", "label": "Identity & Credentials", "accent": "emerald" },
+    { "key": "rights", "label": "Rights & Ownership", "accent": "amber" },
+    { "key": "governance", "label": "Governance & Orgs", "accent": "violet" },
+    { "key": "ops", "label": "Internal & Ops", "accent": "slate" },
+    { "key": "supply_chain", "label": "Supply Chain", "accent": "teal" },
+    { "key": "experimental", "label": "Experimental", "accent": "pink" }
+  ],
+
+  "common": {
+    "attribute_keys": {
+      "holder_name": "Name shown on the pass",
+      "valid_until": "Expiry / valid-until date in YYYY-MM-DD",
+      "notes": "Short notes displayed on front",
+      "context": "Short category/context label",
+      "preset": "Visual preset key"
+    },
+    "lifecycle_kinds": [
+      "time_bound",
+      "perpetual",
+      "renewable",
+      "claimable"
+    ]
+  },
+
+  "templates": {
+    "event_ticket": {
+      "key": "event_ticket",
+      "name": "Event Ticket",
+      "category": "access_entry",
+      "icon": "ticket",
+      "tagline": "Time-bound access for real-world or online events.",
+      "description": "Use for conferences, meetups, concerts, workshops, webinars. QR-first with auto-expiry options.",
+      "attributes": [
+        { "key": "holder_name", "label": "Attendee Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "event_name", "label": "Event Name", "type": "text", "required": true, "placeholder": "XERTIFY Summit 2026" },
+        { "key": "venue", "label": "Venue", "type": "text", "required": false, "placeholder": "London • Hall A" },
+        { "key": "seat", "label": "Seat", "type": "text", "required": false, "placeholder": "A12" },
+        { "key": "valid_until", "label": "Event Date / Valid Until", "type": "date", "required": true, "placeholder": "2026-12-31" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Doors 6pm • Bring ID" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "event_ticket",
+          "preset": { "preset_key": "ticket", "category": "Access" },
+          "visual": { "preset": "ticket" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": true, "revocable": true, "transferable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "EVENT" }
+        ]
+      }
+    },
+
+    "vip_pass": {
+      "key": "vip_pass",
+      "name": "VIP Pass",
+      "category": "access_entry",
+      "icon": "crown",
+      "tagline": "Status-based access with tiers and perks.",
+      "description": "Use for VIP lounge entry, premium guest access, perks, backstage access, partners.",
+      "attributes": [
+        { "key": "holder_name", "label": "Guest Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "level", "label": "Level", "type": "select", "required": true, "options": ["VIP", "GOLD", "PLATINUM"], "default": "VIP" },
+        { "key": "perks", "label": "Perks", "type": "textarea", "required": false, "placeholder": "Fast track entry • Free drinks • Lounge access" },
+        { "key": "valid_until", "label": "Valid Until (optional)", "type": "date", "required": false, "placeholder": "2026-12-31" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Show at door" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "vip_pass",
+          "preset": { "preset_key": "vip", "category": "Access" },
+          "visual": { "preset": "vip" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": false, "revocable": true, "transferable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "VIP" }
+        ]
+      }
+    },
+
+    "facility_access": {
+      "key": "facility_access",
+      "name": "Building / Facility Access",
+      "category": "access_entry",
+      "icon": "door",
+      "tagline": "Real-world access control for buildings and facilities.",
+      "description": "Use for offices, gyms, labs, warehouses, campuses. Default non-transferable.",
+      "attributes": [
+        { "key": "holder_name", "label": "Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "facility_name", "label": "Facility Name", "type": "text", "required": true, "placeholder": "HQ • Level 3" },
+        { "key": "access_level", "label": "Access Level", "type": "text", "required": false, "placeholder": "General / Restricted / Admin" },
+        { "key": "valid_hours", "label": "Valid Hours", "type": "text", "required": false, "placeholder": "Mon–Fri 09:00–18:00" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": false, "placeholder": "2026-12-31" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Badge must be visible at all times" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "facility_access",
+          "preset": { "preset_key": "access", "category": "Access" },
+          "visual": { "preset": "access" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": false, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "ACCESS" }
+        ]
+      }
+    },
+
+    "membership_pass": {
+      "key": "membership_pass",
+      "name": "Membership Pass",
+      "category": "membership",
+      "icon": "badge",
+      "tagline": "Tiered membership with renewals and benefits.",
+      "description": "Use for clubs, communities, gyms, co-working, premium membership programs.",
+      "attributes": [
+        { "key": "holder_name", "label": "Member Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "organization", "label": "Organization", "type": "text", "required": true, "placeholder": "XERTIFY Club" },
+        { "key": "tier", "label": "Tier", "type": "text", "required": false, "placeholder": "Standard / Pro / Elite" },
+        { "key": "renewal_date", "label": "Renewal Date", "type": "date", "required": false, "placeholder": "2026-12-31" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": false, "placeholder": "2026-12-31" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Member since 2026" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "membership_pass",
+          "preset": { "preset_key": "membership", "category": "Membership" },
+          "visual": { "preset": "membership" },
+          "lifecycle": { "kind": "renewable", "auto_expire": false, "revocable": true, "transferable": false, "extendable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "MEMBER" }
+        ]
+      }
+    },
+
+    "subscription_pass": {
+      "key": "subscription_pass",
+      "name": "Subscription Pass",
+      "category": "membership",
+      "icon": "repeat",
+      "tagline": "Service access with billing cycle and renewal.",
+      "description": "Use for SaaS access, premium services, recurring subscriptions. Extend-only recommended.",
+      "attributes": [
+        { "key": "holder_name", "label": "Subscriber Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "service_name", "label": "Service Name", "type": "text", "required": true, "placeholder": "XERTIFY Pro" },
+        { "key": "billing_cycle", "label": "Billing Cycle", "type": "select", "required": false, "options": ["Monthly", "Quarterly", "Yearly"], "default": "Monthly" },
+        { "key": "next_renewal", "label": "Next Renewal", "type": "date", "required": false, "placeholder": "2026-02-01" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": false, "placeholder": "2026-02-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Support tier: Priority" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "subscription_pass",
+          "preset": { "preset_key": "subscription", "category": "Membership" },
+          "visual": { "preset": "subscription" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": true, "revocable": true, "transferable": false, "extendable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "SUB" }
+        ]
+      }
+    },
+
+    "identity_credential": {
+      "key": "identity_credential",
+      "name": "Identity Credential",
+      "category": "identity",
+      "icon": "id",
+      "tagline": "Trust-grade identity credential issued by a verifier.",
+      "description": "Use for user identity assertions, partner badges, verified identity credentials.",
+      "attributes": [
+        { "key": "full_name", "label": "Full Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "issuer", "label": "Issuer", "type": "text", "required": true, "placeholder": "XERTIFY Verified" },
+        { "key": "credential_type", "label": "Credential Type", "type": "text", "required": true, "placeholder": "Identity Credential" },
+        { "key": "issued_date", "label": "Issued Date", "type": "date", "required": false, "placeholder": "2026-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Verified via KYC provider X" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "identity_credential",
+          "preset": { "preset_key": "identity", "category": "Identity" },
+          "visual": { "preset": "identity" },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "ID" }
+        ]
+      }
+    },
+
+    "kyc_verification": {
+      "key": "kyc_verification",
+      "name": "KYC / Verification Pass",
+      "category": "identity",
+      "icon": "shield",
+      "tagline": "Verification badge for compliance and trust.",
+      "description": "Use for KYC results, accreditation, age/region verification, verified partner programs.",
+      "attributes": [
+        { "key": "subject", "label": "Subject", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "verifier", "label": "Verifier", "type": "text", "required": true, "placeholder": "XERTIFY Compliance" },
+        { "key": "verification_level", "label": "Verification Level", "type": "select", "required": false, "options": ["Basic", "Standard", "Enhanced"], "default": "Standard" },
+        { "key": "issued_date", "label": "Issued Date", "type": "date", "required": false, "placeholder": "2026-01-01" },
+        { "key": "valid_until", "label": "Valid Until (optional)", "type": "date", "required": false, "placeholder": "2027-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Verified via provider X" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "kyc_verification",
+          "preset": { "preset_key": "verified", "category": "Identity" },
+          "visual": { "preset": "verified" },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "VERIFIED" }
+        ]
+      }
+    },
+
+    "certificate": {
+      "key": "certificate",
+      "name": "Certificate",
+      "category": "identity",
+      "icon": "award",
+      "tagline": "Proof-of-completion and achievements.",
+      "description": "Use for course completion, training, awards, accreditations. Usually perpetual and non-transferable.",
+      "attributes": [
+        { "key": "recipient_name", "label": "Recipient Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "certificate_title", "label": "Certificate Title", "type": "text", "required": true, "placeholder": "Completion — XRPL Fundamentals" },
+        { "key": "issuer", "label": "Issuer", "type": "text", "required": true, "placeholder": "XERTIFY Academy" },
+        { "key": "issue_date", "label": "Issue Date", "type": "date", "required": false, "placeholder": "2026-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Score: 98%" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "certificate",
+          "preset": { "preset_key": "certificate", "category": "Credential" },
+          "visual": { "preset": "certificate" },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": false, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "CERT" }
+        ]
+      }
+    },
+
+    "license": {
+      "key": "license",
+      "name": "License",
+      "category": "rights",
+      "icon": "file",
+      "tagline": "Usage rights with jurisdiction and expiry.",
+      "description": "Use for licenses, permits, entitlements, professional credentials with expiry.",
+      "attributes": [
+        { "key": "licensee", "label": "Licensee", "type": "text", "required": true, "placeholder": "Jane Doe / Company Ltd" },
+        { "key": "license_type", "label": "License Type", "type": "text", "required": true, "placeholder": "Commercial Use License" },
+        { "key": "jurisdiction", "label": "Jurisdiction", "type": "text", "required": false, "placeholder": "UK" },
+        { "key": "valid_until", "label": "Expiry", "type": "date", "required": false, "placeholder": "2027-01-01" },
+        { "key": "notes", "label": "Terms / Notes", "type": "textarea", "required": false, "placeholder": "Non-exclusive • Non-transferable" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "license",
+          "preset": { "preset_key": "license", "category": "Rights" },
+          "visual": { "preset": "license" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": false, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "LICENSE" }
+        ]
+      }
+    },
+
+    "warranty": {
+      "key": "warranty",
+      "name": "Warranty Pass",
+      "category": "rights",
+      "icon": "package",
+      "tagline": "Warranty for physical goods and purchases.",
+      "description": "Bridge real products to verifiable ownership/warranty. Serial number first-class.",
+      "attributes": [
+        { "key": "product_name", "label": "Product Name", "type": "text", "required": true, "placeholder": "XERTIFY Device Pro" },
+        { "key": "serial_number", "label": "Serial Number", "type": "text", "required": true, "placeholder": "SN-00012345" },
+        { "key": "purchase_date", "label": "Purchase Date", "type": "date", "required": false, "placeholder": "2026-01-01" },
+        { "key": "warranty_length", "label": "Warranty Length", "type": "text", "required": false, "placeholder": "12 months" },
+        { "key": "valid_until", "label": "Warranty Expiry", "type": "date", "required": false, "placeholder": "2027-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Keep proof of purchase" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "warranty",
+          "preset": { "preset_key": "warranty", "category": "Rights" },
+          "visual": { "preset": "warranty" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": false, "revocable": false, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "WARRANTY" }
+        ]
+      }
+    },
+
+    "dao_membership": {
+      "key": "dao_membership",
+      "name": "DAO Membership",
+      "category": "governance",
+      "icon": "users",
+      "tagline": "Membership identity for DAOs and orgs.",
+      "description": "Use for on-chain governance memberships, roles, voting weight hints (non-binding).",
+      "attributes": [
+        { "key": "member_name", "label": "Member Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "dao_name", "label": "DAO Name", "type": "text", "required": true, "placeholder": "XERTIFY DAO" },
+        { "key": "voting_weight", "label": "Voting Weight", "type": "text", "required": false, "placeholder": "1" },
+        { "key": "valid_until", "label": "Valid Until (optional)", "type": "date", "required": false, "placeholder": "2027-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Role: Contributor" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "dao_membership",
+          "preset": { "preset_key": "dao", "category": "Governance" },
+          "visual": { "preset": "dao" },
+          "lifecycle": { "kind": "renewable", "auto_expire": false, "revocable": true, "transferable": false, "extendable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "DAO" }
+        ]
+      }
+    },
+
+    "voting_pass": {
+      "key": "voting_pass",
+      "name": "Voting Pass",
+      "category": "governance",
+      "icon": "vote",
+      "tagline": "Time-boxed voting eligibility pass.",
+      "description": "Use for eligibility windows and gated ballots. Single-use enforcement can be added later.",
+      "attributes": [
+        { "key": "election_name", "label": "Election / Vote Name", "type": "text", "required": true, "placeholder": "Board Election 2026" },
+        { "key": "voter_id", "label": "Voter ID", "type": "text", "required": false, "placeholder": "VOTER-001" },
+        { "key": "vote_window", "label": "Vote Window", "type": "text", "required": false, "placeholder": "2026-02-01 to 2026-02-05" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": true, "placeholder": "2026-02-05" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "One vote per holder (future enforcement)" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "voting_pass",
+          "preset": { "preset_key": "vote", "category": "Governance" },
+          "visual": { "preset": "vote" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": true, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "VOTE" }
+        ]
+      }
+    },
+
+    "employee_badge": {
+      "key": "employee_badge",
+      "name": "Employee Badge",
+      "category": "ops",
+      "icon": "briefcase",
+      "tagline": "HR-ready employee badge and role credential.",
+      "description": "Use for employee identity and internal privileges. Default non-transferable + revocable.",
+      "attributes": [
+        { "key": "employee_name", "label": "Employee Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "role", "label": "Role", "type": "text", "required": true, "placeholder": "Product Manager" },
+        { "key": "department", "label": "Department", "type": "text", "required": false, "placeholder": "Operations" },
+        { "key": "start_date", "label": "Start Date", "type": "date", "required": false, "placeholder": "2026-01-01" },
+        { "key": "valid_until", "label": "Valid Until (optional)", "type": "date", "required": false, "placeholder": "2027-01-01" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Internal use only" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "employee_badge",
+          "preset": { "preset_key": "badge", "category": "Ops" },
+          "visual": { "preset": "badge" },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "STAFF" }
+        ]
+      }
+    },
+
+    "contractor_pass": {
+      "key": "contractor_pass",
+      "name": "Contractor Pass",
+      "category": "ops",
+      "icon": "wrench",
+      "tagline": "Short-lived access for contractors and vendors.",
+      "description": "Use for temporary access and time-boxed engagements.",
+      "attributes": [
+        { "key": "contractor_name", "label": "Contractor Name", "type": "text", "required": true, "placeholder": "Jane Doe" },
+        { "key": "company", "label": "Company", "type": "text", "required": false, "placeholder": "Vendor Co" },
+        { "key": "contract_end", "label": "Contract End", "type": "date", "required": true, "placeholder": "2026-03-31" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": false, "placeholder": "2026-03-31" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Escort required after hours" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "contractor_pass",
+          "preset": { "preset_key": "contractor", "category": "Ops" },
+          "visual": { "preset": "contractor" },
+          "lifecycle": { "kind": "time_bound", "auto_expire": true, "revocable": true, "transferable": false }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "CONTRACT" }
+        ]
+      }
+    },
+
+    "claimable_pass": {
+      "key": "claimable_pass",
+      "name": "Claimable Pass",
+      "category": "experimental",
+      "icon": "sparkles",
+      "tagline": "Distribution-ready passes with claim windows.",
+      "description": "Use for campaigns, rewards, allowlists. Claim-once logic can be enforced later (DB).",
+      "attributes": [
+        { "key": "campaign_name", "label": "Campaign Name", "type": "text", "required": true, "placeholder": "Genesis Access Drop" },
+        { "key": "claim_window", "label": "Claim Window", "type": "text", "required": false, "placeholder": "2026-02-01 to 2026-02-07" },
+        { "key": "issuer", "label": "Issuer", "type": "text", "required": false, "placeholder": "XERTIFY" },
+        { "key": "valid_until", "label": "Valid Until", "type": "date", "required": false, "placeholder": "2026-02-07" },
+        { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "One claim per wallet (future enforcement)" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "claimable_pass",
+          "preset": { "preset_key": "claim", "category": "Experimental" },
+          "visual": { "preset": "claim" },
+          "lifecycle": { "kind": "claimable", "auto_expire": true, "revocable": true, "transferable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "CLAIM" }
+        ]
+      }
+    },
+
+    "perm_domain_supply_chain_gate": {
+      "key": "perm_domain_supply_chain_gate",
+      "name": "Permissioned Domain Gate (Supply Chain)",
+      "category": "rights",
+      "icon": "lock",
+      "tagline": "Credential-gated supply-chain domain access.",
+      "description": "Creates a DNFT that acts as an access credential for a Permissioned Domain supply-chain environment.",
+      "attributes": [
+        { "key": "domain_label", "label": "Domain label", "type": "text", "required": true, "placeholder": "e.g. ACME Supply Chain Domain" },
+        { "key": "domain_purpose", "label": "Purpose", "type": "select", "required": true, "options": ["supply_chain"], "default": "supply_chain" },
+        { "key": "credential_issuer", "label": "Credential issuer (XRPL address)", "type": "text", "required": true, "placeholder": "r..." },
+        { "key": "credential_type", "label": "Credential type", "type": "text", "required": true, "placeholder": "e.g. ACME_SC_PARTICIPANT" },
+        { "key": "domain_mode", "label": "Domain mode", "type": "select", "required": true, "options": ["create_new", "use_existing"], "default": "create_new" },
+        { "key": "existing_domain_id", "label": "Existing Domain ID (if using existing)", "type": "text", "required": false, "placeholder": "DomainID (hex)" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "perm_domain_supply_chain_gate",
+          "preset": { "preset_key": "rights", "category": "Rights" },
+          "visual": { "preset": "rights" },
+          "permissioned_domain": {
+            "enabled": true,
+            "accepted_credentials": [
+              { "issuer_field": "credential_issuer", "type_field": "credential_type" }
+            ]
+          },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "SUPPLY" }
+        ]
+      }
+    },
+
+    "perm_domain_regulated_rwa_gate": {
+      "key": "perm_domain_regulated_rwa_gate",
+      "name": "Permissioned Domain Gate (Regulated RWA)",
+      "category": "rights",
+      "icon": "shield",
+      "tagline": "KYC/AML gated RWA domain access.",
+      "description": "Creates a DNFT that represents regulated access + compliance gating into a Permissioned Domain.",
+      "attributes": [
+        { "key": "domain_label", "label": "Domain label", "type": "text", "required": true, "placeholder": "e.g. RWA Compliance Domain" },
+        { "key": "domain_purpose", "label": "Purpose", "type": "select", "required": true, "options": ["regulated_rwa"], "default": "regulated_rwa" },
+        { "key": "credential_issuer", "label": "Credential issuer (XRPL address)", "type": "text", "required": true, "placeholder": "r..." },
+        { "key": "credential_type", "label": "Credential type", "type": "text", "required": true, "placeholder": "e.g. RWA_KYC_APPROVED" },
+        { "key": "domain_mode", "label": "Domain mode", "type": "select", "required": true, "options": ["create_new", "use_existing"], "default": "create_new" },
+        { "key": "existing_domain_id", "label": "Existing Domain ID (if using existing)", "type": "text", "required": false, "placeholder": "DomainID (hex)" }
+      ],
+      "defaults": {
+        "properties": {
+          "template": "perm_domain_regulated_rwa_gate",
+          "preset": { "preset_key": "rights", "category": "Rights" },
+          "visual": { "preset": "rights" },
+          "permissioned_domain": {
+            "enabled": true,
+            "accepted_credentials": [
+              { "issuer_field": "credential_issuer", "type_field": "credential_type" }
+            ]
+          },
+          "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": true }
+        },
+        "attributes": [
+          { "trait_type": "context", "value": "RWA" }
+        ]
+      }
+    },
+
+    
+"pharma_batch_passport": {
+  "key": "pharma_batch_passport",
+  "name": "Pharma Batch Passport",
+  "category": "supply_chain",
+  "icon": "package",
+  "tagline": "Serialized batch + cold-chain + custody checkpoints.",
+  "description": "Use for pharmaceutical serialization, cold-chain integrity, custody history, and rapid recall verification.",
+  "attributes": [
+    { "key": "batch_id", "label": "Batch ID", "type": "text", "required": true, "placeholder": "BATCH-2026-0001" },
+    { "key": "gtin", "label": "GTIN", "type": "text", "required": true, "placeholder": "00312345678905" },
+    { "key": "drug_name", "label": "Drug Name", "type": "text", "required": true, "placeholder": "Examplemab 50mg" },
+    { "key": "manufacturer", "label": "Manufacturer", "type": "text", "required": true, "placeholder": "ACME Pharma Ltd" },
+
+    { "key": "mfg_date", "label": "Manufacture Date", "type": "date", "required": true, "placeholder": "2026-01-01" },
+    { "key": "expiry_date", "label": "Expiry Date", "type": "date", "required": true, "placeholder": "2027-01-01" },
+
+    { "key": "temp_min", "label": "Min Temperature (°C)", "type": "number", "required": true, "placeholder": "2" },
+    { "key": "temp_max", "label": "Max Temperature (°C)", "type": "number", "required": true, "placeholder": "8" },
+
+    { "key": "initial_qty", "label": "Initial Quantity", "type": "number", "required": true, "placeholder": "1000" },
+    { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Storage instructions / handling notes" }
+  ],
+  "defaults": {
+    "properties": {
+      "template": "pharma_batch_passport",
+      "preset": { "preset_key": "asset", "category": "Supply Chain" },
+      "visual": { "preset": "asset" },
+      "lifecycle": { "kind": "time_bound", "auto_expire": true, "revocable": true, "transferable": true },
+
+      "supply_chain": {
+        "enabled": true,
+        "industry": "pharmaceuticals",
+        "cold_chain_required": true,
+        "checkpoint_events": true,
+        "recallable": true
+      }
+    },
+    "attributes": [
+      { "trait_type": "context", "value": "PHARMA" },
+      { "trait_type": "industry", "value": "pharmaceuticals" }
+    ]
+  }
+}
+,
+"aviation_part_passport": {
+  "key": "aviation_part_passport",
+  "name": "Aviation Part Passport",
+  "category": "supply_chain",
+  "icon": "settings",
+  "tagline": "Serialized part + custody + maintenance + life-limit tracking.",
+  "description": "Use for aircraft/aerospace parts traceability, custody chain, maintenance events, and airworthiness verification.",
+  "attributes": [
+    { "key": "part_number", "label": "Part Number (P/N)", "type": "text", "required": true, "placeholder": "P/N 1234-567" },
+    { "key": "serial_number", "label": "Serial Number (S/N)", "type": "text", "required": true, "placeholder": "SN-0000001" },
+    { "key": "manufacturer", "label": "Manufacturer", "type": "text", "required": true, "placeholder": "ACME Aerospace" },
+
+    { "key": "mfg_date", "label": "Manufacture Date", "type": "date", "required": true, "placeholder": "2026-01-01" },
+
+    { "key": "aircraft_tail", "label": "Aircraft Tail Number", "type": "text", "required": false, "placeholder": "G-XXXX / N12345" },
+    { "key": "install_ts", "label": "Install Timestamp", "type": "date", "required": false, "placeholder": "2026-01-01" },
+
+    { "key": "life_limit_cycles", "label": "Life Limit Cycles", "type": "number", "required": false, "placeholder": "20000" },
+    { "key": "life_limit_hours", "label": "Life Limit Hours", "type": "number", "required": false, "placeholder": "40000" },
+
+    { "key": "notes", "label": "Notes", "type": "textarea", "required": false, "placeholder": "Any key handling / compliance notes" }
+  ],
+  "defaults": {
+    "properties": {
+      "template": "aviation_part_passport",
+      "preset": { "preset_key": "asset", "category": "Supply Chain" },
+      "visual": { "preset": "asset" },
+      "lifecycle": { "kind": "perpetual", "auto_expire": false, "revocable": true, "transferable": true },
+
+      "supply_chain": {
+        "enabled": true,
+        "industry": "aviation_parts",
+        "checkpoint_events": true,
+        "recallable": true
+      }
+    },
+    "attributes": [
+      { "trait_type": "context", "value": "AVIATION" },
+      { "trait_type": "industry", "value": "aviation_parts" }
+    ]
+  }
+}
+
+  }
+}

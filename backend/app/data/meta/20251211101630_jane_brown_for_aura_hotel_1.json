@@ -1,0 +1,91 @@
+{
+  "name": "junior brown – jane brown for aura hotel",
+  "description": "jane brown for aura hotel – digital ticket granting Standard access. Valid from 2025-12-11 until 2026-01-01. Notes: room 113",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "Ticket"
+    },
+    {
+      "trait_type": "access_level",
+      "value": "Standard"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "junior brown"
+    },
+    {
+      "trait_type": "valid_from",
+      "value": "2025-12-11"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "notes",
+      "value": "112"
+    }
+  ],
+  "properties": {
+    "template": "ticket",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "valid_from": "2025-12-11",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "template": "ticket",
+      "brand_primary": "#4f46e5",
+      "brand_accent": "#22c55e",
+      "brand_text_on_dark": true,
+      "logo_url": "http://127.0.0.1:8000/uploads/20251211101551_logo_logo__1_.png",
+      "bg_image_url": "http://127.0.0.1:8000/uploads/20251211101555_background_castle-mountain-valley-sunset-medieval-600nw-1856819368.webp",
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20251211101630_nft_preview_nft-preview.png"
+    },
+    "qr_payload": {
+      "t": "PROJXPASS",
+      "v": 1,
+      "name": "jane brown for aura hotel",
+      "attrs": [
+        {
+          "trait_type": "type",
+          "value": "Ticket"
+        },
+        {
+          "trait_type": "access_level",
+          "value": "Standard"
+        },
+        {
+          "trait_type": "holder_name",
+          "value": "jane brown"
+        },
+        {
+          "trait_type": "valid_from",
+          "value": "2025-12-11"
+        },
+        {
+          "trait_type": "valid_until",
+          "value": "2026-01-01"
+        },
+        {
+          "trait_type": "notes",
+          "value": "room 113"
+        }
+      ],
+      "lifecycle": {
+        "kind": "escrow_ticket",
+        "valid_from": "2025-12-11",
+        "expires_at": "2026-01-01"
+      }
+    },
+    "batch": {
+      "index": 1,
+      "holder_name": "junior brown",
+      "address": "rUTmG9nys1X1An6kK6ZAgUkpgede9EVhWG"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20251211101630_nft_preview_nft-preview.png"
+}

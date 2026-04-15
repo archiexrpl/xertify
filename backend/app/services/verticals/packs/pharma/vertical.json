@@ -1,0 +1,13 @@
+{
+  "vertical_id": "pharma",
+  "name": "Pharma Supply Chain",
+  "version": 1,
+  "labels": {
+    "verdict_ok": "COMPLIANT",
+    "verdict_not_ok": "NON_COMPLIANT"
+  },
+  "examples": {
+    "proof_ok": "proof_example.json",
+    "proof_fail": "proof_example_recalled.json"
+  }
+}

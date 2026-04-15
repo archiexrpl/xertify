@@ -1,0 +1,10 @@
+{
+  "vertical_id": "aviation",
+  "name": "Aviation Components",
+  "version": 1,
+  "labels": {
+    "verdict_ok": "AIRWORTHY",
+    "verdict_not_ok": "NOT_AIRWORTHY"
+  },
+  "example_proof": "proof_example.json"
+}

@@ -1,0 +1,96 @@
+{
+  "name": "dsdsadsa – sadadas",
+  "description": "sadadas — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "access"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "f"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "context",
+      "value": "event"
+    },
+    {
+      "trait_type": "preset",
+      "value": "access_pass"
+    },
+    {
+      "trait_type": "transferable",
+      "value": "true"
+    },
+    {
+      "trait_type": "ownership_product",
+      "value": "event_ticket"
+    },
+    {
+      "trait_type": "template_key",
+      "value": "event_ticket"
+    },
+    {
+      "trait_type": "status",
+      "value": "live"
+    }
+  ],
+  "properties": {
+    "template_key": "event_ticket",
+    "template": "generic",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "brand_primary": "#3b82f6",
+      "brand_accent": "#a855f7",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20260113100740_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "access_pass",
+      "category": "access",
+      "rules": {
+        "category": "access",
+        "requires_holder_name": true,
+        "transferable": false,
+        "expires": true,
+        "revocable": true,
+        "reissuable": true,
+        "lifecycle": "escrow_ticket",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "validate"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "custody": {
+      "mode": "custodial",
+      "holder_address": null
+    },
+    "qr_payload": {
+      "t": "X",
+      "v": 1,
+      "id": "x_23359cd196e342ff",
+      "sig": "189567f06cf4f2e431133064c00231f336ac58b9905e0fbac3a6727dba6bcaaf"
+    },
+    "verification": {
+      "pass_id": "23359cd196e342ff",
+      "public_id": "x_23359cd196e342ff",
+      "verify_url": "http://127.0.0.1:8000/v/23359cd196e342ff",
+      "share_url": "http://127.0.0.1:8000/s/x_23359cd196e342ff"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20260113100740_nft_preview_nft-preview.png"
+}

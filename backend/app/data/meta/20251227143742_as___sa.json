@@ -1,0 +1,74 @@
+{
+  "name": "as – sa",
+  "description": "sa — digital pass on XRPL.",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "access"
+    },
+    {
+      "trait_type": "holder_name",
+      "value": "as"
+    },
+    {
+      "trait_type": "valid_until",
+      "value": "2026-01-01"
+    },
+    {
+      "trait_type": "context",
+      "value": "hotel"
+    },
+    {
+      "trait_type": "preset",
+      "value": "access_pass"
+    }
+  ],
+  "properties": {
+    "template": "generic",
+    "lifecycle": {
+      "kind": "escrow_ticket",
+      "expires_at": "2026-01-01"
+    },
+    "visual": {
+      "brand_primary": "#000000",
+      "brand_accent": "#000000",
+      "brand_text_on_dark": true,
+      "show_qr": true,
+      "show_badge": true,
+      "preview_image": "http://127.0.0.1:8000/uploads/20251227143742_nft_preview_nft-preview.png"
+    },
+    "preset": {
+      "preset_key": "access_pass",
+      "category": "access",
+      "rules": {
+        "category": "access",
+        "requires_holder_name": true,
+        "transferable": false,
+        "expires": true,
+        "revocable": true,
+        "reissuable": true,
+        "lifecycle": "escrow_ticket",
+        "qr": {
+          "enabled": true,
+          "visibility": "public",
+          "scan_action": "validate"
+        },
+        "batch_friendly": true
+      },
+      "conditions": []
+    },
+    "conditions": [],
+    "qr_payload": {
+      "t": "P",
+      "v": 1,
+      "h": "as",
+      "vu": "2026-01-01",
+      "k": "escrow_ticket"
+    },
+    "verification": {
+      "pass_id": "6afc5470a9444fc3",
+      "verify_url": "http://127.0.0.1:8000/v/6afc5470a9444fc3"
+    }
+  },
+  "image": "http://127.0.0.1:8000/uploads/20251227143742_nft_preview_nft-preview.png"
+}

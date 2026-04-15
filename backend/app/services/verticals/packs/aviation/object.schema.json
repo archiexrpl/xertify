@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aviation Object Snapshot v1",
+  "type": "object",
+  "required": ["object_id", "vertical_id", "kind", "facts"],
+  "properties": {
+    "object_id": { "type": "string", "minLength": 1 },
+"vertical_id": { "type": "string", "const": "aviation" },
+    "kind": { "type": "string", "enum": ["component", "assembly", "document"] },
+    "facts": {
+      "type": "object",
+      "required": ["serial_number", "part_number", "manufacturer"],
+      "properties": {
+        "serial_number": { "type": "string" },
+        "part_number": { "type": "string" },
+        "manufacturer": { "type": "string" },
+
+        "installed_on": { "type": ["string", "null"] },
+        "installed_at": { "type": ["string", "null"], "description": "ISO-8601" },
+
+        "last_inspected_at": { "type": ["string", "null"], "description": "ISO-8601" },
+        "inspection_interval_days": { "type": ["integer", "null"], "minimum": 1 },
+
+        "revoked": { "type": "boolean", "default": false },
+        "removed_at": { "type": ["string", "null"], "description": "ISO-8601" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

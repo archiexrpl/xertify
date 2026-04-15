@@ -1,0 +1,25 @@
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" id="nick-modal">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold">Welcome!</h3>
+      <button class="text-slate-400 hover:text-slate-200" onclick="document.getElementById('nick-modal').remove()">✕</button>
+    </div>
+
+    <p class="mt-3 text-slate-300">Set a nickname so others see a friendly name instead of your wallet address.</p>
+
+    <div class="mt-5 flex gap-3 justify-end">
+      <button
+        class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700"
+        hx-post="/profile/nickname-later"
+        hx-swap="none"
+        onclick="document.getElementById('nick-modal')?.remove()">
+        Later
+      </button>
+      <button
+        class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        onclick="document.getElementById('nick-modal')?.remove(); window.location.href='/profile'">
+        Set nickname
+      </button>
+    </div>
+  </div>
+</div>

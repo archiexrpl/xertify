@@ -1,0 +1,22 @@
+<div class="space-y-3">
+  {% if qr_uri %}
+    <div class="mx-auto w-48">
+      <img alt="Scan with XUMM" src="{{ qr_uri }}" class="w-48 h-48 mx-auto rounded-md border border-slate-700"/>
+    </div>
+    <p class="text-center text-slate-400 text-sm">Scan with your Xaman (XUMM) app</p>
+  {% endif %}
+
+  {% if deeplink %}
+    <a href="{{ deeplink }}" target="_blank" class="block text-center px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500">
+      Open in XUMM
+    </a>
+  {% endif %}
+
+  <div id="xumm-status"
+       class="text-center text-slate-400 text-sm min-h-[1.5rem]"
+       hx-get="/auth/xrpl/status?uuid={{ uuid }}"
+       hx-trigger="every 2s"
+       hx-swap="innerHTML">
+    Waiting for signature…
+  </div>
+</div>

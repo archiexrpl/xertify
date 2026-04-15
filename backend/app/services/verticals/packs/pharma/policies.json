@@ -1,0 +1,33 @@
+{
+  "id": "pharma/v1",
+  "rules": [
+    {
+      "id": "recall_gate",
+      "when": { "fact": "recall_status", "op": "equals", "value": "recalled" },
+      "status": "recalled",
+      "ok": false,
+      "reason": "Batch is recalled"
+    },
+    {
+      "id": "cold_chain_gate",
+      "when": { "fact": "cold_chain_ok", "op": "equals", "value": false },
+      "status": "cold_chain_failed",
+      "ok": false,
+      "reason": "Cold-chain compliance failed"
+    },
+    {
+      "id": "temp_min_gate",
+      "when": { "fact": "temp_min_breached", "op": "equals", "value": true },
+      "status": "temp_breach",
+      "ok": false,
+      "reason": "Temperature below allowed minimum"
+    },
+    {
+      "id": "temp_max_gate",
+      "when": { "fact": "temp_max_breached", "op": "equals", "value": true },
+      "status": "temp_breach",
+      "ok": false,
+      "reason": "Temperature above allowed maximum"
+    }
+  ]
+}

@@ -1,0 +1,609 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+/* ======================================= */
+/*  XERTIFY VERIFY — TRUTH CHECK (SCAN)    */
+/*  Unified with base.html brand vars      */
+/* ======================================= */
+
+.verify-wrap{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 34px 20px 90px;
+}
+
+.verify-hero{
+  text-align:center;
+  margin-bottom: 24px;
+}
+
+.verify-hero h1{
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.verify-hero p{
+  margin-top: 8px;
+  font-size: 15px;
+  color: rgba(226,232,240,0.75);
+}
+
+.verify-card{
+  border-radius: 22px;
+  border: 1px solid var(--brand-border-soft);
+  background: linear-gradient(to bottom right, rgba(2,6,23,0.82), rgba(15,23,42,0.65));
+  box-shadow: 0 20px 60px rgba(2,6,23,0.65);
+  padding: 22px;
+}
+
+.verify-input-row{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+.verify-input{
+  flex:1;
+  min-width: 240px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(2,6,23,0.65);
+  border: 1px solid var(--brand-border-soft);
+  color: #f8fafc;
+  font-size: 14px;
+  outline:none;
+}
+
+.verify-input:focus{
+  border-color: var(--brand-border);
+  /* FIX: base.html defines --ring (not --brand-ring) */
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.verify-btn{
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--brand-border);
+  background: var(--brand);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--brand-ink);
+  transition: 0.18s ease;
+  white-space: nowrap;
+}
+
+.verify-btn:hover{ background: var(--brand-2); }
+
+.verify-btn-ghost{
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.35);
+  color: rgba(226,232,240,0.92);
+}
+
+.verify-btn-ghost:hover{ background: rgba(2,6,23,0.48); }
+
+.verify-foot{
+  margin-top: 14px;
+  text-align:center;
+  font-size: 12px;
+  color: rgba(226,232,240,0.60);
+}
+
+.verify-foot code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: rgba(226,232,240,0.9);
+  background: rgba(2,6,23,0.45);
+  border: 1px solid var(--brand-border-soft);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.verify-mini{
+  margin-top: 14px;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.verify-chip{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.35);
+  color: rgba(226,232,240,0.92);
+  cursor:pointer;
+  user-select:none;
+  transition: 0.15s ease;
+}
+
+.verify-chip:hover{
+  background: rgba(2,6,23,0.50);
+  border-color: var(--brand-border);
+}
+
+.verify-links{
+  margin-top: 14px;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.verify-link{
+  font-size: 12px;
+  color: rgba(148,163,253,0.90);
+  text-decoration: none;
+  border: 1px solid var(--border-soft);
+  background: rgba(2,6,23,0.30);
+  padding: 8px 10px;
+  border-radius: 999px;
+  transition: 0.15s ease;
+}
+.verify-link:hover{
+  background: rgba(2,6,23,0.45);
+  border-color: var(--border);
+}
+
+/* ======================= */
+/*  Scanner overlay         */
+/* ======================= */
+.scan-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  background: rgba(2,6,23,0.84);
+  backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.scan-panel{
+  width: min(920px, 96vw);
+  border-radius: 22px;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.88);
+  box-shadow: 0 25px 90px rgba(0,0,0,0.60);
+  overflow: hidden;
+}
+
+.scan-header{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brand-border-soft);
+}
+
+.scan-title{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(226,232,240,0.92);
+}
+
+.scan-sub{
+  font-size: 11px;
+  color: rgba(226,232,240,0.62);
+  margin-top: 4px;
+}
+
+.scan-body{
+  display:grid;
+  grid-template-columns: 1.3fr 0.9fr;
+  gap: 12px;
+  padding: 14px;
+}
+
+@media (max-width: 840px){
+  .scan-body{ grid-template-columns: 1fr; }
+}
+
+.scan-video-wrap{
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.55);
+  aspect-ratio: 16/10;
+}
+
+.scan-video{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+.scan-reticle{
+  position:absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, var(--ring), transparent 55%),
+    linear-gradient(to bottom, rgba(2,6,23,0.25), rgba(2,6,23,0.55));
+}
+
+.scan-box{
+  position:absolute;
+  left: 50%;
+  top: 50%;
+  width: min(62%, 420px);
+  aspect-ratio: 1/1;
+  transform: translate(-50%,-50%);
+  border-radius: 18px;
+  border: 2px solid rgba(226,232,240,0.25);
+  box-shadow: 0 0 0 2px rgba(2,6,23,0.55) inset;
+}
+
+.scan-side{
+  border-radius: 18px;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.35);
+  padding: 14px;
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scan-pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.40);
+  color: rgba(226,232,240,0.92);
+}
+
+.scan-pill.ok{
+  border-color: rgba(16,185,129,0.55);
+  background: rgba(16,185,129,0.14);
+  color: rgba(209,250,229,0.95);
+}
+
+.scan-pill.bad{
+  border-color: rgba(239,68,68,0.55);
+  background: rgba(239,68,68,0.14);
+  color: rgba(254,226,226,0.95);
+}
+
+.scan-mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: rgba(226,232,240,0.88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.45);
+  padding: 10px 12px;
+  border-radius: 14px;
+}
+
+.scan-actions{
+  display:flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  border-top: 1px solid var(--brand-border-soft);
+}
+</style>
+
+
+<div class="verify-wrap">
+
+  <div class="verify-hero">
+    <h1>Verify a Proof</h1>
+    <p>
+      This is not “ownership lookup.” This is <span style="color:rgba(226,232,240,0.92);font-weight:800;">verifiable truth</span> —
+      a policy-evaluated verdict at <span style="color:rgba(148,163,253,0.95);font-weight:900;">evaluated_at</span>.
+    </p>
+  </div>
+
+  <div class="verify-card">
+    <div class="verify-input-row">
+      <input id="pid" class="verify-input" placeholder="Enter Pass ID (or scan QR)…" />
+      <button class="verify-btn" onclick="goVerify()">Verify</button>
+      <button class="verify-btn verify-btn-ghost" onclick="openScanner()">Scan QR</button>
+    </div>
+
+    <div class="verify-mini" aria-label="Examples">
+      <button class="verify-chip" type="button" onclick="fillExample('f1de30b4135b43aa')">
+        Use aviation example
+      </button>
+      <button class="verify-chip" type="button" onclick="fillExample('b641d18b7d244e18')">
+        Use pharma recalled example
+      </button>
+      <button class="verify-chip" type="button" onclick="clearInput()">
+        Clear
+      </button>
+    </div>
+
+    <div class="verify-links" aria-label="Public contract endpoints">
+      <a class="verify-link" href="/spec/overview">/spec/overview</a>
+      <a class="verify-link" href="/spec/aviation.json">/spec/aviation.json</a>
+      <a class="verify-link" href="/spec/pharma.json">/spec/pharma.json</a>
+    </div>
+
+    <div class="verify-foot">
+      Opens <code>/v/&lt;pass_id&gt;</code> • Proof bundle at <code>/v/&lt;pass_id&gt;/proof.json</code> • Verdict at <code>/v/&lt;pass_id&gt;/verdict</code>
+    </div>
+  </div>
+
+</div>
+
+<!-- Scanner Overlay -->
+<div class="scan-overlay" id="scanOverlay" aria-hidden="true">
+  <div class="scan-panel">
+    <div class="scan-header">
+      <div>
+        <div class="scan-title">Live QR Scanner</div>
+        <div class="scan-sub">Point camera at a pass QR to verify instantly.</div>
+      </div>
+      <button class="verify-btn verify-btn-ghost" onclick="closeScanner()">Close</button>
+    </div>
+
+    <div class="scan-body">
+      <div class="scan-video-wrap">
+        <video id="scanVideo" class="scan-video" playsinline muted></video>
+        <div class="scan-reticle"></div>
+        <div class="scan-box"></div>
+        <canvas id="scanCanvas" style="display:none"></canvas>
+      </div>
+
+      <div class="scan-side">
+        <div id="scanState" class="scan-pill">Waiting for camera…</div>
+        <div class="text-[12px] text-slate-300" style="color: rgba(226,232,240,0.82); line-height:1.4">
+          If the QR contains a full link, we’ll open it. If it contains a raw pass id, we’ll verify it.
+          If it contains JSON, we’ll attempt to extract <span style="color:rgba(148,163,253,0.9)">id / pid / pass_id</span>.
+        </div>
+        <div id="scanPayload" class="scan-mono">—</div>
+      </div>
+    </div>
+
+    <div class="scan-actions">
+      <button class="verify-btn verify-btn-ghost" onclick="flipCamera()">Flip camera</button>
+      <button class="verify-btn" onclick="closeScanner()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- jsQR (QR decoder) -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<script>
+function goVerify(){
+  const v = (document.getElementById("pid").value || "").trim();
+  if (!v){
+    openWarn();
+    return;
+  }
+  window.location.href = "/v/" + encodeURIComponent(v);
+}
+
+function fillExample(id){
+  const el = document.getElementById("pid");
+  el.value = id;
+  el.focus();
+}
+
+function clearInput(){
+  const el = document.getElementById("pid");
+  el.value = "";
+  el.focus();
+}
+
+/* -----------------------------
+   QR Scanner
+----------------------------- */
+let __scanStream = null;
+let __scanRAF = null;
+let __scanFacing = "environment"; // environment | user
+let __scanLast = "";
+let __scanCooldownUntil = 0;
+
+function setScanState(kind, text){
+  const el = document.getElementById("scanState");
+  if (!el) return;
+  el.className = "scan-pill " + (kind || "");
+  el.textContent = text || "";
+}
+
+function setScanPayload(txt){
+  const el = document.getElementById("scanPayload");
+  if (!el) return;
+  el.textContent = txt ? txt : "—";
+}
+
+function openScanner(){
+  const overlay = document.getElementById("scanOverlay");
+  overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden", "false");
+  setScanState("", "Starting camera…");
+  setScanPayload("—");
+  startScanner();
+}
+
+function closeScanner(){
+  const overlay = document.getElementById("scanOverlay");
+  overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden", "true");
+  stopScanner();
+}
+
+async function flipCamera(){
+  __scanFacing = (__scanFacing === "environment") ? "user" : "environment";
+  await restartScanner();
+}
+
+async function restartScanner(){
+  stopScanner();
+  setScanState("", "Switching camera…");
+  await startScanner();
+}
+
+async function startScanner(){
+  try{
+    const video = document.getElementById("scanVideo");
+    const constraints = {
+      audio: false,
+      video: { facingMode: { ideal: __scanFacing } }
+    };
+
+    __scanStream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = __scanStream;
+    await video.play();
+
+    setScanState("ok", "Scanning…");
+    tickScan();
+  } catch(e){
+    console.error("camera error", e);
+    setScanState("bad", "Camera blocked / unavailable");
+    setScanPayload("Check browser permissions.");
+  }
+}
+
+function stopScanner(){
+  if (__scanRAF) cancelAnimationFrame(__scanRAF);
+  __scanRAF = null;
+
+  const video = document.getElementById("scanVideo");
+  if (video) video.pause();
+
+  if (__scanStream){
+    __scanStream.getTracks().forEach(t => t.stop());
+    __scanStream = null;
+  }
+}
+
+function parseQrTextToPassId(text){
+  if (!text) return null;
+  const raw = String(text).trim();
+
+  // If it's a URL containing /v/<id>
+  try{
+    if (/^https?:\/\//i.test(raw)){
+      const u = new URL(raw);
+      const m = u.pathname.match(/\/v\/([^\/?#]+)/i);
+      if (m && m[1]) return decodeURIComponent(m[1]);
+      return null;
+    }
+  }catch(e){}
+
+  // If it's a relative path /v/<id>
+  const rel = raw.match(/\/v\/([^\/?#]+)/i);
+  if (rel && rel[1]) return decodeURIComponent(rel[1]);
+
+  // If it's JSON, try to pull common keys
+  if ((raw.startsWith("{") && raw.endsWith("}")) || (raw.startsWith("[") && raw.endsWith("]"))){
+    try{
+      const j = JSON.parse(raw);
+      const keys = ["pass_id","pid","id","passId","passID"];
+      for (const k of keys){
+        if (j && typeof j === "object" && j[k]) return String(j[k]).trim();
+      }
+    }catch(e){}
+  }
+
+  // Otherwise assume it's the pass id itself
+  if (raw.length >= 6) return raw;
+  return null;
+}
+
+function openWarn(){
+  const o = document.getElementById("warnOverlay");
+  o.style.display = "flex";
+}
+
+function closeWarn(){
+  const o = document.getElementById("warnOverlay");
+  o.style.display = "none";
+}
+
+function tickScan(){
+  const video = document.getElementById("scanVideo");
+  const canvas = document.getElementById("scanCanvas");
+  const ctx = canvas.getContext("2d");
+
+  if (video.readyState === video.HAVE_ENOUGH_DATA){
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const qr = window.jsQR(img.data, img.width, img.height, { inversionAttempts: "dontInvert" });
+
+    if (qr && qr.data){
+      const now = Date.now();
+      if (now < __scanCooldownUntil){
+        __scanRAF = requestAnimationFrame(tickScan);
+        return;
+      }
+
+      const txt = String(qr.data).trim();
+      setScanPayload(txt);
+
+      // Debounce repeated frames
+      if (txt && txt !== __scanLast){
+        __scanLast = txt;
+
+        const passId = parseQrTextToPassId(txt);
+        if (passId){
+          setScanState("ok", "QR detected — opening…");
+          __scanCooldownUntil = now + 900;
+          setTimeout(() => {
+            closeScanner();
+            window.location.href = "/v/" + encodeURIComponent(passId);
+          }, 250);
+          return;
+        }else{
+          setScanState("bad", "QR detected — unsupported payload");
+          __scanCooldownUntil = now + 900;
+        }
+      }
+    }
+  }
+
+  __scanRAF = requestAnimationFrame(tickScan);
+}
+</script>
+
+<!-- Verify Warning Modal -->
+<div id="warnOverlay" class="scan-overlay" style="display:none;">
+  <div class="scan-panel" style="max-width:440px;">
+    <div class="scan-header">
+      <div class="scan-title">Verification required</div>
+    </div>
+
+    <div style="padding:20px;text-align:center;">
+      <p style="font-size:14px;color:rgba(226,232,240,0.9); line-height:1.45;">
+        Enter a <b>Pass ID</b> (or scan a QR) to view the verification page.
+        This will show the verdict at <b>evaluated_at</b> and the proof bundle endpoints.
+      </p>
+    </div>
+
+    <div class="scan-actions">
+      <button class="verify-btn" onclick="closeWarn()">Got it</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

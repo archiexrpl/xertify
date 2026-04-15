@@ -1,0 +1,1297 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  /* ==========================================
+     Dashboard (Profile) — Operator Control Plane
+     Brand-aligned with base.html vars.
+     ========================================== */
+
+  :root{
+    --dash-header-h: 84px;
+    --dash-gap: 16px;
+
+    --panel: rgba(2,6,23,0.46);
+    --panel-2: rgba(2,6,23,0.34);
+
+    --border: var(--brand-border-soft);
+    --border-2: var(--brand-border-soft);
+
+    --text: rgba(226,232,240,0.92);
+    --muted: rgba(226,232,240,0.68);
+
+    --brand-local: rgba(79,70,229,0.18); /* fall back if base vars shift */
+    --brand-border-local: var(--brand-border);
+    --brand-text-local: var(--brand-ink);
+
+    --glass: rgba(2,6,23,0.30);
+    --glass-2: rgba(2,6,23,0.44);
+  }
+
+  /* --- One-screen shell --- */
+  .dash-shell{
+    height: calc(100vh - var(--dash-header-h));
+    min-height: 560px;
+    padding-top: 18px;
+    display:flex;
+    flex-direction:column;
+    gap: var(--dash-gap);
+    overflow:hidden;
+  }
+
+  @media (max-width: 1100px){
+    .dash-shell{ height:auto; overflow:visible; }
+  }
+
+  /* --- Top strip --- */
+  .dash-top{
+    flex: 0 0 auto;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .dash-title h1{
+    margin:0;
+    font-size: 22px;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .dash-title p{
+    margin:6px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 78ch;
+  }
+
+  .dash-actions{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+    flex-wrap: wrap;
+  }
+
+  .dash-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    cursor:pointer;
+    user-select:none;
+    text-decoration:none;
+    border: 1px solid var(--brand-border-local);
+    background: rgba(79,70,229,0.18);
+    color: var(--brand-text-local);
+    transition: 0.15s ease;
+    white-space: nowrap;
+  }
+  .dash-btn:hover{ background: rgba(79,70,229,0.26); }
+
+  .dash-btn-ghost{
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.28);
+    color: rgba(226,232,240,0.92);
+    backdrop-filter: blur(8px);
+  }
+  .dash-btn-ghost:hover{
+    background: rgba(2,6,23,0.48);
+    border-color: var(--brand-border);
+  }
+
+  /* --- Truth Health strip --- */
+  .health-strip{
+    flex: 0 0 auto;
+    border-radius: 18px;
+    border: 1px solid var(--brand-border-soft);
+    background: linear-gradient(to bottom right, rgba(2,6,23,0.58), rgba(15,23,42,0.40));
+    box-shadow: 0 18px 60px rgba(2,6,23,0.45);
+    overflow:hidden;
+    position: relative;
+  }
+
+  .health-strip::before{
+    content:"";
+    position:absolute;
+    inset:-40px;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(79,70,229,0.18), transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(168,85,247,0.14), transparent 45%);
+    pointer-events:none;
+  }
+
+  .health-inner{
+    position: relative;
+    padding: 14px;
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+  }
+
+  .health-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .health-head .k{
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.74);
+  }
+  .health-head .s{
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(226,232,240,0.62);
+  }
+
+  .health-grid{
+    display:grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  @media (max-width: 1100px){
+    .health-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 680px){
+    .health-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .health-pill{
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.36);
+    padding: 10px 12px;
+    min-height: 64px;
+  }
+  .health-pill .label{
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.62);
+  }
+  .health-pill .value{
+    margin-top: 6px;
+    font-size: 18px;
+    font-weight: 950;
+    color: rgba(226,232,240,0.95);
+    line-height: 1.1;
+  }
+  .health-pill .sub{
+    margin-top: 4px;
+    font-size: 11px;
+    color: rgba(226,232,240,0.62);
+  }
+
+  /* --- Main grid: 2x2 --- */
+  .dash-grid{
+    flex: 1;
+    min-height: 0;
+    display:grid;
+    gap: var(--dash-gap);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow:hidden;
+  }
+
+  @media (max-width: 1100px){
+    .dash-grid{
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      overflow:visible;
+    }
+  }
+
+  .dash-card{
+    position:relative;
+    border-radius: 18px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.46);
+    box-shadow: 0 18px 60px rgba(2,6,23,0.55);
+    overflow:hidden;
+    min-height: 0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .dash-card-head{
+    flex: 0 0 auto;
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid var(--brand-border-soft);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+  }
+
+  .dash-card-head h2{
+    margin:0;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(226,232,240,0.74);
+    position: relative;
+  }
+
+  .dash-card-head h2::after{
+    content:"";
+    display:block;
+    height:2px;
+    width: 26px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: rgba(99,102,241,0.95);
+  }
+
+  .dash-card-body{
+    flex: 1;
+    min-height: 0;
+    padding: 12px;
+    overflow: hidden;
+  }
+
+  .dash-muted{ color: var(--muted); font-size: 12px; }
+  .dash-mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    color: rgba(226,232,240,0.92);
+    word-break: break-all;
+  }
+
+  .dash-input{
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.55);
+    color: rgba(241,245,249,1);
+    padding: 10px 12px;
+    outline:none;
+    font-size: 13px;
+  }
+  .dash-input:focus{
+    border-color: var(--brand-border);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.22);
+  }
+
+  /* --- Expand mode --- */
+  .expand-btn{
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.35);
+    color: rgba(226,232,240,0.92);
+    cursor:pointer;
+  }
+  .expand-btn:hover{ background: rgba(2,6,23,0.48); }
+
+  .dash-grid.is-expanded{
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr !important;
+  }
+  .dash-grid.is-expanded .dash-card{ display:none; }
+  .dash-grid.is-expanded .dash-card.is-expanded{
+    display:flex;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    height: 100%;
+    min-height: 0;
+    border-radius: 22px;
+    box-shadow: 0 24px 90px rgba(2,6,23,0.75);
+  }
+
+  /* --- Common list rows --- */
+  .compact-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    min-height: 0;
+    overflow:hidden;
+  }
+
+  .row-card{
+    border-radius: 14px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.34);
+    padding: 10px 12px;
+  }
+
+  .tabs{
+    display:flex;
+    gap: 8px;
+    align-items:center;
+    flex-wrap: wrap;
+  }
+  .tab{
+    border-radius: 999px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.35);
+    color: rgba(226,232,240,0.88);
+    cursor:pointer;
+    user-select:none;
+  }
+  .tab:hover{ background: rgba(2,6,23,0.48); border-color: var(--brand-border); }
+  .tab.is-active{
+    border-color: var(--brand-border);
+    background: rgba(79,70,229,0.18);
+    color: rgba(243,232,255,0.98);
+  }
+
+  .icon-btn{
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.35);
+    color: rgba(226,232,240,0.88);
+    cursor:pointer;
+  }
+  .icon-btn:hover{ background: rgba(2,6,23,0.48); border-color: var(--brand-border); }
+
+  .searchbar{
+    display:none;
+    gap: 10px;
+    align-items:center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .searchbar.is-open{ display:flex; }
+
+  .search-hint{
+    font-size: 11px;
+    color: rgba(226,232,240,0.62);
+  }
+
+  /* Inventory shell + scroll */
+  .inv-shell{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
+  }
+  .inv-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .inv-scroll{
+    flex: 1;
+    min-height: 0;
+    overflow:auto;
+    padding-right: 6px;
+  }
+  .inv-scroll::-webkit-scrollbar{ width: 8px; }
+  .inv-scroll::-webkit-scrollbar-thumb{ background: var(--brand-border-soft); border-radius: 999px; }
+  .inv-scroll::-webkit-scrollbar-track{ background: rgba(2,6,23,0.15); }
+
+  /* Filters */
+  .filters{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .select{
+    border-radius: 12px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.50);
+    color: rgba(226,232,240,0.92);
+    padding: 10px 12px;
+    font-size: 12px;
+    outline:none;
+  }
+  .select:focus{
+    border-color: var(--brand-border);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.22);
+  }
+
+  /* Activity */
+  .activity-shell{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+  }
+  .activity-scroll{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    padding-right:6px;
+  }
+  .activity-scroll::-webkit-scrollbar{ width:8px; }
+  .activity-scroll::-webkit-scrollbar-thumb{ background: var(--brand-border-soft); border-radius:999px; }
+  .activity-scroll::-webkit-scrollbar-track{ background: rgba(2,6,23,0.15); }
+
+  /* Operator action grid */
+  .actions-grid{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  @media (max-width: 560px){
+    .actions-grid{ grid-template-columns: 1fr; }
+  }
+
+  .action-card{
+    border-radius: 16px;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.34);
+    padding: 12px;
+  }
+  .action-card .t{
+    font-weight: 950;
+    font-size: 12px;
+    color: rgba(226,232,240,0.95);
+    letter-spacing: 0.02em;
+  }
+  .action-card .d{
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(226,232,240,0.66);
+    line-height: 1.4;
+  }
+  .action-row{
+    margin-top: 10px;
+    display:flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items:center;
+  }
+
+  /* Small helper */
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  }
+
+  /* Identity tighten */
+  .identity-tight .row-card{ padding: 10px 12px; }
+  .identity-tight .dash-mono{ font-size: 11px; }
+  .identity-tight .dash-muted{ font-size: 11px; }
+  .identity-tight .dash-input{ padding: 9px 10px; font-size: 12px; }
+  .identity-tight .dash-btn{ padding: 9px 11px; font-size: 12px; }
+
+  /* Wallet overview scroll */
+  .wallet-row{
+    display:flex;
+    flex-direction:column;
+    min-height: 0;
+    height: 92px;
+  }
+  #wallet-overview{
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
+  }
+  #wallet-overview::-webkit-scrollbar{ width: 6px; }
+  #wallet-overview::-webkit-scrollbar-thumb{ background: var(--brand-border-soft); border-radius: 999px; }
+  #wallet-overview::-webkit-scrollbar-track{ background: rgba(2,6,23,0.12); }
+
+  /* Exceptions badge */
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    border: 1px solid var(--brand-border-soft);
+    background: rgba(2,6,23,0.35);
+    color: rgba(226,232,240,0.90);
+    white-space: nowrap;
+  }
+  .chip.bad{
+    border-color: rgba(239,68,68,0.55);
+    background: rgba(239,68,68,0.12);
+    color: rgba(254,226,226,0.95);
+  }
+  .chip.ok{
+    border-color: rgba(16,185,129,0.55);
+    background: rgba(16,185,129,0.12);
+    color: rgba(209,250,229,0.95);
+  }
+
+</style>
+
+{% if not user %}
+  <div class="mt-6 p-4 rounded-xl border border-slate-800 bg-slate-950/40">
+    <p class="text-slate-300">You’re not logged in. Click “Connect Wallet” in the header.</p>
+  </div>
+{% else %}
+
+{% set addr = user.address if user.address else user['address'] %}
+
+<div class="dash-shell">
+
+  <!-- Top: title + global actions -->
+  <div class="dash-top">
+    <div class="dash-title">
+      <h1>Issuer Control Plane</h1>
+      <p>Monitor, issue, and prove truth. This is the operator console for your truth objects — inventory, exceptions, and audit activity in one place.</p>
+    </div>
+
+    <div class="dash-actions">
+      <a class="dash-btn dash-btn-ghost" href="/spec/overview">Specs</a>
+      <a class="dash-btn dash-btn-ghost" href="/xertify">Open Creator</a>
+      <a class="dash-btn dash-btn-ghost" href="/verify">Verify</a>
+
+      <button class="dash-btn dash-btn-ghost"
+              hx-get="/profile/wallet-overview"
+              hx-target="#wallet-overview"
+              hx-swap="innerHTML">
+        Refresh wallet
+      </button>
+
+      <button class="dash-btn dash-btn-ghost"
+              hx-get="/profile/activity"
+              hx-target="#profile-activity"
+              hx-swap="innerHTML">
+        Refresh activity
+      </button>
+    </div>
+  </div>
+
+  <!-- Truth Health strip (client-side computed from rendered panels) -->
+  <div class="health-strip" aria-label="Truth health">
+    <div class="health-inner">
+      <div class="health-head">
+        <div>
+          <div class="k">Truth health</div>
+          <div class="s">A live operational snapshot of your inventory. (Counts update when panels load.)</div>
+        </div>
+        <div class="dash-muted">
+          Tip: use <span class="mono">Exceptions</span> tab to isolate non-OK truth objects.
+        </div>
+      </div>
+
+      <div class="health-grid">
+        <div class="health-pill">
+          <div class="label">Total</div>
+          <div class="value" id="kpi-total">—</div>
+          <div class="sub">All visible passes</div>
+        </div>
+        <div class="health-pill">
+          <div class="label">OK</div>
+          <div class="value" id="kpi-ok">—</div>
+          <div class="sub">Compliant / airworthy</div>
+        </div>
+        <div class="health-pill">
+          <div class="label">Needs attention</div>
+          <div class="value" id="kpi-attn">—</div>
+          <div class="sub">Recalled / overdue / failed</div>
+        </div>
+        <div class="health-pill">
+          <div class="label">Revoked</div>
+          <div class="value" id="kpi-revoked">—</div>
+          <div class="sub">Hard fail</div>
+        </div>
+        <div class="health-pill">
+          <div class="label">Updated 24h</div>
+          <div class="value" id="kpi-24h">—</div>
+          <div class="sub">Recent events</div>
+        </div>
+        <div class="health-pill">
+          <div class="label">Unanchored</div>
+          <div class="value" id="kpi-unanchored">—</div>
+          <div class="sub">Placeholder for on-chain anchors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="dash-grid">
+
+    <!-- 1) Identity -->
+    <div class="dash-card identity-tight">
+      <div class="dash-card-head">
+        <h2>Identity</h2>
+
+        <button class="expand-btn" type="button" onclick="toggleExpand(this)" title="Expand">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M9 3H3v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 21h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M21 21l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="dash-card-body">
+        <div class="compact-list">
+          <div class="row-card">
+            <div class="dash-muted">Issuer wallet</div>
+            <div class="dash-mono" style="margin-top:8px;">{{ addr }}</div>
+            <div class="dash-muted" style="margin-top:8px;">
+              This wallet is the authority surface for issuing and operating truth objects.
+            </div>
+          </div>
+
+          <div class="row-card">
+            <div class="dash-muted" style="margin-bottom:8px;">Display name</div>
+            <form hx-post="/profile/nickname" hx-target="#nick-status" style="display:flex; gap:10px; align-items:center;">
+              <input name="nickname" type="text"
+                     value="{{ profile.nickname or '' }}"
+                     placeholder="Choose your operator name"
+                     class="dash-input"
+                     style="flex:1; min-width: 180px;">
+              <button class="dash-btn" type="submit">Save</button>
+            </form>
+            <div id="nick-status" class="dash-muted" style="margin-top:8px;"></div>
+          </div>
+
+          <div class="row-card wallet-row">
+            <div class="dash-muted" style="margin-bottom:8px;">Wallet overview</div>
+            <div id="wallet-overview"
+                 hx-get="/profile/wallet-overview"
+                 hx-trigger="load"
+                 hx-target="this"
+                 hx-swap="innerHTML"
+                 class="dash-muted">
+              Loading…
+            </div>
+          </div>
+
+          <div class="row-card">
+            <div class="dash-muted">XRPL / anchoring</div>
+            <div class="dash-muted" style="margin-top:8px;">
+              XRPL is your issuance + ownership substrate. Proof bundles remain verifiable offline.
+              Optional anchoring (timestamp / tamper evidence) can be surfaced here when enabled.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 2) Pass inventory -->
+    <div class="dash-card">
+      <div class="dash-card-head" style="justify-content:space-between;">
+        <h2>Truth objects</h2>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span id="inv-status-chip" class="chip ok" title="Inventory status">OPERATIONAL</span>
+
+          <button class="expand-btn" type="button" onclick="toggleExpand(this)" title="Expand">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 3H3v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 21h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M21 21l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dash-card-body" style="padding: 12px 14px;">
+        <div class="inv-shell">
+
+          <div class="inv-topbar">
+            <div class="tabs" role="tablist" aria-label="Pass tabs">
+              <button id="tabCreated" class="tab is-active" type="button" onclick="showPassTab('created')">Created</button>
+              <button id="tabRelated" class="tab" type="button" onclick="showPassTab('related')">Related</button>
+              <button id="tabExceptions" class="tab" type="button" onclick="showPassTab('exceptions')">
+                Exceptions
+              </button>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="icon-btn" type="button" title="Search / filter" onclick="togglePassSearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+
+              <button class="dash-btn dash-btn-ghost" type="button" onclick="refreshPasses()">Refresh</button>
+            </div>
+          </div>
+
+          <!-- Search + Filters -->
+          <div id="passSearchBar" class="searchbar">
+            <input id="passSearchInput" class="dash-input"
+                   placeholder="Search by name, holder, template, id, status…"
+                   oninput="filterPassPanels()"
+                   style="flex:1; min-width: 220px;">
+
+            <select id="filterVertical" class="select" onchange="filterPassPanels()" title="Filter by vertical">
+              <option value="">All verticals</option>
+              <option value="pharma">pharma</option>
+              <option value="aviation">aviation</option>
+            </select>
+
+            <select id="filterVerdict" class="select" onchange="filterPassPanels()" title="Filter by verdict">
+              <option value="">All verdicts</option>
+              <option value="ok">ok</option>
+              <option value="airworthy">airworthy</option>
+              <option value="recalled">recalled</option>
+              <option value="maintenance_overdue">maintenance_overdue</option>
+              <option value="revoked">revoked</option>
+              <option value="expired">expired</option>
+              <option value="unknown">unknown</option>
+            </select>
+
+            <select id="filterLifecycle" class="select" onchange="filterPassPanels()" title="Filter by lifecycle state">
+              <option value="">All states</option>
+              <option value="live">live</option>
+              <option value="ready">ready</option>
+              <option value="revoked">revoked</option>
+            </select>
+
+            <button class="dash-btn dash-btn-ghost" type="button" onclick="clearPassSearch()">Clear</button>
+          </div>
+
+          <div id="passSearchHint" class="search-hint" style="display:none;">
+            Filters apply client-side to the currently loaded panel. Next step: server-side inventory query + status engine.
+          </div>
+
+          <!-- Panels -->
+          <div class="inv-scroll">
+            <div id="panelCreated"
+                 hx-get="/profile/passes/created"
+                 hx-trigger="load"
+                 hx-target="this"
+                 hx-swap="innerHTML">
+              <div class="dash-muted">Loading…</div>
+            </div>
+
+            <div id="panelRelated" style="display:none;"
+                 hx-get="/profile/passes/related"
+                 hx-trigger="revealed"
+                 hx-target="this"
+                 hx-swap="innerHTML">
+              <div class="dash-muted">Loading…</div>
+            </div>
+
+            <!-- Exceptions panel is a filtered view of whichever is active.
+                 We render it client-side by cloning visible items that look "non-ok". -->
+            <div id="panelExceptions" style="display:none;">
+              <div class="dash-muted" id="exceptionsHint">
+                Loading exceptions… (requires Created/Related to load first)
+              </div>
+              <div id="exceptionsList" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 3) Activity -->
+    <div class="dash-card">
+      <div class="dash-card-head">
+        <h2>Audit activity</h2>
+
+        <button class="expand-btn" type="button" onclick="toggleExpand(this)" title="Expand">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M9 3H3v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 21h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M21 21l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="dash-card-body" style="padding: 12px 14px;">
+        <div class="activity-shell">
+
+          <div class="activity-scroll">
+            <div id="profile-activity"
+                 hx-get="/profile/activity"
+                 hx-trigger="load"
+                 hx-target="this"
+                 hx-swap="innerHTML">
+              <div class="dash-muted">Loading…</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div class="dash-muted">
+              This log is your accountability trail: who asserted what, when, and under which policy.
+            </div>
+            <button class="dash-btn dash-btn-ghost"
+                    hx-get="/profile/activity"
+                    hx-target="#profile-activity"
+                    hx-swap="innerHTML">
+              Refresh
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 4) Operator actions -->
+    <div class="dash-card">
+      <div class="dash-card-head">
+        <h2>Operator actions</h2>
+
+        <button class="expand-btn" type="button" onclick="toggleExpand(this)" title="Expand">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M9 3H3v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 21h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M21 21l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="dash-card-body">
+        <div class="actions-grid">
+
+          <div class="action-card">
+            <div class="t">Issue truth objects</div>
+            <div class="d">
+              Create and manage passes (truth objects) for any vertical.
+              Your policy + schema define what “valid” means.
+            </div>
+            <div class="action-row">
+              <a class="dash-btn dash-btn-ghost" href="/xertify">Open Creator</a>
+              <a class="dash-btn dash-btn-ghost" href="/spec/overview">View Specs</a>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="t">Verify & share</div>
+            <div class="d">
+              Verification is public and offline-verifiable via proof bundles.
+              Use this to test partner verification flows.
+            </div>
+            <div class="action-row">
+              <a class="dash-btn dash-btn-ghost" href="/verify">Verify by ID</a>
+              <a class="dash-btn dash-btn-ghost" href="/spec/overview">Proof examples</a>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="t">Export inventory</div>
+            <div class="d">
+              Enterprise ops want exports. This is a placeholder hook for CSV/JSON exports
+              once the server endpoint is wired.
+            </div>
+            <div class="action-row">
+              <button class="dash-btn dash-btn-ghost" type="button" onclick="alert('Export is a placeholder hook. Next step: add /profile/export.csv or /profile/export.json');">
+                Export (placeholder)
+              </button>
+              <button class="dash-btn dash-btn-ghost" type="button" onclick="refreshPasses()">Refresh passes</button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="t">Exception handling</div>
+            <div class="d">
+              When truth fails (recall/overdue/expired/revoked), route operators to remediation:
+              view verdict, view proof, see events, fix upstream facts.
+            </div>
+            <div class="action-row">
+              <button class="dash-btn dash-btn-ghost" type="button" onclick="showPassTab('exceptions')">Open Exceptions</button>
+              <button class="dash-btn dash-btn-ghost" type="button" onclick="togglePassSearch(true)">Search + filter</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row-card" style="margin-top:12px;">
+          <div class="dash-muted">Public contract</div>
+          <div class="dash-muted" style="margin-top:8px; line-height:1.6;">
+            <span class="mono">/spec/overview</span> •
+            <span class="mono">/spec/&lt;vertical&gt;.json</span> •
+            <span class="mono">/v/&lt;pass_id&gt;/proof.json</span> •
+            <span class="mono">/v/&lt;pass_id&gt;/verdict</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // -------------------------
+  // Tabs / panels
+  // -------------------------
+  function showPassTab(which){
+    const createdTab = document.getElementById("tabCreated");
+    const relatedTab = document.getElementById("tabRelated");
+    const exceptionsTab = document.getElementById("tabExceptions");
+
+    const createdPanel = document.getElementById("panelCreated");
+    const relatedPanel = document.getElementById("panelRelated");
+    const exceptionsPanel = document.getElementById("panelExceptions");
+
+    if (!createdTab || !relatedTab || !exceptionsTab || !createdPanel || !relatedPanel || !exceptionsPanel) return;
+
+    // reset
+    createdTab.classList.remove("is-active");
+    relatedTab.classList.remove("is-active");
+    exceptionsTab.classList.remove("is-active");
+
+    createdPanel.style.display = "none";
+    relatedPanel.style.display = "none";
+    exceptionsPanel.style.display = "none";
+
+    if (which === "related"){
+      relatedTab.classList.add("is-active");
+      relatedPanel.style.display = "block";
+      if (window.htmx) window.htmx.trigger(relatedPanel, "revealed");
+    } else if (which === "exceptions"){
+      exceptionsTab.classList.add("is-active");
+      exceptionsPanel.style.display = "block";
+      buildExceptions();
+    } else {
+      createdTab.classList.add("is-active");
+      createdPanel.style.display = "block";
+      if (window.htmx) window.htmx.trigger(createdPanel, "load");
+    }
+
+    filterPassPanels();
+    updateKPIs();
+  }
+
+  function refreshPasses(){
+    const createdPanel = document.getElementById("panelCreated");
+    const relatedPanel = document.getElementById("panelRelated");
+    if (!createdPanel || !relatedPanel) return;
+
+    if (window.htmx){
+      window.htmx.trigger(createdPanel, "load");
+      // related will refresh when opened; if visible, refresh now:
+      if (relatedPanel.style.display !== "none"){
+        window.htmx.trigger(relatedPanel, "revealed");
+      }
+    }
+    setTimeout(() => { buildExceptions(); updateKPIs(); }, 450);
+  }
+
+  // -------------------------
+  // Search / filters
+  // -------------------------
+  function togglePassSearch(forceOpen){
+    const bar = document.getElementById("passSearchBar");
+    const hint = document.getElementById("passSearchHint");
+    const inp = document.getElementById("passSearchInput");
+
+    if (!bar) return;
+    const open = (typeof forceOpen === "boolean") ? forceOpen : !bar.classList.contains("is-open");
+
+    bar.classList.toggle("is-open", open);
+    if (hint) hint.style.display = open ? "block" : "none";
+
+    if (open && inp) setTimeout(() => inp.focus(), 50);
+    if (!open) clearPassSearch();
+  }
+
+  function clearPassSearch(){
+    const inp = document.getElementById("passSearchInput");
+    const v = document.getElementById("filterVertical");
+    const verdict = document.getElementById("filterVerdict");
+    const life = document.getElementById("filterLifecycle");
+
+    if (inp) inp.value = "";
+    if (v) v.value = "";
+    if (verdict) verdict.value = "";
+    if (life) life.value = "";
+    filterPassPanels();
+    buildExceptions();
+    updateKPIs();
+  }
+
+  function getActivePanel(){
+    const relatedPanel = document.getElementById("panelRelated");
+    const createdPanel = document.getElementById("panelCreated");
+    const exceptionsPanel = document.getElementById("panelExceptions");
+    if (exceptionsPanel && exceptionsPanel.style.display !== "none") return exceptionsPanel;
+    if (relatedPanel && relatedPanel.style.display !== "none") return relatedPanel;
+    return createdPanel;
+  }
+
+  // Heuristic: attempt to detect tokens in the rendered row text.
+  // This works with your current server HTML even without adding data attributes.
+  function matchesFilters(el, q, vertical, verdict, lifecycle){
+    const txt = (el.innerText || "").toLowerCase();
+
+    if (q && !txt.includes(q)) return false;
+
+    if (vertical){
+      if (!txt.includes(("vertical").toLowerCase()) && !txt.includes(vertical)) {
+        // try simpler: vertical word itself
+        if (!txt.includes(vertical)) return false;
+      } else {
+        if (!txt.includes(vertical)) return false;
+      }
+    }
+
+    if (verdict){
+      if (!txt.includes(verdict)) return false;
+    }
+
+    if (lifecycle){
+      // common lifecycle tokens: live/ready/revoked
+      if (!txt.includes(lifecycle)) return false;
+    }
+
+    return true;
+  }
+
+  function filterPassPanels(){
+    const q = (document.getElementById("passSearchInput")?.value || "").trim().toLowerCase();
+    const vertical = (document.getElementById("filterVertical")?.value || "").trim().toLowerCase();
+    const verdict = (document.getElementById("filterVerdict")?.value || "").trim().toLowerCase();
+    const lifecycle = (document.getElementById("filterLifecycle")?.value || "").trim().toLowerCase();
+
+    const createdPanel = document.getElementById("panelCreated");
+    const relatedPanel = document.getElementById("panelRelated");
+    if (!createdPanel || !relatedPanel) return;
+
+    const activePanel = getActivePanel();
+
+    // If we're on exceptions, filter the exceptions list instead
+    if (activePanel && activePanel.id === "panelExceptions"){
+      const list = document.getElementById("exceptionsList");
+      if (!list) return;
+      Array.from(list.children || []).forEach(k => {
+        k.style.display = matchesFilters(k, q, vertical, verdict, lifecycle) ? "" : "none";
+      });
+      return;
+    }
+
+    const kids = Array.from(activePanel.children || []);
+    kids.forEach(k => {
+      k.style.display = matchesFilters(k, q, vertical, verdict, lifecycle) ? "" : "none";
+    });
+
+    buildExceptions();
+    updateKPIs();
+  }
+
+  // -------------------------
+  // Exceptions (client-side)
+  // -------------------------
+  function looksNonOk(text){
+    const t = (text || "").toLowerCase();
+    // treat these as "attention" states
+    const badTokens = [
+      "recalled", "maintenance_overdue", "overdue", "revoked", "expired",
+      "cold_chain_failed", "temp_breach", "not_installed", "removed", "unknown", "fail", "failed"
+    ];
+    // if we find "status: ok" or "airworthy" keep as ok
+    if (t.includes("status") && (t.includes(" ok") || t.includes("airworthy"))) return false;
+    return badTokens.some(x => t.includes(x));
+  }
+
+  function buildExceptions(){
+    const exceptionsPanel = document.getElementById("panelExceptions");
+    const list = document.getElementById("exceptionsList");
+    const hint = document.getElementById("exceptionsHint");
+    if (!exceptionsPanel || !list || !hint) return;
+
+    // choose source as created if loaded; else related if loaded; else active
+    const createdPanel = document.getElementById("panelCreated");
+    const relatedPanel = document.getElementById("panelRelated");
+
+    const createdKids = createdPanel ? Array.from(createdPanel.children || []) : [];
+    const relatedKids = relatedPanel ? Array.from(relatedPanel.children || []) : [];
+
+    // If neither loaded, show hint
+    const hasAny = createdKids.length + relatedKids.length > 0;
+    if (!hasAny){
+      hint.textContent = "Loading exceptions… (open Created or Related first so inventory can load)";
+      list.innerHTML = "";
+      return;
+    }
+
+    hint.textContent = "Non-OK truth objects (heuristic from rendered status text). Use filters to refine.";
+
+    // Collect non-ok elements (clone nodes for display)
+    const bad = [];
+    createdKids.forEach(el => { if (looksNonOk(el.innerText || "")) bad.push(el); });
+    relatedKids.forEach(el => { if (looksNonOk(el.innerText || "")) bad.push(el); });
+
+    // Render
+    list.innerHTML = "";
+    if (!bad.length){
+      const okDiv = document.createElement("div");
+      okDiv.className = "row-card";
+      okDiv.innerHTML = `
+        <div class="dash-muted">No exceptions detected.</div>
+        <div class="dash-muted" style="margin-top:6px;">If you expect failures, ensure the rendered pass cards include status text (e.g. recalled / overdue).</div>
+      `;
+      list.appendChild(okDiv);
+      return;
+    }
+
+    bad.slice(0, 200).forEach(el => {
+      const wrap = document.createElement("div");
+      wrap.appendChild(el.cloneNode(true));
+      // ensure clones have visible spacing
+      list.appendChild(wrap.firstElementChild);
+    });
+  }
+
+  // -------------------------
+  // KPIs (best-effort client-side)
+  // -------------------------
+  function updateKPIs(){
+    const totalEl = document.getElementById("kpi-total");
+    const okEl = document.getElementById("kpi-ok");
+    const attnEl = document.getElementById("kpi-attn");
+    const revokedEl = document.getElementById("kpi-revoked");
+    const h24El = document.getElementById("kpi-24h");
+    const unanchoredEl = document.getElementById("kpi-unanchored");
+
+    const createdPanel = document.getElementById("panelCreated");
+    const relatedPanel = document.getElementById("panelRelated");
+    if (!totalEl || !okEl || !attnEl || !revokedEl || !h24El || !unanchoredEl) return;
+    if (!createdPanel || !relatedPanel) return;
+
+    const kids = [
+      ...Array.from(createdPanel.children || []),
+      ...Array.from(relatedPanel.children || [])
+    ];
+
+    if (!kids.length){
+      totalEl.textContent = "—";
+      okEl.textContent = "—";
+      attnEl.textContent = "—";
+      revokedEl.textContent = "—";
+      h24El.textContent = "—";
+      unanchoredEl.textContent = "—";
+      return;
+    }
+
+    const visibleKids = kids.filter(el => el && el.style && el.style.display !== "none");
+
+    let ok = 0, attn = 0, revoked = 0, h24 = 0, unanchored = 0;
+
+    const now = Date.now();
+    visibleKids.forEach(el => {
+      const t = (el.innerText || "").toLowerCase();
+
+      const isRevoked = t.includes("revoked") || t.includes("status: revoked") || t.includes(" state: revoked");
+      if (isRevoked) revoked++;
+
+      const isOk = (t.includes("status") && t.includes(" ok")) || t.includes("airworthy") || t.includes("status: airworthy");
+      const isBad = looksNonOk(t);
+
+      if (isOk && !isBad) ok++;
+      else if (isBad) attn++;
+
+      // Updated 24h heuristic: look for ISO date strings in content and parse first match
+      const isoMatch = (el.innerText || "").match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+      if (isoMatch){
+        const ms = Date.parse(isoMatch[0] + "Z".replace("ZZ","Z"));
+        if (!isNaN(ms) && (now - ms) <= (24*60*60*1000)) h24++;
+      }
+
+      // Unanchored placeholder: detect "anchored: false" or "anchored false"
+      if (t.includes("anchored") && (t.includes("false") || t.includes("not anchored"))) unanchored++;
+    });
+
+    totalEl.textContent = String(visibleKids.length);
+    okEl.textContent = String(ok);
+    attnEl.textContent = String(attn);
+    revokedEl.textContent = String(revoked);
+    h24El.textContent = String(h24);
+    unanchoredEl.textContent = String(unanchored);
+
+    // Update inventory chip
+    const chip = document.getElementById("inv-status-chip");
+    if (chip){
+      if (attn > 0 || revoked > 0){
+        chip.classList.remove("ok");
+        chip.classList.add("bad");
+        chip.textContent = "ATTENTION";
+      } else {
+        chip.classList.remove("bad");
+        chip.classList.add("ok");
+        chip.textContent = "OPERATIONAL";
+      }
+    }
+  }
+
+  // Update KPIs after HTMX swaps in inventory panels
+  document.body.addEventListener("htmx:afterSwap", (e) => {
+    const tgt = e.target;
+    if (!tgt) return;
+
+    if (tgt.id === "panelCreated" || tgt.id === "panelRelated"){
+      // apply active filters immediately
+      filterPassPanels();
+      // rebuild exceptions + KPIs
+      setTimeout(() => { buildExceptions(); updateKPIs(); }, 60);
+    }
+  });
+
+  // Initial KPIs after load
+  window.addEventListener("load", () => {
+    setTimeout(() => { buildExceptions(); updateKPIs(); }, 650);
+  });
+
+  // -------------------------
+  // Expand / collapse
+  // -------------------------
+  function toggleExpand(btn){
+    const grid = document.querySelector(".dash-grid");
+    const card = btn.closest(".dash-card");
+    if (!grid || !card) return;
+
+    const expanding = !card.classList.contains("is-expanded");
+
+    // clear all
+    document.querySelectorAll(".dash-card.is-expanded").forEach(c => c.classList.remove("is-expanded"));
+
+    if (expanding){
+      grid.classList.add("is-expanded");
+      card.classList.add("is-expanded");
+      btn.title = "Collapse";
+    } else {
+      grid.classList.remove("is-expanded");
+      btn.title = "Expand";
+    }
+  }
+
+  // ESC to exit expanded mode
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const grid = document.querySelector(".dash-grid");
+    if (!grid?.classList.contains("is-expanded")) return;
+    grid.classList.remove("is-expanded");
+    document.querySelectorAll(".dash-card.is-expanded").forEach(c => c.classList.remove("is-expanded"));
+  });
+
+</script>
+
+{% endif %}
+{% endblock %}

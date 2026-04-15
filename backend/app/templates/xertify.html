@@ -1,0 +1,4145 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<!-- ========================================================= -->
+<!--  XERTIFY — GLOBAL DNFT STUDIO                             -->
+<!--  SINGLE FILE — Sidebar Verticals + DNFT Designer + Minting -->
+<!-- ========================================================= -->
+
+<style>
+/* ------------------------------------------- */
+/*  GLOBAL THEME — Aurora + Midnight Titanium  */
+/* ------------------------------------------- */
+/* ------------------------------------------- */
+/*  GLOBAL THEME — Aurora + Midnight Titanium  */
+/* ------------------------------------------- */
+/* Use global brand tokens from base.html */
+:root{
+  --xertify-soft: rgba(148,163,253,.18); /* optional local helper for subtle highlights */
+}
+
+
+
+/* Docking behavior controlled by your footer script */
+.xertify-sidebar.is-docked{
+  position: absolute !important;
+}
+
+.xertify-wrap{
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+
+  padding: 0 0 24px 0;
+}
+
+.xertify-sidebar{
+  position: sticky;
+  top: 92px;
+  height: calc(100vh - 112px);
+  overflow: auto;
+  z-index: 30;
+
+  margin: 0;
+  left: auto;
+
+  border-radius: 0 14px 14px 0;
+
+  background: linear-gradient(to bottom, rgba(15,23,42,0.92), rgba(2,6,23,0.96));
+  border: 1px solid rgba(148,163,253,0.10);
+  padding: 14px;
+  box-shadow: 0 10px 35px rgba(2,6,23,0.55);
+}
+
+.xertify-main{
+  margin: 0;
+  max-width: none;
+  padding: 0 48px;
+  min-width: 0;
+}
+
+
+
+.xertify-sidebar h2 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgba(226,232,240,0.74);
+  margin: 2px 0 10px;
+}
+
+.xertify-vertical-btn {
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: rgba(30,41,59,0.40);
+  border: 1px solid rgba(148,163,253,0.14);
+  color: rgb(226 232 240 / 92%);
+  transition: transform .16s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+  margin-bottom: 8px;
+  transform: translateY(0);
+}
+
+.xertify-vertical-btn:hover {
+  background: rgba(51,65,85,0.55);
+  border-color: rgba(148,163,253,0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(2,6,23,0.35);
+}
+
+.xertify-vertical-btn:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+
+/* =============================== */
+/*  Sidebar Categories (Phase B)   */
+/* =============================== */
+
+.xertify-cat {
+  margin-top: 14px;
+}
+
+.xertify-cat:first-child {
+  margin-top: 0;
+}
+
+.xertify-cat-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin: 2px 0 10px;
+}
+
+.xertify-cat-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgba(226,232,240,0.74);
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+
+.xertify-cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(2,6,23,0.55);
+}
+
+.xertify-cat-sub {
+  font-size: 10px;
+  color: rgba(148,163,253,0.55);
+}
+
+/* category dot colors */
+.dot-access    { background: rgba(168,85,247,1); }  /* purple */
+.dot-membership{ background: rgba(59,130,246,1); }  /* blue */
+.dot-identity  { background: rgba(16,185,129,1); }  /* green */
+.dot-rights    { background: rgba(245,158,11,1); }  /* amber */
+.dot-ops       { background: rgba(239,68,68,1); }   /* red */
+.dot-future    { background: rgba(148,163,253,1); } /* indigo-ish */
+.dot-advanced  { background: rgba(226,232,240,0.85); } /* slate */
+
+/* a slightly tighter button spacing in sidebar */
+.xertify-sidebar .xertify-vertical-btn{
+  margin-bottom: 6px;
+}
+
+
+.xertify-vertical-btn.active {
+  background: var(--brand-bg);
+  border-color: var(--brand-border);
+  color: var(--brand-ink);
+  box-shadow: 0 0 0 1px var(--brand-bg) inset;
+}
+
+
+
+
+
+/* ----------------------------- */
+/*  HERO PREVIEW (top)           */
+/* ----------------------------- */
+.xertify-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.xertify-preview-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgb(148 163 253 / 55%);
+  margin-bottom: 8px;
+}
+
+/* Balanced frame (no lopsided shadow) */
+.xertify-preview-frame {
+  width: 512px;
+  height: 512px;
+  padding: 10px;
+  border-radius: 22px;
+  background: rgba(2,6,23,0.55);
+  border: 1px solid rgba(148,163,253,0.18);
+  box-shadow:
+    0 0 0 1px rgba(148,163,253,0.10) inset,
+    0 12px 40px rgba(2,6,23,0.55),
+    0 0 24px rgba(59,130,246,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xertify-preview-inner {
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------- */
+/*  FORM AREA (below preview)                    */
+/* --------------------------------------------- */
+.xertify-form-section{
+  margin: 6px 0 0;
+}
+
+
+.xertify-form-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgb(226 232 240 / 100%);
+  margin-bottom: 10px;
+}
+
+/* Bigger “form feel” */
+.xertify-card {
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,253,0.14);
+  background: linear-gradient(to bottom right, rgba(2,6,23,0.78), rgba(15,23,42,0.60));
+  box-shadow: 0 16px 48px rgba(2,6,23,0.55);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.xertify-card::after {
+    content: "";
+    display: block;
+    height: 6px;
+}
+
+.xertify-grid {
+  display: grid;
+grid-template-columns: 1.2fr 560px; /* gives room so 512px preview isn't eaten by padding/borders */
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* Mobile */
+@media (max-width: 980px) {
+  .xertify-main { padding-left: 16px; padding-right: 16px; max-width: none; }
+  .xertify-sidebar { position: static; width: auto; height: auto; margin: 0 0 14px 0; }
+  .xertify-grid { grid-template-columns: 1fr; }
+  .xertify-preview-frame { width: 100%; height: auto; aspect-ratio: 1/1; }
+}
+
+/* --------------------------------------------- */
+/*  INPUTS — blue + high contrast                */
+/* --------------------------------------------- */
+.xertify-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(226 232 240 / 92%);
+}
+
+.xertify-help {
+  font-size: 10px;
+  color: rgb(148 163 253 / 60%);
+  margin-top: 2px;
+}
+
+.xertify-input, .xertify-select, .xertify-textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--brand-border);
+  background: rgba(2,6,23,0.55);
+  color: rgb(241 245 249 / 100%);
+  padding: 10px 12px;
+  outline: none;
+  transition: 0.15s ease;
+  box-shadow: 0 0 0 1px var(--brand-bg) inset;
+}
+
+.xertify-input:focus, .xertify-select:focus, .xertify-textarea:focus {
+  border-color: var(--brand-border);
+  box-shadow: 0 0 0 3px var(--brand-ring);
+}
+
+/* Sidebar search */
+.xertify-sidebar-search{
+  margin: 6px 0 12px 0;
+}
+.xertify-input-compact{
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+
+
+.xertify-textarea { resize: vertical; }
+
+.xertify-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.xertify-row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.xertify-btn {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--brand-border);
+  background: var(--brand-bg);
+  color: var(--brand-ink);
+  transition: 0.15s ease;
+}
+.xertify-btn:hover { background: var(--brand-bg-2); }
+
+
+.xertify-btn-ghost {
+  border: 1px solid var(--brand-border-soft);
+  background: rgba(2,6,23,0.35);
+  color: rgba(226,232,240,0.92);
+}
+
+
+
+.xertify-btn-emerald {
+  border-color: rgba(16,185,129,0.65);
+  background: rgba(16,185,129,0.18);
+  color: rgb(209 250 229 / 100%);
+}
+
+.xertify-btn-amber {
+  border-color: rgba(245,158,11,0.65);
+  background: rgba(245,158,11,0.16);
+  color: rgb(254 243 199 / 100%);
+}
+
+/* --------------------------------------------- */
+/*  PASS PREVIEW — proper layout + layers        */
+/* --------------------------------------------- */
+.nft-pass-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(148,163,253,0.18);
+  background: #020617;
+  color: #f8fafc;
+  box-shadow:
+    0 0 0 1px rgba(148,163,253,0.12) inset,
+    0 10px 28px rgba(2,6,23,0.55),
+    0 0 28px rgba(168,85,247,0.22); /* luxury glow */
+}
+
+.nft-pass-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05);
+}
+
+.nft-pass-overlay {
+  position: absolute;
+  inset: 0;
+  
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 45%),
+    radial-gradient(circle at bottom right, rgba(168,85,247,0.18), transparent 45%),
+    linear-gradient(to bottom, rgba(2,6,23,0.10), rgba(2,6,23,0.65));
+}
+
+
+
+.nft-pass-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 17px;
+  gap: 12px;
+}
+
+.nft-pass-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nft-pass-brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.nft-pass-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(148,163,253,0.18);
+  overflow: hidden;
+  flex: 0 0 auto;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.nft-pass-brandtext { min-width: 0; }
+
+.nft-pass-brand-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nft-pass-brand-sub {
+  font-size: 11px;
+  opacity: 0.70;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hide subtitle under hotel name + bottom-right meta area (your preference) */
+.nft-pass-brand-sub { display: none !important; }
+.nft-pass-meta { display: none !important; }
+
+.nft-pass-leftstack{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.nft-pass-mid{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0;
+  padding-top: 4px;
+}
+
+.nft-pass-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.nft-pass-line {
+  font-size: 13px;
+  opacity: 0.90;
+}
+
+.nft-pass-notes {
+  font-size: 12px;
+  opacity: 0.85;
+  line-height: 1.25;
+  max-height: 4.2em;
+  overflow: hidden;
+}
+
+.nft-pass-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Premium QR frame */
+.nft-pass-qr{
+  width: 104px;
+  height: 104px;
+  border-radius: 18px;
+  padding: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148,163,253,0.22);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06) inset,
+    0 10px 24px rgba(2,6,23,0.55);
+}
+
+[data-role="preview-qr-inner"]{
+  width: 96px !important;
+  height: 96px !important;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.96);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* html2canvas text clipping fixes */
+.nft-pass-brand-name,
+.nft-pass-title,
+.nft-pass-line,
+.nft-pass-notes {
+  line-height: 1.4 !important;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  transform: translateY(0.5px);
+}
+
+.nft-pass-notes { line-height: 1.35 !important; }
+
+.nft-pass-top,
+.nft-pass-mid,
+.nft-pass-bottom { align-items: stretch !important; }
+.nft-pass-brand { align-items: flex-start !important; }
+
+.nft-pass-guestphoto{
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,253,0.22);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+  overflow: hidden;
+  flex: 0 0 auto;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none;
+}
+
+/* Optional blank state */
+.blank-preview .nft-pass-title,
+.blank-preview .nft-pass-line,
+.blank-preview .nft-pass-notes { opacity: 0.35; }
+
+#xertify-preview-mount{
+  width:100%;
+  height:100%;
+  display:flex;
+}
+
+#xertify-preview-mount > .nft-pass-preview{
+  width:100%;
+  height:100%;
+}
+
+/* =============================== */
+/*  BATCH PREVIEW MODAL            */
+/* =============================== */
+.xertify-modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.72);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.xertify-modal{
+  width: min(1100px, 96vw);
+  max-height: min(82vh, 900px);
+  background: rgba(2,6,23,0.92);
+  border: 1px solid rgba(148,163,253,0.18);
+  border-radius: 18px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.55);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.xertify-modal-header{
+  padding: 12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148,163,253,0.12);
+}
+
+.xertify-modal-title{
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(226,232,240,0.92);
+}
+
+.xertify-modal-sub{
+  font-size: 11px;
+  color: rgba(148,163,253,0.70);
+  margin-top: 2px;
+}
+
+.xertify-modal-body{
+  padding: 14px;
+  overflow: auto;
+}
+
+.xertify-preview-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.xertify-preview-card{
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,253,0.14);
+  background: rgba(15,23,42,0.45);
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
+}
+
+.xertify-preview-thumb{
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: rgba(2,6,23,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position: relative;
+}
+
+.xertify-preview-thumb img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+}
+
+.xertify-pill{
+  position:absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(2,6,23,0.70);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(241,245,249,0.95);
+}
+
+.xertify-modal-footer{
+  padding: 12px 14px;
+  border-top: 1px solid rgba(148,163,253,0.12);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.xertify-hidden-render{
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  width: 512px;
+  height: 512px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* =============================== */
+/*  Validation UI                  */
+/* =============================== */
+.xertify-err{
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(248,113,113,0.95);
+  display: none;
+}
+
+.xertify-input.is-invalid,
+.xertify-select.is-invalid,
+.xertify-textarea.is-invalid{
+  border-color: rgba(248,113,113,0.85) !important;
+  box-shadow: 0 0 0 3px rgba(248,113,113,0.18) !important;
+}
+
+/* =============================== */
+/*  Flip (metadata)                */
+/* =============================== */
+.xertify-flipwrap{
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+}
+
+.xertify-flip{
+  position: relative;
+  width: 100%;
+  min-height: 520px; /* stable */
+  transform-style: preserve-3d;
+  transition: transform .55s ease;
+}
+
+.xertify-flip.is-flipped{ transform: rotateY(180deg); }
+
+.xertify-flip-face{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.xertify-flip-back{ transform: rotateY(180deg); }
+
+/* =============================== */
+/*  Step 2.3 — compact branding UI */
+/* =============================== */
+.xertify-branding-row{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.xertify-upload-mini{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.xertify-upload-mini .xertify-btn{
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+.xertify-upload-mini .statusline{
+  font-size: 10px;
+  color: rgba(148,163,253,0.70);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+
+
+.xertify-label{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(226,232,240,0.72);
+}
+ 
+/* =============================== */
+/*  Collapsible arrows (FIXED)     */
+/* =============================== */
+.xertify-collapse-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* hide the default disclosure marker */
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+
+.xertify-chevron{
+  display:inline-block;
+  width: 14px;
+  text-align:center;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(148,163,253,0.85); /* visible */
+  opacity: 1;
+  transition: transform .25s ease;
+  transform: rotate(0deg);
+}
+
+/* rotate when open */
+details[open] > summary .xertify-chevron{
+  transform: rotate(180deg);
+}
+
+/* =============================== */
+/*  RIGHT COLUMN: fixed 512 preview + controls under it */
+/* =============================== */
+.xertify-rightcol{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.xertify-preview-fixed{
+  width: 512px;
+  height: 512px;
+  margin: 0 auto;              /* centers inside right column */
+}
+
+/* make the flip container truly fill the 512x512 box */
+.xertify-preview-fixed .xertify-flipwrap,
+.xertify-preview-fixed .xertify-flip,
+.xertify-preview-fixed .xertify-flip-face{
+  width: 100%;
+  height: 100%;
+  min-height: 0 !important;
+}
+
+/* The card under the preview (where Branding/Colors/flags go) */
+.xertify-under-preview{
+  width: 512px;
+  margin: 0 auto;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,253,0.12);
+  background: rgba(2,6,23,0.35);
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* compact color inputs */
+.xertify-color-compact{
+  padding: 2px !important;
+  height: 30px !important;
+  border-radius: 10px !important;
+}
+
+/* compact selects to match */
+.xertify-select-compact{
+  padding: 6px 10px !important;
+  height: 30px !important;
+  border-radius: 10px !important;
+}
+
+/* make the chevron ALWAYS visible */
+.xertify-chevron{
+  font-weight: 900;
+  font-size: 14px;
+  color: rgba(226,232,240,0.95) !important;
+}
+
+/* Hide the default disclosure marker */
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+
+/* Rotate chevron when open */
+details[open] > summary .xertify-chevron{
+  transform: rotate(180deg);
+}
+
+/* Show cond-actions only when the details is open (CSS-only = reliable) */
+details .cond-actions{ display:none; }
+details[open] .cond-actions{ display:block; }
+
+/* OPTIONAL: keep the mint button visible even when scrolling left column */
+.xertify-mintbar{
+  position: sticky;
+  bottom: 10px;
+  z-index: 5;
+  padding-top: 10px;
+  background: linear-gradient(to top, rgba(2,6,23,0.95), rgba(2,6,23,0.0));
+}
+
+/* -------------------------------------------------- */
+/*  Flip: make only the visible face clickable        */
+/* -------------------------------------------------- */
+.xertify-flip-face{
+  pointer-events: none;         /* default: nothing clickable */
+}
+
+.xertify-flip:not(.is-flipped) .xertify-flip-face:not(.xertify-flip-back){
+  pointer-events: auto;         /* front is clickable when NOT flipped */
+}
+
+.xertify-flip.is-flipped .xertify-flip-back{
+  pointer-events: auto;         /* back is clickable when flipped */
+}
+
+.xertify-date-wrap{
+  position: relative;
+  width: 100%;
+}
+
+.xertify-input-date{
+  padding-right: 44px;
+}
+
+.xertify-date-btn{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,253,0.20);
+  background: rgba(2,6,23,0.35);
+  color: rgba(226,232,240,0.92);
+  cursor: pointer;
+  padding: 6px 10px;
+  font-size: 14px;
+  line-height: 1;
+}
+.xertify-date-btn:hover{
+  background: rgba(2,6,23,0.52);
+}
+
+/* =============================== */
+/* Template-driven fields (Phase C) */
+/* =============================== */
+.xertify-fieldgrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 900px){
+  .xertify-fieldgrid{ grid-template-columns: 1fr; }
+}
+.xertify-fieldlabel{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(148,163,253,0.75);
+  margin-bottom: 6px;
+}
+.xertify-required{
+  color: rgba(168,85,247,0.95);
+  margin-left: 6px;
+}
+
+
+
+/* Top-right action inside the pass preview */
+.pass-top-actions{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+}
+
+/* Slightly tighter button for the preview corner */
+.pass-top-actions .xertify-btn{
+  padding: 7px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+
+</style>
+
+<div class="xertify-wrap">
+
+  <!-- Sidebar — Verticals (THIS is your "business preset" now) -->
+ <!-- Sidebar — Templates (Registry Driven) -->
+<aside class="xertify-sidebar">
+
+  <!-- Template search -->
+  <div class="xertify-sidebar-search">
+    <input
+      id="xertifyTemplateSearch"
+      class="xertify-input xertify-input-compact"
+      type="text"
+      placeholder="Search templates…"
+      autocomplete="off"
+    />
+  </div>
+
+  {# ------------------------------
+     Pull templates from registry
+     template_registry is passed from backend route
+     ------------------------------ #}
+
+
+
+
+
+
+
+
+
+
+  {# ===============================
+     DOMAIN REGISTRY SIDEBAR
+     (replaces Engine Pack + category buckets)
+     =============================== #}
+
+  {% set domreg = domain_registry or {} %}
+  {% set domains = domreg.get('domains', []) %}
+
+  {% set domain_dot = {
+    'supply_chain': 'dot-rights',
+    'access': 'dot-access',
+    'membership': 'dot-membership',
+    'identity': 'dot-identity',
+    'governance': 'dot-ops'
+  } %}
+
+  {% for d in domains %}
+    <div class="xertify-cat">
+      <div class="xertify-cat-head">
+        <div class="xertify-cat-title">
+          <span class="xertify-cat-dot {{ domain_dot.get(d.domain_id, 'dot-future') }}"></span>
+          <span>{{ d.label or d.domain_id }}</span>
+        </div>
+        <div class="xertify-cat-sub">{{ d.description or '' }}</div>
+      </div>
+
+      {% for t in (d.templates or []) %}
+        <button
+  data-xertify-product="{{ t.template_id }}"
+  data-domain-id="{{ d.domain_id }}"
+  class="xertify-vertical-btn"
+  data-vertical-id="{{ t.vertical_id }}"
+  title="{{ t.label or '' }}">
+  {{ t.label or t.template_id }}
+</button>
+
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+
+
+
+ 
+
+
+  <hr style="border:0;border-top:1px solid rgba(148,163,253,0.12); margin: 12px 0;" />
+
+  <div class="xertify-cat">
+    <div class="xertify-cat-head">
+      <div class="xertify-cat-title">
+        <span class="xertify-cat-dot dot-advanced"></span>
+        <span>Advanced</span>
+      </div>
+      <div class="xertify-cat-sub">Custom / Bespoke</div>
+    </div>
+
+    <button data-xertify-product="custom" class="xertify-vertical-btn">
+      Custom / Bespoke
+    </button>
+  </div>
+
+</aside>
+
+
+
+  <!-- Main -->
+  <main class="xertify-main">
+
+ 
+    <!-- DESIGNER -->
+    <div class="xertify-form-section">
+  <div id="xertify-designer-root"></div>
+</div>
+
+
+  </main>
+</div>
+
+<!-- ========================================================= -->
+<!--  HELPERS + SHIMS                                          -->
+<!-- ========================================================= -->
+<script>
+/* Small helper for HTML templating */
+function el(html) {
+  const tpl = document.createElement("template");
+  tpl.innerHTML = html.trim();
+  return tpl.content.firstElementChild;
+}
+
+/* Component registry */
+const COMPONENTS = {};
+function def(cfg) { return cfg; }
+
+/* Wallet + QR modal shims */
+if (typeof window.wallet === "undefined") window.wallet = {};
+var wallet = window.wallet;
+
+if (typeof window.openQrModal !== "function") {
+  window.openQrModal = function (qrPng, uuid, deeplink, onDone) {
+    if (deeplink) window.open(deeplink, "_blank");
+    else alert("XUMM deeplink unavailable.");
+    if (typeof onDone === "function") onDone();
+  };
+}
+
+/* XERTIFY global */
+if (!window.XERTIFY) window.XERTIFY = {};
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.__USER__ = {
+    address: "{{ (user.address if user and user.address else '') }}"
+  };
+</script>
+
+
+<script>
+  // Server-provided Template Registry (templates.json)
+  window.__TEMPLATE_REGISTRY__ = {{ (template_registry or {})|tojson }};
+</script>
+
+<script>
+  // Server-provided Domain Registry (/studio/domains)
+  window.__DOMAIN_REGISTRY__ = {{ (domain_registry or {})|tojson }};
+</script>
+
+
+
+
+
+
+<script>
+function syncCustodyUI() {
+  const cb = document.getElementById("custodySelfHeld");
+  if (!cb) return;
+
+  // Store choice globally for metadata builder
+  window.__CUSTODY_MODE__ = cb.checked ? "self" : "custodial";
+}
+</script>
+
+
+
+
+
+
+<!-- ========================================================= -->
+<!--  NFT.DESIGNER — CLEAN UI + FULL WORKING LOGIC              -->
+<!--  - Vertical sidebar drives presets                          -->
+<!--  - Upload logo + background (URL or upload)                 -->
+<!--  - Primary/accent actually apply                             -->
+<!--  - Mint button works for single or batch                     -->
+<!-- ========================================================= -->
+<script>
+COMPONENTS['NFT.Designer'] = def({
+  render: c => {
+
+    // ---- default props (safe) ----
+    c.props = c.props || {};
+    if (!Array.isArray(c.props.batch_rows)) c.props.batch_rows = [];
+
+    // ---- conditions (Phase 3) ----
+if (!Array.isArray(c.props.conditions)) {
+  c.props.conditions = [];
+}
+
+
+
+
+// =====================================================
+// OWNERSHIP PRODUCT TEMPLATES — Registry driven (Phase B)
+// Reads templates.json and maps them into your existing primitives.
+// =====================================================
+
+
+
+
+
+
+
+
+
+
+
+    // ---- UI (NO business preset dropdown, NO simple/advanced toggle) ----
+ // ---- UI (NO business preset dropdown, NO simple/advanced toggle) ----
+const node = el(`
+<div data-role="xertify-root">
+
+  <div class="xertify-card">
+
+    <div class="xertify-grid">
+
+      <!-- LEFT: Controls -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Title -->
+        <div class="flex flex-col gap-3">
+          <div class="xertify-label">Title</div>
+          <input data-role="simple-title" class="xertify-input" placeholder="Digital Pass" />
+        </div>
+        <div data-role="err-title" class="xertify-err"></div>
+
+        <!-- Holder -->
+        <div class="flex flex-col gap-3">
+          <div class="xertify-label">Holder name</div>
+          <input data-role="simple-holder" class="xertify-input" placeholder="Alice Smith" />
+        </div>
+        <div data-role="err-holder" class="xertify-err"></div>
+
+        <!-- Valid until -->
+        <div class="flex flex-col gap-2">
+  <div class="xertify-label">Valid until</div>
+
+  <div class="xertify-date-wrap">
+    <input data-role="simple-until" type="date" class="xertify-input xertify-input-date" />
+    <button type="button" class="xertify-date-btn" aria-label="Pick a date"
+      onclick="openDatePickerBySelector('[data-role=&quot;simple-until&quot;]')">
+      📅
+    </button>
+  </div>
+</div>
+
+        <div data-role="err-until" class="xertify-err"></div>
+
+        <!-- Notes -->
+        <div class="flex flex-col gap-3">
+          <div class="xertify-label">Notes</div>
+          <textarea data-role="simple-notes" rows="3" class="xertify-textarea"
+            placeholder="Room • Seat • Booking reference"></textarea>
+        </div>
+
+
+        <!-- Template-specific fields will appear here -->
+<div id="xertify-template-fields" class="xertify-fieldgrid" style="margin-top: 12px;"></div>
+
+
+        
+
+        <!-- ALWAYS VISIBLE MINT -->
+        <div class="xertify-mintbar">
+          <div class="flex justify-end">
+            <button type="button" data-role="mint-now"
+              class="xertify-btn xertify-btn-emerald">
+              Mint via XUMM
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Preview + controls underneath -->
+      <div class="xertify-rightcol">
+
+        <!-- 512x512 Preview -->
+        <div class="xertify-preview-fixed">
+          <div class="xertify-flipwrap">
+            <div class="xertify-flip" data-role="flip-card">
+
+              <!-- FRONT -->
+              <div class="xertify-flip-face">
+                <div data-role="preview-root" class="nft-pass-preview">
+  <div class="nft-pass-bg" data-role="preview-bg"></div>
+  <div class="nft-pass-overlay"></div>
+
+  <!-- Top-right action (inside preview) -->
+  <div class="pass-top-actions">
+    <button type="button"
+      class="xertify-btn xertify-btn-ghost"
+      data-role="flip-open">
+      View metadata
+    </button>
+  </div>
+
+
+                  <div class="nft-pass-content">
+                    <div class="nft-pass-top">
+                      <div class="nft-pass-brand">
+                        <div class="nft-pass-logo" data-role="preview-logo"></div>
+                        <div class="nft-pass-brandtext">
+                          <div class="nft-pass-brand-name"
+                            data-role="preview-brand-title">Your Brand</div>
+                        </div>
+                      </div>
+                      <div class="nft-pass-guestphoto" data-role="preview-guestphoto"></div>
+                    </div>
+
+                    <div class="nft-pass-mid">
+                      <div class="nft-pass-title" data-role="preview-title">—</div>
+                      <div class="nft-pass-leftstack">
+                        <div class="nft-pass-line" data-role="preview-dates">Valid until —</div>
+                        <div class="nft-pass-notes" data-role="preview-notes">Notes</div>
+                      </div>
+                    </div>
+
+                    <div class="nft-pass-bottom">
+                      <div class="nft-pass-qr" data-role="preview-qr">
+                        <div data-role="preview-qr-inner"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                
+              </div>
+
+             <!-- BACK -->
+<div class="xertify-flip-face xertify-flip-back">
+  <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4 h-full"
+       style="position:relative; overflow:hidden;">
+
+    <div class="text-[11px] uppercase tracking-wide text-slate-400">Metadata</div>
+
+   <div class="mt-3 grid gap-2 text-[12px] text-slate-200">
+  <div><span class="text-slate-400">Name:</span> <span data-role="meta-name">—</span></div>
+  <div><span class="text-slate-400">Template:</span> <span data-role="meta-template">—</span></div>
+  <div><span class="text-slate-400">Lifecycle:</span> <span data-role="meta-lifecycle">—</span></div>
+  <div><span class="text-slate-400">Context:</span> <span data-role="meta-context">—</span></div>
+  <div><span class="text-slate-400">Custody:</span> <span data-role="meta-custody">—</span></div>
+
+  <div class="mt-2">
+    <div class="text-slate-400 text-[11px] uppercase tracking-wide">Conditions</div>
+    <div class="mt-1 rounded border border-slate-800 bg-slate-950/40 p-2 text-[11px]"
+         data-role="meta-conditions">—</div>
+  </div>
+</div>
+
+
+    <!-- ✅ ALWAYS CLICKABLE (never clipped) -->
+    <button type="button"
+      class="xertify-btn xertify-btn-ghost"
+      data-role="flip-close"
+      style="position:absolute; top:12px; right:12px;">
+      Back to preview
+    </button>
+
+  </div>
+</div>
+
+
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+<!-- FILLS GAP UNDER PREVIEW -->
+<div class="xertify-under-preview">
+
+  <!-- BRANDING -->
+  <div class="text-[11px] uppercase tracking-wide text-slate-400 text-center">
+    Branding
+  </div>
+
+  <div class="xertify-branding-row">
+
+    <!-- LOGO -->
+    <div class="xertify-upload-mini text-center">
+      <div class="xertify-label mb-2">Logo</div>
+      <input data-role="design-logo" type="hidden" />
+      <button
+        type="button"
+        data-role="design-logo-upload"
+        class="xertify-btn xertify-btn-ghost mx-auto">
+        Upload
+      </button>
+      <div class="statusline mt-1 text-center" data-role="design-logo-status">
+        No file
+      </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="xertify-upload-mini text-center">
+      <div class="xertify-label mb-2">Background</div>
+      <input data-role="design-bgimage" type="hidden" />
+      <button
+        type="button"
+        data-role="design-bg-upload"
+        class="xertify-btn xertify-btn-ghost mx-auto">
+        Upload
+      </button>
+      <div class="statusline mt-1 text-center" data-role="design-bg-status">
+        No file
+      </div>
+    </div>
+
+    <!-- GUEST PHOTO -->
+    <div class="xertify-upload-mini text-center">
+      <div class="xertify-label mb-2">Guest photo</div>
+      <input data-role="design-guestphoto" type="hidden" />
+      <button
+        type="button"
+        data-role="design-guestphoto-upload"
+        class="xertify-btn xertify-btn-ghost mx-auto">
+        Upload
+      </button>
+      <div class="statusline mt-1 text-center" data-role="design-guestphoto-status">
+        No file
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+ <div class="flex flex-wrap items-center gap-4 text-[12px] text-slate-200 mt-2">
+
+  <label class="inline-flex items-center gap-2">
+    <input type="checkbox" data-role="design-show-qr" checked />
+    Show QR
+  </label>
+
+  <label class="inline-flex items-center gap-2">
+    <input type="checkbox" data-role="design-show-badge" checked />
+    Show badge
+  </label>
+
+  <label class="inline-flex items-center gap-2">
+    <input type="checkbox" id="custodySelfHeld" onchange="syncCustodyUI()" />
+    Self-held 
+  </label>
+
+</div>
+
+  <!-- CONDITIONS -->
+  <details class="border-t border-slate-800/60 pt-4 mt-4">
+    <summary class="xertify-collapse-header flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="xertify-chevron">▾</span>
+        <div class="text-[11px] uppercase tracking-wide text-slate-400">Conditions</div>
+      </div>
+      <div class="cond-actions">
+        <button
+          type="button"
+          class="xertify-btn xertify-btn-ghost"
+          data-role="cond-add"
+          onclick="event.preventDefault(); event.stopPropagation();">
+          + Add condition
+        </button>
+      </div>
+    </summary>
+
+    <div class="mt-3 flex flex-col gap-3">
+      <div class="text-[10px] text-slate-500">
+        Conditions are business rules attached to this DNFT.
+      </div>
+      <div class="rounded border border-slate-800 bg-slate-950/40 p-2">
+        <div data-role="cond-list" class="flex flex-col gap-2"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- PERMISSIONED DOMAIN GATE (Tier B) -->
+<details class="border-t border-slate-800/60 pt-4">
+  <summary class="xertify-collapse-header flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="xertify-chevron">▾</span>
+      <div class="text-[11px] uppercase tracking-wide text-slate-400">
+        Permissioned Domain Gate (Tier B)
+      </div>
+    </div>
+
+    <div class="cond-actions">
+      <button
+        type="button"
+        class="xertify-btn xertify-btn-ghost"
+        data-role="pd-configure"
+        onclick="event.preventDefault(); event.stopPropagation();">
+        Configure
+      </button>
+    </div>
+  </summary>
+
+  <div class="mt-3 flex flex-col gap-3">
+    <div class="text-[10px] text-slate-500">
+      Gate access/transfer using XRPL Permissioned Domains + Credentials.
+    </div>
+
+    <label class="inline-flex items-center gap-2 text-[12px] text-slate-200">
+      <input type="checkbox" data-role="pd-enabled" />
+      Enable Permissioned Domain Gate
+    </label>
+
+    <div class="rounded border border-slate-800 bg-slate-950/40 p-2 text-[11px] text-slate-200">
+      <div><span class="text-slate-400">Label:</span> <span data-role="pd-sum-label">—</span></div>
+      <div><span class="text-slate-400">Purpose:</span> <span data-role="pd-sum-purpose">—</span></div>
+      <div><span class="text-slate-400">Credential:</span> <span data-role="pd-sum-cred">—</span></div>
+      <div><span class="text-slate-400">Mode:</span> <span data-role="pd-sum-mode">—</span></div>
+    </div>
+  </div>
+</details>
+
+
+  <!-- BATCH -->
+  <details class="border-t border-slate-800/60 pt-4">
+    <summary class="xertify-collapse-header flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="xertify-chevron">▾</span>
+        <div class="text-[11px] uppercase tracking-wide text-slate-400">
+          Batch minting
+        </div>
+      </div>
+      <div class="text-[11px] text-slate-500" data-role="batch-summary">
+        No rows
+      </div>
+    </summary>
+
+    <div class="mt-4 flex flex-col gap-3">
+      <div class="flex flex-wrap gap-2">
+        <button type="button" data-role="batch-add-row"
+          class="xertify-btn xertify-btn-ghost"
+          onclick="event.preventDefault(); event.stopPropagation();">
+          + Add row
+        </button>
+        <button type="button" data-role="batch-upload-csv"
+          class="xertify-btn xertify-btn-ghost"
+          onclick="event.preventDefault(); event.stopPropagation();">
+          Upload CSV
+        </button>
+      </div>
+
+      <div class="mt-2 max-h-64 overflow-auto rounded border border-slate-800 bg-slate-950/40">
+        <table class="w-full text-[11px] text-slate-100">
+          <thead class="bg-slate-900/70 sticky top-0 z-10">
+            <tr>
+              <th class="px-2 py-2 text-left text-slate-400">Holder</th>
+              <th class="px-2 py-2 text-left text-slate-400">Wallet</th>
+              <th class="px-2 py-2 text-left text-slate-400">Valid until</th>
+              <th class="px-2 py-2 text-left text-slate-400">Notes</th>
+              <th class="px-2 py-2"></th>
+            </tr>
+          </thead>
+          <tbody data-role="batch-rows-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ===================================================== -->
+<!-- Permissioned Domain Gate Modal (Tier B)               -->
+<!-- Insert near end of the node template, before closing  -->
+<!-- ===================================================== -->
+<div class="xertify-modal-backdrop" data-role="pd-modal" aria-hidden="true">
+  <div class="xertify-modal" role="dialog" aria-modal="true" aria-label="Permissioned Domain Gate">
+
+    <div class="xertify-modal-header">
+      <div>
+        <div class="xertify-modal-title">Permissioned Domain Gate</div>
+        <div class="xertify-modal-sub">Create or link an XRPL Permissioned Domain + accepted credential rule.</div>
+      </div>
+
+      <button type="button" class="xertify-btn xertify-btn-ghost" data-role="pd-close">✕</button>
+    </div>
+
+    <div class="xertify-modal-body">
+      <div class="xertify-row2">
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Domain label</div>
+          <input class="xertify-input" data-role="pd-domain-label" placeholder="ACME Supply Chain Domain" />
+          <div class="xertify-help">Human label only. Stored on pass + used when creating the domain.</div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Purpose</div>
+          <select class="xertify-select" data-role="pd-purpose">
+            <option value="supply_chain">Supply chain</option>
+            <option value="regulated_rwa">Regulated RWA</option>
+          </select>
+          <div class="xertify-help">Used for templates + audit metadata.</div>
+        </div>
+      </div>
+
+      <div class="xertify-row2" style="margin-top:12px;">
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Accepted credential issuer</div>
+          <input class="xertify-input" data-role="pd-issuer" placeholder="r..." />
+          <div class="xertify-help">XRPL address that issues the credential.</div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Credential type</div>
+          <input class="xertify-input" data-role="pd-ctype" placeholder="ACME_SC_PARTICIPANT" />
+          <div class="xertify-help">Exact CredentialType string.</div>
+        </div>
+      </div>
+
+      <div class="xertify-row2" style="margin-top:12px;">
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Mode</div>
+          <select class="xertify-select" data-role="pd-mode">
+            <option value="create_new">Create new domain</option>
+            <option value="use_existing">Use existing domain</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="xertify-label">Existing Domain ID</div>
+          <input class="xertify-input" data-role="pd-existing" placeholder="(only required if using existing)" />
+          <div class="xertify-help">Required only when “Use existing domain”.</div>
+        </div>
+      </div>
+
+      <div class="xertify-err" data-role="pd-err" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="xertify-modal-footer">
+      <button type="button" class="xertify-btn xertify-btn-ghost" data-role="pd-cancel">Cancel</button>
+      <button type="button" class="xertify-btn xertify-btn-emerald" data-role="pd-save">Save</button>
+    </div>
+
+  </div>
+</div>
+<!-- =============================== -->
+<!--  BATCH PREVIEW MODAL (Phase 2B) -->
+<!-- =============================== -->
+<div class="xertify-modal-backdrop" data-role="batch-modal" aria-hidden="true">
+  <div class="xertify-modal" role="dialog" aria-modal="true" aria-label="Batch Preview">
+
+    <div class="xertify-modal-header">
+      <div>
+        <div class="xertify-modal-title">Batch Preview</div>
+        <div class="xertify-modal-sub" data-role="batch-modal-sub">Preparing…</div>
+      </div>
+
+      <button type="button" class="xertify-btn xertify-btn-ghost" data-role="batch-modal-close">✕</button>
+    </div>
+
+    <div class="xertify-modal-body">
+      <div class="xertify-preview-grid" data-role="batch-preview-grid"></div>
+      <div class="xertify-modal-sub" style="margin-top:10px;" data-role="batch-modal-status">—</div>
+    </div>
+
+    <div class="xertify-modal-footer">
+      <button type="button" class="xertify-btn xertify-btn-ghost" data-role="batch-modal-back">Back</button>
+      <button type="button" class="xertify-btn xertify-btn-emerald" data-role="batch-modal-confirm">
+        Confirm &amp; Mint
+      </button>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+`);
+
+
+    // ---------------------------------------------
+    // Expose ctx for sidebar vertical control
+    // ---------------------------------------------
+    window.__xertifyDesignerCtx = { node, vertical: 'hotel' };
+
+    // ---------------------------------------------
+    // DOM refs
+    // ---------------------------------------------
+    const simpleTitle   = node.querySelector('[data-role="simple-title"]');
+    const simpleHolder  = node.querySelector('[data-role="simple-holder"]');
+    const simpleUntil   = node.querySelector('[data-role="simple-until"]');
+    const simpleNotes   = node.querySelector('[data-role="simple-notes"]');
+const condAddBtn = node.querySelector('[data-role="cond-add"]');
+const condListEl = node.querySelector('[data-role="cond-list"]');
+// ---- Permissioned Domain Gate (Tier B) ----
+const pdEnabledChk   = node.querySelector('[data-role="pd-enabled"]');
+const pdConfigureBtn = node.querySelector('[data-role="pd-configure"]');
+
+const pdModal     = node.querySelector('[data-role="pd-modal"]');
+const pdCloseBtn  = node.querySelector('[data-role="pd-close"]');
+const pdCancelBtn = node.querySelector('[data-role="pd-cancel"]');
+const pdSaveBtn   = node.querySelector('[data-role="pd-save"]');
+
+const pdLabelInp  = node.querySelector('[data-role="pd-domain-label"]');
+const pdPurposeSel= node.querySelector('[data-role="pd-purpose"]');
+const pdIssuerInp = node.querySelector('[data-role="pd-issuer"]');
+const pdTypeInp   = node.querySelector('[data-role="pd-ctype"]');
+const pdModeSel   = node.querySelector('[data-role="pd-mode"]');
+const pdExistingInp = node.querySelector('[data-role="pd-existing"]');
+const pdErrEl     = node.querySelector('[data-role="pd-err"]');
+
+const pdSumLabel  = node.querySelector('[data-role="pd-sum-label"]');
+const pdSumPurpose= node.querySelector('[data-role="pd-sum-purpose"]');
+const pdSumCred   = node.querySelector('[data-role="pd-sum-cred"]');
+const pdSumMode   = node.querySelector('[data-role="pd-sum-mode"]');
+
+
+
+// ------------------------------
+// Permissioned Domain Gate state
+// ------------------------------
+if (!c.props.pd_gate || typeof c.props.pd_gate !== "object") {
+  c.props.pd_gate = {
+    enabled: false,
+    domain_label: "",
+    domain_purpose: "supply_chain", // supply_chain | regulated_rwa
+    credential_issuer: "",
+    credential_type: "",
+    domain_mode: "create_new",      // create_new | use_existing
+    existing_domain_id: ""
+  };
+}
+
+
+
+    const designLogoInput   = node.querySelector('[data-role="design-logo"]');
+    const designBgInput     = node.querySelector('[data-role="design-bgimage"]');
+    const designShowQrChk   = node.querySelector('[data-role="design-show-qr"]');
+    const designShowBadgeChk= node.querySelector('[data-role="design-show-badge"]');
+    const designLogoUploadBtn = node.querySelector('[data-role="design-logo-upload"]');
+    const designBgUploadBtn   = node.querySelector('[data-role="design-bg-upload"]');
+const designGuestPhotoInput   = node.querySelector('[data-role="design-guestphoto"]');
+const designGuestPhotoUploadBtn = node.querySelector('[data-role="design-guestphoto-upload"]');
+
+    const previewRoot     = node.querySelector('[data-role="preview-root"]');
+    const previewBg       = node.querySelector('[data-role="preview-bg"]');
+    const previewLogo     = node.querySelector('[data-role="preview-logo"]');
+    const previewBrandTitle= node.querySelector('[data-role="preview-brand-title"]');
+    const previewBrandSub = node.querySelector('[data-role="preview-brand-sub"]');
+    const previewTitle    = node.querySelector('[data-role="preview-title"]');
+    const previewDates    = node.querySelector('[data-role="preview-dates"]');
+    const previewNotes    = node.querySelector('[data-role="preview-notes"]');
+    const previewQr       = node.querySelector('[data-role="preview-qr"]');
+    const previewQrInner  = node.querySelector('[data-role="preview-qr-inner"]');
+    const previewMeta1    = node.querySelector('[data-role="preview-meta-line-1"]');
+    const previewMeta2    = node.querySelector('[data-role="preview-meta-line-2"]');
+const previewGuestPhoto = node.querySelector('[data-role="preview-guestphoto"]');
+
+    const jsonOutput      = node.querySelector('[data-role="json-output"]');
+    const copyJsonBtn     = node.querySelector('[data-role="copy-json"]');
+    const downloadJsonBtn = node.querySelector('[data-role="download-json"]');
+    const mintNowBtn      = node.querySelector('[data-role="mint-now"]');
+
+    const batchRowsBody   = node.querySelector('[data-role="batch-rows-body"]');
+    const batchAddRowBtn  = node.querySelector('[data-role="batch-add-row"]');
+    const batchUploadCsvBtn = node.querySelector('[data-role="batch-upload-csv"]');
+    const batchSummaryEl  = node.querySelector('[data-role="batch-summary"]');
+        // Batch preview modal refs
+    const batchModal        = node.querySelector('[data-role="batch-modal"]');
+    const batchModalClose   = node.querySelector('[data-role="batch-modal-close"]');
+    const batchModalBack    = node.querySelector('[data-role="batch-modal-back"]');
+    const batchModalConfirm = node.querySelector('[data-role="batch-modal-confirm"]');
+    const batchModalSub     = node.querySelector('[data-role="batch-modal-sub"]');
+    const batchModalStatus  = node.querySelector('[data-role="batch-modal-status"]');
+    const batchPreviewGrid  = node.querySelector('[data-role="batch-preview-grid"]');
+const hiddenRenderHost =
+  node.querySelector('[data-role="hidden-render"]') ||
+  document.querySelector('[data-role="hidden-render"]');
+
+
+
+
+
+
+
+
+
+// ------------------------------
+// Flip wiring (Update 2C)
+// ------------------------------
+// ------------------------------
+// Flip wiring (HARDENED)
+// ------------------------------
+const flipCard  = node.querySelector('[data-role="flip-card"]');
+
+function setFlipped(on){
+  if (!flipCard) return;
+  flipCard.classList.toggle('is-flipped', !!on);
+}
+
+// Event delegation so it never “misses” bindings
+node.addEventListener('click', (e) => {
+  const openBtn = e.target.closest('[data-role="flip-open"]');
+  const closeBtn = e.target.closest('[data-role="flip-close"]');
+
+  if (openBtn) {
+    e.preventDefault();
+    setFlipped(true);
+  }
+  if (closeBtn) {
+    e.preventDefault();
+    setFlipped(false);
+  }
+});
+
+
+// Back-side metadata fields
+const metaNameEl       = node.querySelector('[data-role="meta-name"]');
+const metaTemplateEl   = node.querySelector('[data-role="meta-template"]');
+const metaLifecycleEl  = node.querySelector('[data-role="meta-lifecycle"]');
+const metaPresetEl     = node.querySelector('[data-role="meta-preset"]');
+const metaContextEl    = node.querySelector('[data-role="meta-context"]');
+const metaCustodyEl    = node.querySelector('[data-role="meta-custody"]');
+const metaConditionsEl = node.querySelector('[data-role="meta-conditions"]');
+
+
+
+function renderMetaBack(meta){
+  if (!meta) return;
+
+  const props = meta.properties || {};
+  const custody = props.custody || {};
+  const conditions = Array.isArray(props.conditions) ? props.conditions : [];
+
+  // Template + lifecycle truth
+  const tplObj = (props.template && typeof props.template === "object") ? props.template : null;
+  const lifecycleKind =
+    tplObj?.lifecycle?.kind ||
+    props.lifecycle?.kind ||
+    "—";
+
+  if (metaNameEl) metaNameEl.textContent = meta.name || '—';
+
+  // show template_id clearly
+  if (metaTemplateEl) {
+    metaTemplateEl.textContent =
+      props.template_id ||
+      tplObj?.template_id ||
+      '—';
+  }
+
+  if (metaLifecycleEl) {
+    metaLifecycleEl.textContent = lifecycleKind;
+  }
+
+  // context attribute
+  const attrs = Array.isArray(meta.attributes) ? meta.attributes : [];
+  const ctxAttr = attrs.find(a => a.trait_type === 'context');
+  if (metaContextEl) {
+    metaContextEl.textContent = (ctxAttr && ctxAttr.value) ? String(ctxAttr.value) : '—';
+  }
+
+  // custody
+  if (metaCustodyEl) {
+    const mode = custody.mode || '—';
+    const addr = custody.holder_address ? ` (${custody.holder_address})` : '';
+    metaCustodyEl.textContent = `${mode}${addr}`;
+  }
+
+  // conditions
+  if (metaConditionsEl) {
+    if (!conditions.length) {
+      metaConditionsEl.textContent = 'No conditions.';
+    } else {
+      metaConditionsEl.textContent = conditions
+        .map(c => `${c.key} ${c.op} ${c.value}`)
+        .join(' • ');
+    }
+  }
+}
+
+
+
+// ------------------------------
+// Permissioned Domain Gate UI
+// ------------------------------
+function pdOpenModal(){
+  if (!pdModal) return;
+  pdErrEl && (pdErrEl.style.display = "none");
+  pdModal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+  // hydrate inputs from state
+  const s = c.props.pd_gate || {};
+  if (pdLabelInp) pdLabelInp.value = s.domain_label || "";
+  if (pdPurposeSel) pdPurposeSel.value = s.domain_purpose || "supply_chain";
+  if (pdIssuerInp) pdIssuerInp.value = s.credential_issuer || "";
+  if (pdTypeInp) pdTypeInp.value = s.credential_type || "";
+  if (pdModeSel) pdModeSel.value = s.domain_mode || "create_new";
+  if (pdExistingInp) pdExistingInp.value = s.existing_domain_id || "";
+}
+
+function pdCloseModal(){
+  if (!pdModal) return;
+  pdModal.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function pdRenderSummary(){
+  const s = c.props.pd_gate || {};
+
+  if (pdEnabledChk) pdEnabledChk.checked = !!s.enabled;
+
+  if (pdSumLabel)   pdSumLabel.textContent = s.domain_label ? s.domain_label : "—";
+  if (pdSumPurpose) pdSumPurpose.textContent = s.domain_purpose ? s.domain_purpose : "—";
+  if (pdSumCred) {
+    const cred = (s.credential_issuer && s.credential_type)
+      ? `${s.credential_issuer} • ${s.credential_type}`
+      : "—";
+    pdSumCred.textContent = cred;
+  }
+  if (pdSumMode) {
+    const modeText = s.domain_mode === "use_existing"
+      ? `Use existing${s.existing_domain_id ? ` (${s.existing_domain_id})` : ""}`
+      : "Create new";
+    pdSumMode.textContent = modeText;
+  }
+}
+function pdSetError(msg){
+  if (!pdErrEl) return false;
+  pdErrEl.textContent = msg || "";
+  pdErrEl.style.display = msg ? "block" : "none";
+  return false;
+}
+
+
+
+function pdSaveFromModal(){
+  const label = (pdLabelInp?.value || "").trim();
+  const purpose = (pdPurposeSel?.value || "").trim();
+  const issuer = (pdIssuerInp?.value || "").trim();
+  const ctype = (pdTypeInp?.value || "").trim();
+  const mode = (pdModeSel?.value || "create_new").trim();
+  const existing = (pdExistingInp?.value || "").trim();
+
+  if (!label) return pdSetError("Domain label is required.");
+  if (!(purpose === "supply_chain" || purpose === "regulated_rwa")) return pdSetError("Purpose must be supply_chain or regulated_rwa.");
+  if (!issuer) return pdSetError("Accepted credential issuer is required.");
+  if (!ctype) return pdSetError("Credential type is required.");
+  if (mode === "use_existing" && !existing) return pdSetError("Existing Domain ID is required when using existing.");
+
+  c.props.pd_gate.domain_label = label;
+  c.props.pd_gate.domain_purpose = purpose;
+  c.props.pd_gate.credential_issuer = issuer;
+  c.props.pd_gate.credential_type = ctype;
+  c.props.pd_gate.domain_mode = mode;
+  c.props.pd_gate.existing_domain_id = existing;
+
+  pdSetError("");
+  pdCloseModal();
+  pdRenderSummary();
+  refreshAll();
+}
+
+
+
+const errTitleEl  = node.querySelector('[data-role="err-title"]');
+const errHolderEl = node.querySelector('[data-role="err-holder"]');
+const errUntilEl  = node.querySelector('[data-role="err-until"]');
+
+function setErr(el, msg){
+  if (!el) return;
+  el.textContent = msg || '';
+  el.style.display = msg ? 'block' : 'none';
+}
+
+function markInvalid(inputEl, isBad){
+  if (!inputEl) return;
+  inputEl.classList.toggle('is-invalid', !!isBad);
+}
+
+
+
+
+
+function validateForm(){
+  let valid = true;
+
+  // ------------------------------
+  // Template is source of truth
+  // ------------------------------
+  const tplKey = (c.props.template_key || c.props.product_key || "custom");
+  const tpl = (typeof findTemplateByKey === "function") ? findTemplateByKey(tplKey) : null;
+  const lifecycleRules = tpl?.lifecycle || {};
+
+  const title = (simpleTitle?.value || '').trim();
+  const holder = (simpleHolder?.value || '').trim();
+  const validUntil = (simpleUntil?.value || '').trim();
+
+  // base requirements
+  const reqTitle = true;
+
+  // holder requirement comes from template (if you support it), else default false
+  const reqHolder = !!tpl?.requires_holder_name;
+
+  // expires requirement comes from lifecycle.kind === "time_bound"
+  const reqUntil  = (lifecycleRules?.kind === "time_bound");
+
+  const badTitle = reqTitle && !title;
+  const badHolder = reqHolder && !holder;
+  const badUntil = reqUntil && !validUntil;
+
+  // UI: errors
+  setErr(errTitleEl,  badTitle  ? "Title is required." : "");
+  setErr(errHolderEl, badHolder ? "Holder name is required for this template." : "");
+  setErr(errUntilEl,  badUntil  ? "Valid-until is required for this template." : "");
+
+  markInvalid(simpleTitle, badTitle);
+  markInvalid(simpleHolder, badHolder);
+  markInvalid(simpleUntil, badUntil);
+
+  if (badTitle || badHolder || badUntil) valid = false;
+
+  // ---------------------------------------------
+  // Required fields from template schema
+  // ---------------------------------------------
+  if (tpl && Array.isArray(tpl.required) && tpl.required.length){
+    const extra = (typeof readTemplateFieldValues === "function") ? readTemplateFieldValues() : {};
+
+    for (const reqKey of tpl.required){
+      // already covered by base inputs
+      if (["holder_name","valid_until","notes","title"].includes(reqKey)) continue;
+
+      const rid = `tpl_${tplKey}_${reqKey}`;
+      const input = document.getElementById(rid);
+      const err = document.querySelector(`[data-err-for="${rid}"]`);
+
+      const ok = !!(extra[reqKey] && String(extra[reqKey]).trim());
+
+      if (input) input.classList.toggle("is-invalid", !ok);
+      if (err){
+        err.style.display = ok ? "none" : "block";
+        err.textContent = "Required";
+      }
+
+      if (!ok) valid = false;
+    }
+  }
+
+
+
+    // ---------------------------------------------
+  // Permissioned Domain Gate validation (Step 4)
+  // ---------------------------------------------
+  // clear any previous PD error
+  if (typeof pdSetError === "function") pdSetError("");
+
+  const g = c.props.pd_gate || {};
+  const enabled = !!g.enabled;
+
+  if (enabled) {
+    const issuer = (g.credential_issuer || "").trim();
+    const ctype  = (g.credential_type || "").trim();
+    const mode   = (g.domain_mode || "create_new").trim();
+    const existing = (g.existing_domain_id || "").trim();
+
+    if (!issuer) {
+      if (typeof pdSetError === "function") pdSetError("Accepted credential issuer is required.");
+      valid = false;
+    }
+
+    if (!ctype) {
+      if (typeof pdSetError === "function") pdSetError("Accepted credential type is required.");
+      valid = false;
+    }
+
+    if (mode === "use_existing" && !existing) {
+      if (typeof pdSetError === "function") pdSetError("Existing Domain ID is required when using an existing domain.");
+      valid = false;
+    }
+  }
+
+
+  return valid;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ---------------------------------------------
+    // Utilities
+    // ---------------------------------------------
+    function normaliseAccessLevel(val) {
+      if (!val) return 'Standard';
+      const v = String(val).trim().toLowerCase();
+      if (v === 'vip') return 'VIP';
+      if (v === 'staff') return 'Staff';
+      if (v === 'owner') return 'Owner';
+      if (v === 'visitor') return 'Visitor';
+      if (v === 'member') return 'Member';
+      return 'Standard';
+    }
+
+
+
+
+
+function hexToRgba(hex, a){
+  const h = (hex || '').replace('#','').trim();
+  if (h.length !== 6) return `rgba(59,130,246,${a})`;
+  const r = parseInt(h.slice(0,2),16);
+  const g = parseInt(h.slice(2,4),16);
+  const b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+
+
+
+
+
+    // ---------------------------------------------
+    // Batch preview state
+    // ---------------------------------------------
+    let __BATCH_QUEUE = null; // { baseMeta, rowsWithPreview, finalRows, itemsCount }
+
+    function openBatchModal(){
+      if (!batchModal) return;
+      batchModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBatchModal(){
+      if (!batchModal) return;
+      batchModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+
+
+function buildPreviewCard(item, idx){
+  const card = document.createElement('div');
+  card.className = `xertify-preview-card`;
+
+  card.innerHTML = `
+    <div class="xertify-preview-thumb">
+      ${
+        item.image_url
+          ? `<img src="${item.image_url}" alt="Preview" />`
+          : `<div style="font-size:11px;opacity:.7;">No image</div>`
+      }
+    </div>
+  `;
+
+  return card;
+}
+
+
+    function renderBatchPreviewGrid(rowsWithPreview){
+      if (!batchPreviewGrid) return;
+      batchPreviewGrid.innerHTML = '';
+      rowsWithPreview.forEach((item, idx) => batchPreviewGrid.appendChild(buildPreviewCard(item, idx)));
+    }
+
+    // Build an OFFSCREEN previewRoot clone so we can snapshot per-row without ripping the hero preview
+function ensureOffscreenPreviewRoot(){
+  // Always resolve host; if missing, create it on the fly
+  let host =
+    (hiddenRenderHost && hiddenRenderHost.isConnected ? hiddenRenderHost : null) ||
+    document.querySelector('[data-role="hidden-render"]');
+
+  if (!host) {
+    host = document.createElement('div');
+    host.className = 'xertify-hidden-render';
+    host.setAttribute('data-role', 'hidden-render');
+    document.body.appendChild(host);
+  }
+
+  host.innerHTML = '';
+
+  // Preview gets moved into hero mount, so fall back to hero DOM
+  const live =
+    previewRoot ||
+    document.querySelector('#xertify-preview-mount [data-role="preview-root"]') ||
+    document.querySelector('#xertify-preview-mount .nft-pass-preview');
+
+  if (!live) return null;
+
+  const clone = live.cloneNode(true);
+  clone.classList.remove('blank-preview');
+
+  host.appendChild(clone);
+
+  return {
+    root: clone,
+    bg: clone.querySelector('[data-role="preview-bg"]'),
+    logo: clone.querySelector('[data-role="preview-logo"]'),
+    brandTitle: clone.querySelector('[data-role="preview-brand-title"]'),
+    brandSub: clone.querySelector('[data-role="preview-brand-sub"]'),
+    badge: clone.querySelector('[data-role="preview-badge"]'),
+    title: clone.querySelector('[data-role="preview-title"]'),
+    dates: clone.querySelector('[data-role="preview-dates"]'),
+    notes: clone.querySelector('[data-role="preview-notes"]'),
+    qr: clone.querySelector('[data-role="preview-qr"]'),
+    qrInner: clone.querySelector('[data-role="preview-qr-inner"]'),
+    meta1: clone.querySelector('[data-role="preview-meta-line-1"]'),
+    meta2: clone.querySelector('[data-role="preview-meta-line-2"]'),
+    guestPhoto: clone.querySelector('[data-role="preview-guestphoto"]'),
+
+  };
+}
+
+
+
+    function renderVisualPreviewInto(meta, refs){
+      if (!refs || !refs.root) return;
+
+      const props = meta.properties || {};
+      const visual = props.visual || {};
+      const lifecycle = props.lifecycle || {};
+
+      const brandPrimary = visual.brand_primary || '#3b82f6';
+      const brandAccent  = visual.brand_accent || '#22c55e';
+
+      refs.root.style.boxShadow = `
+        0 0 0 1px rgba(148,163,253,0.12) inset,
+        0 10px 28px rgba(2,6,23,0.55),
+        0 0 26px ${hexToRgba(brandPrimary, 0.28)},
+        0 0 22px ${hexToRgba(brandAccent, 0.22)}
+      `;
+
+      const textOnDark   = visual.brand_text_on_dark !== false;
+      const logoUrl      = visual.logo_url || '';
+      const bgImg        = visual.bg_image_url || '';
+      const showBadge    = visual.show_badge !== false;
+const guestPhotoUrl = visual.guest_photo_url || '';
+
+      refs.root.style.setProperty('--nft-primary', brandPrimary);
+      refs.root.style.setProperty('--nft-accent', brandAccent);
+      refs.root.style.color = textOnDark ? '#f8fafc' : '#020617';
+
+      if (refs.bg) {
+        refs.bg.style.backgroundImage = bgImg ? `url("${bgImg}")` : 'none';
+        refs.bg.style.display = 'block';
+      }
+
+      if (refs.logo) {
+        refs.logo.style.backgroundImage = logoUrl ? `url("${logoUrl}")` : 'none';
+        refs.logo.style.opacity = logoUrl ? '1' : '0.9';
+      }
+
+      if (refs.guestPhoto) {
+  if (guestPhotoUrl) {
+    refs.guestPhoto.style.backgroundImage = `url("${guestPhotoUrl}")`;
+    refs.guestPhoto.style.display = 'block';
+  } else {
+    refs.guestPhoto.style.backgroundImage = 'none';
+    refs.guestPhoto.style.display = 'none';
+  }
+}
+
+
+      const attrs = Array.isArray(meta.attributes) ? meta.attributes : [];
+      const getAttr = (k) => {
+        const a = attrs.find(x => x.trait_type === k);
+        return a ? String(a.value || '') : '';
+      };
+
+      const holder = getAttr('holder_name');
+      const until  = getAttr('valid_until') || (lifecycle.expires_at || '');
+      const notes  = getAttr('notes') || '';
+
+      if (refs.brandTitle) refs.brandTitle.textContent = (simpleTitle?.value || meta.name || 'Your Brand').trim();
+
+      if (refs.brandSub) {
+        const vertical =
+          (meta?.properties?.vertical) ||
+          (window.__ENGINE_VERTICAL__) ||
+          "generic";
+        const labelMap = {
+          hotel:'Guest Pass', event:'Event Ticket', gym:'Membership', office:'Access Card', insurance:'Policy Proof',
+          supply_chain:'Provenance', government:'Digital ID', healthcare:'Credential', education:'Certificate',
+          retail:'Loyalty', luxury:'Authenticity', carbon:'Carbon Credit'
+        };
+        refs.brandSub.textContent = `${labelMap[vertical] || 'Digital Pass'} • XRPL`;
+      }
+
+      if (refs.title) refs.title.textContent = holder || '—';
+      if (refs.dates) refs.dates.textContent = until ? `Valid until ${until}` : 'Valid until —';
+      if (refs.notes) refs.notes.textContent = notes || 'Notes will appear here.';
+
+     
+
+      const vertical = getAttr('vertical') || c.props.vertical || 'hotel';
+      if (refs.meta1) refs.meta1.textContent = `${vertical.toUpperCase()} • XRPL`;
+      if (refs.meta2) refs.meta2.textContent = (lifecycle.kind || 'standard');
+
+      const isBlank = !holder && !(simpleTitle?.value || '').trim() && !until && !notes;
+      refs.root.classList.toggle('blank-preview', isBlank);
+
+      // QR (render into clone)
+      if (refs.qr && refs.qrInner) {
+        const visual2 = (meta.properties && meta.properties.visual) ? meta.properties.visual : {};
+        const showQr = visual2.show_qr !== false;
+
+        if (!showQr) {
+          refs.qr.style.display = 'none';
+          refs.qrInner.innerHTML = '';
+        } else {
+          refs.qr.style.display = 'flex';
+          refs.qrInner.innerHTML = '';
+          if (!window.QRCode) {
+            refs.qrInner.textContent = 'QR';
+          } else {
+            const { payload, text } = buildCompactQrPayload(meta);
+            if (!meta.properties) meta.properties = {};
+            meta.properties.qr_payload = payload;
+            try {
+              new QRCode(refs.qrInner, { text, width: 96, height: 96, correctLevel: QRCode.CorrectLevel.L });
+            } catch (e) {
+              refs.qrInner.textContent = 'QR';
+            }
+          }
+        }
+      }
+    }
+
+    async function snapshotAnyRootToImage(rootEl, suffix=''){
+      if (!rootEl) throw new Error('No root element');
+      if (!window.html2canvas) throw new Error('html2canvas missing');
+
+     const snapCanvas = await window.html2canvas(rootEl, {
+  scale: 2.2,
+  backgroundColor: '#020617',
+  useCORS: true,
+  letterRendering: true,
+});
+
+
+      const size = 512;
+      const out = document.createElement('canvas');
+      out.width = size; out.height = size;
+      const ctx2 = out.getContext('2d');
+
+      ctx2.fillStyle = '#020617';
+      ctx2.fillRect(0, 0, size, size);
+
+      const scale = Math.min(size / snapCanvas.width, size / snapCanvas.height);
+      const w = snapCanvas.width * scale;
+      const h = snapCanvas.height * scale;
+      const x = (size - w) / 2;
+      const y = (size - h) / 2;
+      ctx2.drawImage(snapCanvas, x, y, w, h);
+
+      const blob = await new Promise(resolve => out.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('toBlob returned null');
+
+      const fd = new FormData();
+      fd.append('file', blob, `nft-preview${suffix || ''}.png`);
+      fd.append('kind', 'nft_preview');
+
+      const res = await fetch('/studio/actions/upload_image', { method: 'POST', body: fd ,  credentials: 'same-origin'
+ });
+      const j = await res.json().catch(() => null);
+      if (!j || !j.ok || !j.url) throw new Error((j && j.error) ? j.error : 'Preview upload failed');
+      return j.url;
+    }
+
+
+
+
+
+function renderConditions() {
+  if (!condListEl) return;
+
+  condListEl.innerHTML = '';
+
+  const conds = Array.isArray(c.props.conditions)
+    ? c.props.conditions
+    : [];
+
+  if (!conds.length) {
+    condListEl.innerHTML = `
+      <div class="text-[11px] text-slate-500">
+        No conditions added.
+      </div>
+    `;
+    return;
+  }
+
+  conds.forEach((cond, idx) => {
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-center';
+
+    row.innerHTML = `
+      <input
+        class="xertify-input"
+        style="padding:8px 10px;border-radius:10px;"
+        placeholder="field (e.g. checkin_status)"
+        data-role="cond-key" />
+
+      <select
+        class="xertify-select"
+        style="padding:8px 10px;border-radius:10px;width:140px;"
+        data-role="cond-op">
+        <option value="equals">equals</option>
+        <option value="not_equals">not equals</option>
+        <option value="contains">contains</option>
+        <option value="gt">gt</option>
+        <option value="lt">lt</option>
+      </select>
+
+      <input
+        class="xertify-input"
+        style="padding:8px 10px;border-radius:10px;"
+        placeholder="value (e.g. checked_in)"
+        data-role="cond-val" />
+
+      <button
+        type="button"
+        class="xertify-btn xertify-btn-ghost"
+        style="padding:6px 10px;"
+        data-role="cond-remove">
+        ✕
+      </button>
+    `;
+
+    const keyInp = row.querySelector('[data-role="cond-key"]');
+    const opSel  = row.querySelector('[data-role="cond-op"]');
+    const valInp = row.querySelector('[data-role="cond-val"]');
+    const remBtn = row.querySelector('[data-role="cond-remove"]');
+
+    keyInp.value = cond.key || '';
+    opSel.value  = cond.op || 'equals';
+    valInp.value = cond.value || '';
+
+    keyInp.addEventListener('input', e => {
+      c.props.conditions[idx].key = e.target.value;
+      refreshAll();
+    });
+
+    opSel.addEventListener('change', e => {
+      c.props.conditions[idx].op = e.target.value;
+      refreshAll();
+    });
+
+    valInp.addEventListener('input', e => {
+      c.props.conditions[idx].value = e.target.value;
+      refreshAll();
+    });
+
+    remBtn.addEventListener('click', () => {
+      c.props.conditions.splice(idx, 1);
+      renderConditions();
+      refreshAll();
+    });
+
+    condListEl.appendChild(row);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+  async function buildBatchPreviews(baseMeta, finalRows){
+  console.log('[Batch] buildBatchPreviews start', {
+    hasBaseMeta: !!baseMeta,
+    rows: Array.isArray(finalRows) ? finalRows.length : null,
+    hasHiddenRenderHost: !!hiddenRenderHost,
+    hasPreviewRoot: !!previewRoot,
+    hasHtml2canvas: !!window.html2canvas
+  });
+
+  if (!Array.isArray(finalRows) || finalRows.length === 0) {
+    console.warn('[Batch] No finalRows provided');
+    if (batchModalStatus) batchModalStatus.textContent = 'No rows to preview.';
+    return [];
+  }
+
+  const refs = ensureOffscreenPreviewRoot();
+  console.log('[Batch] ensureOffscreenPreviewRoot() returned:', refs);
+
+  if (!refs || !refs.root) {
+    console.error('[Batch] Offscreen preview root missing', {
+      refs,
+      hiddenRenderHost,
+      previewRoot
+    });
+    throw new Error('Offscreen preview root missing');
+  }
+
+  // Ensure the offscreen root has size (helps html2canvas)
+  try {
+    refs.root.style.width = '512px';
+    refs.root.style.height = '512px';
+  } catch (e) {}
+
+  const rowsWithPreview = [];
+
+  for (let idx = 0; idx < finalRows.length; idx++){
+    const row = finalRows[idx];
+    console.log('[Batch] Rendering row', idx, row);
+
+    let rowMeta = null;
+    try {
+      rowMeta = buildMetaForRow(baseMeta, row);
+    } catch (e) {
+      console.error('[Batch] buildMetaForRow failed', { idx, row, e });
+      rowMeta = JSON.parse(JSON.stringify(baseMeta || {}));
+    }
+
+    // render into offscreen root then snapshot
+    try {
+      renderVisualPreviewInto(rowMeta, refs);
+    } catch (e) {
+      console.error('[Batch] renderVisualPreviewInto failed', { idx, e });
+    }
+
+    let image_url = '';
+    try {
+      if (!window.html2canvas) throw new Error('html2canvas missing');
+      image_url = await snapshotAnyRootToImage(refs.root, `-${idx}`);
+
+      rowMeta.image = image_url;
+      if (!rowMeta.properties) rowMeta.properties = {};
+      if (!rowMeta.properties.visual) rowMeta.properties.visual = buildVisualProps();
+      rowMeta.properties.visual.preview_image = image_url;
+
+      console.log('[Batch] Snapshot OK', { idx, image_url });
+    } catch (e) {
+      console.warn('[Batch] Batch preview snapshot failed for row', idx, e);
+    }
+
+    rowsWithPreview.push({
+      ...row,
+      preview_meta: rowMeta,
+      image_url,
+      preview_image_url: image_url,
+    });
+
+    if (batchModalStatus) batchModalStatus.textContent = `Rendering ${idx+1}/${finalRows.length} previews…`;
+  }
+
+  console.log('[Batch] buildBatchPreviews done', { rendered: rowsWithPreview.length });
+  if (batchModalStatus) batchModalStatus.textContent = `Rendered ${rowsWithPreview.length} previews.`;
+  return rowsWithPreview;
+}
+
+
+
+
+
+
+
+
+
+
+    async function handleImageUpload(kind, onUrl){
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('kind', kind);
+        try {
+          const res = await fetch('/studio/actions/upload_image', { method:'POST', body: fd ,   credentials: 'same-origin'
+ });
+          const j = await res.json();
+          if (!j || !j.ok || !j.url) {
+            alert((j && j.error) ? j.error : 'Upload failed');
+            return;
+          }
+          onUrl && onUrl(j.url);
+          refreshAll();
+        } catch (e) {
+          console.error('upload error', e);
+          alert('Upload error, please try again.');
+        }
+      };
+      input.click();
+    }
+
+
+
+
+    function buildVisualProps(){
+  const logo_url        = (designLogoInput?.value || '').trim();
+  const bg_image_url    = (designBgInput?.value || '').trim();
+  const show_qr         = designShowQrChk ? !!designShowQrChk.checked : true;
+  const show_badge      = designShowBadgeChk ? !!designShowBadgeChk.checked : true;
+  const guest_photo_url = (designGuestPhotoInput?.value || '').trim();
+
+  // keep these props if you still want state mirrors
+  c.props.logo_url       = logo_url;
+  c.props.bg_image_url   = bg_image_url;
+  c.props.show_qr        = show_qr;
+  c.props.show_badge     = show_badge;
+  c.props.guest_photo_url = guest_photo_url;
+
+  // ✅ NO primary/accent/text-mode anymore
+  return {
+    logo_url: logo_url || undefined,
+    bg_image_url: bg_image_url || undefined,
+    guest_photo_url: guest_photo_url || undefined,
+    show_qr,
+    show_badge,
+  };
+}
+
+
+
+
+
+
+function buildMetadata(){
+  const title       = (simpleTitle?.value || '').trim();
+  const holder      = (simpleHolder?.value || '').trim();
+  const valid_until = (simpleUntil?.value || '').trim();
+  const notes       = (simpleNotes?.value || '').trim();
+
+  const context = c.props.context || "hotel";
+
+  // ------------------------------
+  // Canonical selection
+  // ------------------------------
+  const selectedTplKey = (c.props.template_key || c.props.product_key || "custom");
+  const selectedDomainId = (() => {
+    try { return localStorage.getItem("xertify:selected_domain") || ""; }
+    catch(e) { return ""; }
+  })();
+
+  const tpl = (typeof findTemplateByKey === "function") ? findTemplateByKey(selectedTplKey) : null;
+
+  const use_case = (tpl && tpl.category) ? tpl.category : "generic";
+
+  // ------------------------------
+  // Lifecycle is template-driven
+  // ------------------------------
+  const tplLifecycle = (tpl && tpl.lifecycle && typeof tpl.lifecycle === "object") ? tpl.lifecycle : {};
+  const lifecycle = {
+    kind: tplLifecycle.kind || "standard",
+  };
+
+  // only set expires_at if lifecycle is time_bound AND user provided a date
+  if ((lifecycle.kind === "time_bound") && valid_until) {
+    lifecycle.expires_at = valid_until;
+  }
+
+  const namePieces = [];
+  if (holder) namePieces.push(holder);
+  if (title) namePieces.push(`– ${title}`);
+  const name = namePieces.join(' ') || (title || 'Digital Pass');
+
+  const attrs = [];
+  attrs.push({ trait_type: 'type', value: use_case });
+  if (holder)      attrs.push({ trait_type: 'holder_name',  value: holder });
+  if (valid_until) attrs.push({ trait_type: 'valid_until',  value: valid_until });
+  if (notes)       attrs.push({ trait_type: 'notes',        value: notes });
+
+  attrs.push({ trait_type: 'context', value: context });
+
+  // ✅ canonical identifiers
+  // NEW (canonical)
+attrs.push({ trait_type: "template_key", value: selectedTplKey });
+attrs.push({ trait_type: "domain_id", value: selectedDomainId });
+
+// OPTIONAL: keep legacy visibility if you like
+attrs.push({ trait_type: "template_id", value: selectedTplKey });
+
+
+  const visual = buildVisualProps();
+
+
+
+
+
+  // ---------------------------------------------
+  // Template lifecycle truth ONLY (Step 19C)
+  // ---------------------------------------------
+  const transferable =
+    (typeof tplLifecycle.transferable === "boolean") ? tplLifecycle.transferable : undefined;
+
+  const revocable =
+    (typeof tplLifecycle.revocable === "boolean") ? tplLifecycle.revocable : undefined;
+
+  if (typeof transferable === "boolean") {
+    attrs.push({ trait_type: "transferable", value: transferable ? "true" : "false" });
+  }
+  if (typeof revocable === "boolean") {
+    attrs.push({ trait_type: "revocable", value: revocable ? "true" : "false" });
+  }
+
+  // Optional legacy visibility only (not used for locks/permissions)
+  const productKey = (c.props.product_key || selectedTplKey || "custom");
+  attrs.push({ trait_type: "ownership_product", value: productKey });
+
+
+
+
+
+  // ---------------------------------------------
+  // Custody metadata
+  // ---------------------------------------------
+  const custodyMode =
+    (window.__CUSTODY_MODE__ === "self") ? "self" : "custodial";
+
+  let holderAddress = "";
+  if (custodyMode === "self") {
+    holderAddress =
+      (window.__USER__ && window.__USER__.address)
+        ? window.__USER__.address
+        : "";
+  }
+
+  const custody = {
+    mode: custodyMode,
+    holder_address: holderAddress || null,
+  };
+
+  // ---------------------------------------------
+  // Conditions
+  // ---------------------------------------------
+  const conditions = (Array.isArray(c.props.conditions) ? c.props.conditions : [])
+    .map(cc => ({
+      key: (cc.key || '').trim(),
+      op: cc.op || 'equals',
+      value: (cc.value || '').trim()
+    }))
+    .filter(cc => cc.key && cc.value);
+
+  // ---------------------------------------------
+  // Template-driven custom fields → attributes
+  // ---------------------------------------------
+  if (typeof readTemplateFieldValues === "function"){
+    const extra = readTemplateFieldValues();
+    for (const [k, v] of Object.entries(extra)){
+      if (!k) continue;
+      attrs.push({ trait_type: k, value: v });
+    }
+  }
+
+  const pd_gate = {
+  enabled: !!(c.props.pd_gate && c.props.pd_gate.enabled),
+  domain_label: (c.props.pd_gate?.domain_label || "").trim(),
+  domain_purpose: (c.props.pd_gate?.domain_purpose || "supply_chain").trim(),
+  credential_issuer: (c.props.pd_gate?.credential_issuer || "").trim(),
+  credential_type: (c.props.pd_gate?.credential_type || "").trim(),
+  domain_mode: (c.props.pd_gate?.domain_mode || "create_new").trim(),
+  existing_domain_id: (c.props.pd_gate?.existing_domain_id || "").trim(),
+};
+
+
+  const meta = {
+    name,
+    description: title ? `${title} — digital pass on XRPL.` : 'Digital pass on XRPL.',
+    attributes: attrs,
+    properties: {
+      vertical: (
+  (window.__ENGINE_VERTICAL__ || "").trim() ||
+  (selectedDomainId || "").trim() ||
+  "generic"
+),
+
+      permissioned_domain_gate: pd_gate,
+
+
+      domain_id: selectedDomainId,
+      template_key: selectedTplKey,     // ✅ canonical
+      template_id: selectedTplKey,      // (optional legacy)
+
+
+      // ✅ keep template object in properties for back-face + debug
+      template: {
+      template_key: selectedTplKey,   // ✅ canonical (add)
+      template_id: selectedTplKey,    // optional legacy
+      domain_id: selectedDomainId,
+      category: use_case,
+      lifecycle: tplLifecycle || {},
+    },
+
+
+      lifecycle,
+      visual,
+      conditions,
+      custody,
+
+      
+    }
+  };
+
+  c.props.metadata = meta;
+  return meta;
+}
+
+
+
+    // ---- QR helpers (compact) ----
+    function buildCompactQrPayload(meta) {
+      const attrs = Array.isArray(meta.attributes) ? meta.attributes : [];
+      const getAttr = (k) => {
+        const a = attrs.find(x => x.trait_type === k);
+        return a ? String(a.value || '') : '';
+      };
+      const lifecycle = (meta.properties && meta.properties.lifecycle) ? meta.properties.lifecycle : {};
+      const payload = { t:'P', v:1 };
+      const holder = getAttr('holder_name');
+      const vu = getAttr('valid_until') || lifecycle.expires_at || '';
+      const notes = getAttr('notes');
+      if (holder) payload.h = holder;
+      if (vu) payload.vu = vu;
+      if (lifecycle.kind) payload.k = lifecycle.kind;
+      if (notes) payload.nt = notes.slice(0, 24);
+
+      let text = JSON.stringify(payload);
+      if (text.length > 180 && payload.nt) { delete payload.nt; text = JSON.stringify(payload); }
+      if (text.length > 180 && payload.vu) { delete payload.vu; text = JSON.stringify(payload); }
+      return { payload, text };
+    }
+
+    function renderQr(meta) {
+      if (!previewQrInner || !previewQr) return;
+
+      const visual = (meta.properties && meta.properties.visual) ? meta.properties.visual : {};
+      const showQr = visual.show_qr !== false;
+
+      if (!showQr) {
+        previewQr.style.display = 'none';
+        previewQrInner.innerHTML = '';
+        return;
+      }
+
+      previewQr.style.display = 'flex';
+      previewQrInner.innerHTML = '';
+
+      if (!window.QRCode) {
+        previewQrInner.textContent = 'QR';
+        return;
+      }
+
+      const { payload, text } = buildCompactQrPayload(meta);
+      if (!meta.properties) meta.properties = {};
+      meta.properties.qr_payload = payload;
+
+      try {
+        new QRCode(previewQrInner, { text, width: 96, height: 96, correctLevel: QRCode.CorrectLevel.L });
+      } catch (e) {
+        console.warn('QR render failed', e);
+        previewQrInner.textContent = 'QR';
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ---- preview renderer (THIS fixes: bunched text, missing badge/qr/logo/bg, colors not applying) ----
+    function renderVisualPreview(meta){
+      if (!previewRoot) return;
+
+      const props = meta.properties || {};
+      const visual = props.visual || {};
+      const lifecycle = props.lifecycle || {};
+const previewBadge = node.querySelector('[data-role="preview-badge"]');
+
+      const brandPrimary = visual.brand_primary || '#3b82f6';
+      const brandAccent  = visual.brand_accent || '#22c55e';
+
+
+previewRoot.style.boxShadow = `
+  0 0 0 1px rgba(148,163,253,0.12) inset,
+  0 10px 28px rgba(2,6,23,0.55),
+  0 0 26px ${hexToRgba(brandPrimary, 0.28)},
+  0 0 22px ${hexToRgba(brandAccent, 0.22)}
+`;
+
+
+
+
+      const textOnDark   = visual.brand_text_on_dark !== false;
+      const logoUrl      = visual.logo_url || '';
+      const bgImg        = visual.bg_image_url || '';
+      const showBadge    = visual.show_badge !== false;
+      const guestPhotoUrl = visual.guest_photo_url || '';
+
+      // apply CSS vars (actual effect via ::after glow)
+      previewRoot.style.setProperty('--nft-primary', brandPrimary);
+      previewRoot.style.setProperty('--nft-accent', brandAccent);
+
+      // text color mode
+      previewRoot.style.color = textOnDark ? '#f8fafc' : '#020617';
+
+      // background
+      if (previewBg) {
+        if (bgImg) {
+          previewBg.style.backgroundImage = `url("${bgImg}")`;
+          previewBg.style.display = 'block';
+        } else {
+          previewBg.style.backgroundImage = 'none';
+          previewBg.style.display = 'block';
+        }
+      }
+
+      // logo
+      if (previewLogo) {
+        if (logoUrl) {
+          previewLogo.style.backgroundImage = `url("${logoUrl}")`;
+          previewLogo.style.opacity = '1';
+        } else {
+          previewLogo.style.backgroundImage = 'none';
+          previewLogo.style.opacity = '0.9';
+        }
+      }
+
+
+      if (previewGuestPhoto) {
+  if (guestPhotoUrl) {
+    previewGuestPhoto.style.backgroundImage = `url("${guestPhotoUrl}")`;
+    previewGuestPhoto.style.display = 'block';
+  } else {
+    previewGuestPhoto.style.backgroundImage = 'none';
+    previewGuestPhoto.style.display = 'none';
+  }
+}
+
+
+      // attributes
+      const attrs = Array.isArray(meta.attributes) ? meta.attributes : [];
+      const getAttr = (k) => {
+        const a = attrs.find(x => x.trait_type === k);
+        return a ? String(a.value || '') : '';
+      };
+
+      const holder = getAttr('holder_name');
+      const until  = getAttr('valid_until') || (lifecycle.expires_at || '');
+      const notes  = getAttr('notes') || '';
+
+      // top brand
+      if (previewBrandTitle) previewBrandTitle.textContent = (simpleTitle?.value || meta.name || 'Your Brand').trim();
+      if (previewBrandSub) {
+        const vertical =
+          (meta?.properties?.vertical) ||
+          (window.__ENGINE_VERTICAL__) ||
+          "generic";
+        const labelMap = {
+          hotel:'Guest Pass', event:'Event Ticket', gym:'Membership', office:'Access Card', insurance:'Policy Proof',
+          supply_chain:'Provenance', government:'Digital ID', healthcare:'Credential', education:'Certificate',
+          retail:'Loyalty', luxury:'Authenticity', carbon:'Carbon Credit'
+        };
+        previewBrandSub.textContent = `${labelMap[vertical] || 'Digital Pass'} • XRPL`;
+      }
+
+      // main title = holder (as requested)
+      if (previewTitle) previewTitle.textContent = holder || '—';
+
+      // dates line
+      if (previewDates) previewDates.textContent = until ? `Valid until ${until}` : 'Valid until —';
+
+      // notes
+      if (previewNotes) previewNotes.textContent = notes || 'Notes will appear here.';
+
+      // badge top-right
+      if (previewBadge) {
+        if (showBadge) {
+          previewBadge.style.display = 'inline-flex';
+previewBadge.textContent = (lifecycle.kind || 'STANDARD').toUpperCase();
+          previewBadge.style.borderColor = 'rgba(255,255,255,0.20)';
+        } else {
+          previewBadge.style.display = 'none';
+        }
+      }
+
+      // meta bottom-right
+      const vertical = getAttr('vertical') || c.props.vertical || 'hotel';
+      if (previewMeta1) previewMeta1.textContent = `${vertical.toUpperCase()} • XRPL`;
+      if (previewMeta2) previewMeta2.textContent = (lifecycle.kind || 'standard');
+
+      // blank state
+      const isBlank = !holder && !(simpleTitle?.value || '').trim() && !until && !notes;
+      previewRoot.classList.toggle('blank-preview', isBlank);
+
+      // QR
+      renderQr(meta);
+    }
+
+    // ---- batch table ----
+    function updateBatchSummary(){
+      if (!batchSummaryEl) return;
+      const rows = Array.isArray(c.props.batch_rows) ? c.props.batch_rows : [];
+      const used = rows.filter(r => (r.holder_name || '').trim().length > 0);
+      batchSummaryEl.textContent = used.length ? `Rows: ${used.length}` : 'No rows';
+    }
+
+    function renderBatchTable(){
+      if (!batchRowsBody) return;
+      batchRowsBody.innerHTML = '';
+      const rows = Array.isArray(c.props.batch_rows) ? c.props.batch_rows : [];
+
+      rows.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+       tr.innerHTML = `
+  <td class="px-2 py-2">
+    <input type="text" class="xertify-input" style="padding:8px 10px;border-radius:10px;" data-role="batch-holder" placeholder="Alice Smith" />
+  </td>
+
+  <td class="px-2 py-2">
+    <input type="text" class="xertify-input" style="padding:8px 10px;border-radius:10px;" data-role="batch-address" placeholder="rWallet... (optional)" />
+  </td>
+
+  <td class="px-2 py-2">
+    <input type="date" class="xertify-input" style="padding:8px 10px;border-radius:10px;" data-role="batch-valid-until" />
+  </td>
+
+  <td class="px-2 py-2">
+    <input type="text" class="xertify-input" style="padding:8px 10px;border-radius:10px;" data-role="batch-notes" placeholder="Room / Seat / Notes" />
+  </td>
+
+  <td class="px-2 py-2">
+  <div style="display:flex; gap:6px; align-items:center;">
+    <input type="hidden" data-role="batch-guestphoto" />
+    <button type="button" class="xertify-btn xertify-btn-ghost" style="padding:6px 10px;" data-role="batch-guestphoto-upload">
+      Upload
+    </button>
+    <span class="text-[10px] text-slate-500 truncate" data-role="batch-guestphoto-status">None</span>
+  </div>
+</td>
+
+
+  <td class="px-2 py-2 text-right">
+    <button type="button" data-role="batch-remove" class="xertify-btn xertify-btn-ghost" style="padding:6px 10px;">✕</button>
+  </td>
+`;
+
+const guestPhotoInp = tr.querySelector('[data-role="batch-guestphoto"]');
+const guestPhotoBtn = tr.querySelector('[data-role="batch-guestphoto-upload"]');
+const guestPhotoStatus = tr.querySelector('[data-role="batch-guestphoto-status"]');
+
+const holderInp = tr.querySelector('[data-role="batch-holder"]');
+const addrInp   = tr.querySelector('[data-role="batch-address"]');
+const validInp  = tr.querySelector('[data-role="batch-valid-until"]');
+const notesInp  = tr.querySelector('[data-role="batch-notes"]');
+const removeBtn = tr.querySelector('[data-role="batch-remove"]');
+
+if (holderInp) holderInp.value = row.holder_name || '';
+if (addrInp)   addrInp.value   = row.address || '';
+if (validInp)  validInp.value  = row.valid_until || '';
+if (notesInp)  notesInp.value  = row.notes || '';
+
+if (guestPhotoInp) guestPhotoInp.value = row.guest_photo_url || '';
+if (guestPhotoStatus) guestPhotoStatus.textContent = row.guest_photo_url ? 'Selected' : 'None';
+
+if (holderInp) holderInp.addEventListener('input', e => {
+  c.props.batch_rows[idx].holder_name = e.target.value;
+  updateBatchSummary();
+});
+if (addrInp)   addrInp.addEventListener('input', e => { c.props.batch_rows[idx].address = e.target.value; });
+if (validInp)  validInp.addEventListener('change', e => { c.props.batch_rows[idx].valid_until = e.target.value; });
+if (notesInp)  notesInp.addEventListener('input', e => { c.props.batch_rows[idx].notes = e.target.value; });
+
+if (removeBtn) removeBtn.addEventListener('click', () => {
+  c.props.batch_rows.splice(idx, 1);
+  renderBatchTable();
+  updateBatchSummary();
+});
+
+if (guestPhotoBtn) guestPhotoBtn.addEventListener('click', () => {
+  handleImageUpload('guest_photo', url => {
+    c.props.batch_rows[idx].guest_photo_url = url;
+    if (guestPhotoInp) guestPhotoInp.value = url;
+    if (guestPhotoStatus) guestPhotoStatus.textContent = 'Selected';
+    refreshAll();
+  });
+});
+
+batchRowsBody.appendChild(tr);
+
+
+
+      });
+    }
+
+
+
+
+
+
+
+    // ---- snapshot (optional) ----
+    async function snapshotPreviewToImage(meta, suffix = '') {
+      if (!previewRoot) throw new Error('No preview root to snapshot');
+      if (!window.html2canvas) throw new Error('html2canvas missing');
+
+      try { setFlipped(false); } catch(e) {}
+
+      // Ensure QR is rendered into DOM before snapshot
+      try { renderQr(meta); } catch (e) {}
+
+      const snapCanvas = await window.html2canvas(previewRoot, {
+        scale: 2,
+        backgroundColor: '#020617',
+        useCORS: true,
+      });
+
+      const size = 512;
+      const out = document.createElement('canvas');
+      out.width = size; out.height = size;
+      const ctx2 = out.getContext('2d');
+
+      ctx2.fillStyle = '#020617';
+      ctx2.fillRect(0, 0, size, size);
+
+      const scale = Math.min(size / snapCanvas.width, size / snapCanvas.height);
+      const w = snapCanvas.width * scale;
+      const h = snapCanvas.height * scale;
+      const x = (size - w) / 2;
+      const y = (size - h) / 2;
+      ctx2.drawImage(snapCanvas, x, y, w, h);
+
+      const blob = await new Promise(resolve => out.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('toBlob returned null');
+
+      const fd = new FormData();
+      fd.append('file', blob, `nft-preview${suffix || ''}.png`);
+      fd.append('kind', 'nft_preview');
+
+      const res = await fetch('/studio/actions/upload_image', { method: 'POST', body: fd ,  credentials: 'same-origin'
+ });
+      const j = await res.json().catch(() => null);
+      if (!j || !j.ok || !j.url) throw new Error((j && j.error) ? j.error : 'Preview upload failed');
+      return j.url;
+    }
+
+    function upsertTrait(attrs, trait, value) {
+      if (!value) return;
+      const existing = attrs.find(a => a.trait_type === trait);
+      if (existing) existing.value = value;
+      else attrs.push({ trait_type: trait, value });
+    }
+
+
+
+
+
+    function buildMetaForRow(baseMeta, row) {
+      const meta = JSON.parse(JSON.stringify(baseMeta || {}));
+      const attrs = Array.isArray(meta.attributes) ? meta.attributes.slice() : [];
+      upsertTrait(attrs, 'holder_name', (row.holder_name || '').trim());
+      upsertTrait(attrs, 'valid_until', (row.valid_until || '').trim());
+      upsertTrait(attrs, 'notes', (row.notes || '').trim());
+      meta.attributes = attrs;
+
+            // =====================================================
+      // Step 6 — Row meta hard guarantees (PER ROW SNAPSHOT)
+      // =====================================================
+      if (!meta.properties || typeof meta.properties !== "object") meta.properties = {};
+
+      // hard guarantee visual + lifecycle
+      if (!meta.properties.visual || typeof meta.properties.visual !== "object") meta.properties.visual = buildVisualProps();
+      if (!meta.properties.lifecycle || typeof meta.properties.lifecycle !== "object") {
+        meta.properties.lifecycle = { kind: "standard" };
+      }
+
+      // stamp canonical identifiers from the base meta (preferred)
+      const p0 = (baseMeta && baseMeta.properties && typeof baseMeta.properties === "object") ? baseMeta.properties : {};
+      const domainId = (p0.domain_id || "").trim();
+      const tplKey   = (p0.template_key || p0.template_id || "").trim();
+
+      if (domainId) meta.properties.domain_id = domainId;
+      if (tplKey)   meta.properties.template_key = tplKey;
+
+      // optional legacy field
+      if (tplKey) meta.properties.template_id = tplKey;
+
+      // stamp PD gate per row snapshot
+      if (p0.permissioned_domain_gate && typeof p0.permissioned_domain_gate === "object") {
+        meta.properties.permissioned_domain_gate = JSON.parse(JSON.stringify(p0.permissioned_domain_gate));
+      }
+
+
+      if (!meta.properties) meta.properties = {};
+      if (!meta.properties.visual) meta.properties.visual = buildVisualProps();
+      // Per-row guest photo overrides global guest photo
+if (!meta.properties.visual) meta.properties.visual = {};
+if (row.guest_photo_url && String(row.guest_photo_url).trim()) {
+  meta.properties.visual.guest_photo_url = String(row.guest_photo_url).trim();
+}
+
+      if (!meta.properties.lifecycle) meta.properties.lifecycle = { kind: 'standard' };
+
+      // Name
+      const baseTitle = (simpleTitle?.value || meta.name || 'Pass').trim();
+      meta.name = row.holder_name ? `${row.holder_name} – ${baseTitle}` : baseTitle;
+
+      // lifecycle expiry from row
+      if (row.valid_until) meta.properties.lifecycle.expires_at = row.valid_until;
+
+      return meta;
+    }
+
+
+/* ==========================================
+   Phase C: Template-driven fields + metadata
+   Requires: window.__TEMPLATE_REGISTRY__
+   ========================================== */
+
+function getTplRegistry(){
+  return (window.__TEMPLATE_REGISTRY__ && typeof window.__TEMPLATE_REGISTRY__ === "object")
+    ? window.__TEMPLATE_REGISTRY__
+    : { templates: {} };
+}
+
+function findTemplateByKey(templateKey){
+  const reg = getTplRegistry();
+  const templates = (reg.templates && typeof reg.templates === "object") ? reg.templates : {};
+  return templates[templateKey] || null;
+}
+
+
+function humanLabel(key){
+  return String(key || "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, m => m.toUpperCase());
+}
+
+/**
+ * Renders fields for currently selected template into #xertify-template-fields
+ * Skips base fields you already have: holder_name, valid_until, notes
+ */
+function renderTemplateFields(){
+  const mount = document.getElementById("xertify-template-fields");
+  if (!mount) return;
+
+  const templateKey = (window.XERTIFY && window.XERTIFY.getSelectedTemplateKey)
+    ? window.XERTIFY.getSelectedTemplateKey()
+    : (window.__SELECTED_TEMPLATE_KEY__ || "custom");
+
+  const tpl = findTemplateByKey(templateKey);
+
+  // If custom or missing template, clear extra fields
+  if (!tpl || templateKey === "custom"){
+    mount.innerHTML = "";
+    return;
+  }
+
+  const attrs = Array.isArray(tpl.attributes) ? tpl.attributes : [];
+  const required = new Set(Array.isArray(tpl.required) ? tpl.required : []);
+
+  // Store a stable container state
+  if (!window.__TEMPLATE_FIELD_STATE__) window.__TEMPLATE_FIELD_STATE__ = {};
+  if (!window.__TEMPLATE_FIELD_STATE__[templateKey]) window.__TEMPLATE_FIELD_STATE__[templateKey] = {};
+  const state = window.__TEMPLATE_FIELD_STATE__[templateKey];
+
+  const skip = new Set(["holder_name","valid_until","notes"]);
+
+  const blocks = [];
+  for (const a of attrs){
+    const k = a && a.key ? String(a.key) : "";
+    if (!k || skip.has(k)) continue;
+
+    const label = a.label || humanLabel(k);
+    const placeholder = a.placeholder || "";
+    const value =
+    (state[k] != null)
+    ? String(state[k])
+    : (a.default != null ? String(a.default) : "");
+
+    const isReq = required.has(k);
+    const rid = `tpl_${templateKey}_${k}`;
+
+    const type = a.type || "text";
+let fieldHtml = "";
+
+if (type === "select" && Array.isArray(a.options)) {
+  fieldHtml = `
+    <select
+      id="${rid}"
+      data-tpl-key="${templateKey}"
+      data-attr-key="${k}"
+      class="xertify-select"
+      ${isReq ? `data-required="1"` : ``}
+    >
+      <option value="">Select…</option>
+      ${a.options.map(opt => `
+        <option value="${opt}" ${value === opt ? "selected" : ""}>${opt}</option>
+      `).join("")}
+    </select>
+  `;
+} else {
+  fieldHtml = `
+    <input
+      id="${rid}"
+      type="${type}"
+      data-tpl-key="${templateKey}"
+      data-attr-key="${k}"
+      class="xertify-input"
+      placeholder="${placeholder}"
+      value="${value.replace(/"/g, "&quot;")}"
+      ${isReq ? `data-required="1"` : ``}
+    />
+  `;
+}
+
+blocks.push(`
+  <div>
+    <div class="xertify-fieldlabel">
+      ${label}${isReq ? `<span class="xertify-required">*</span>` : ``}
+    </div>
+    ${fieldHtml}
+    <div class="xertify-err" data-err-for="${rid}">Required</div>
+  </div>
+`);
+
+  }
+
+  mount.innerHTML = blocks.join("");
+
+  // Wire events (update state + refresh)
+    mount.querySelectorAll("[data-attr-key]").forEach(inp => {
+    const evt = (inp.tagName === "SELECT") ? "change" : "input";
+    inp.addEventListener(evt, () => {
+      const tKey = inp.getAttribute("data-tpl-key");
+      const aKey = inp.getAttribute("data-attr-key");
+      if (!window.__TEMPLATE_FIELD_STATE__[tKey]) window.__TEMPLATE_FIELD_STATE__[tKey] = {};
+      window.__TEMPLATE_FIELD_STATE__[tKey][aKey] = inp.value;
+      if (typeof window.XERTIFY?.refreshAll === "function") window.XERTIFY.refreshAll();
+    });
+  });
+
+}
+window.XERTIFY.getSelectedTemplateKey = function(){
+  return (window.__SELECTED_TEMPLATE_KEY__ || c.props.template_key || c.props.product_key || "custom");
+};
+
+/** returns key->value map for the current selected template */
+function readTemplateFieldValues(){
+  const templateKey = (window.XERTIFY && window.XERTIFY.getSelectedTemplateKey)
+    ? window.XERTIFY.getSelectedTemplateKey()
+    : (window.__SELECTED_TEMPLATE_KEY__ || "custom");
+
+  const state = (window.__TEMPLATE_FIELD_STATE__ && window.__TEMPLATE_FIELD_STATE__[templateKey])
+    ? window.__TEMPLATE_FIELD_STATE__[templateKey]
+    : {};
+
+  // only include non-empty strings
+  const out = {};
+  for (const [k,v] of Object.entries(state)){
+    const s = String(v || "").trim();
+    if (s) out[k] = s;
+  }
+  return out;
+}
+
+
+window.XERTIFY.setProduct = function(templateKey, domainId, verticalId){
+  const tplKey = (templateKey || "custom");
+
+  // Canonical selection (single source of truth)
+  window.__SELECTED_TEMPLATE_KEY__ = tplKey;
+
+  // Persist selection if domainId provided
+  try {
+    if (domainId != null) localStorage.setItem("xertify:selected_domain", String(domainId || ""));
+    localStorage.setItem("xertify:selected_template", String(tplKey || "custom"));
+  } catch(e) {}
+
+  // Keep props canonical
+  c.props.template_key = tplKey;
+  c.props.product_key  = tplKey; // backwards compatibility (you still reference this elsewhere)
+
+  // Derive context + lifecycle locks from template itself
+  const tpl = (typeof findTemplateByKey === "function") ? findTemplateByKey(tplKey) : null;
+
+  // Context = template.category (fallback to generic)
+  c.props.context = (tpl && tpl.category) ? String(tpl.category) : "generic";
+
+  
+  // Set vertical (engine pack) from sidebar or template
+  let v = (verticalId || "").trim().toLowerCase();
+  if (!v && tpl && (tpl.vertical_id || tpl.vertical)) {
+    v = String(tpl.vertical_id || tpl.vertical).trim().toLowerCase();
+  }
+  if (!v) v = "generic";
+  window.__ENGINE_VERTICAL__ = v;
+
+  // Re-render dynamic template fields
+  if (typeof renderTemplateFields === "function") renderTemplateFields();
+
+  refreshAll();
+};
+
+
+
+
+
+
+
+    // ---------------------------------------------
+    // Core refresh
+    // ---------------------------------------------
+    function refreshAll(){
+      const meta = buildMetadata();
+      renderVisualPreview(meta);
+      renderMetaBack(meta); // ✅ Update 2C
+
+      renderConditions();
+        validateForm(); // ✅ keep inline errors synced
+
+
+      if (jsonOutput) jsonOutput.value = JSON.stringify(meta, null, 2);
+
+      renderBatchTable();
+      updateBatchSummary();
+    }
+
+    window.XERTIFY.refreshAll = refreshAll;
+
+
+    // ---------------------------------------------
+    // Wiring
+    // ---------------------------------------------
+
+
+
+
+
+
+// ------------------------------
+// Permissioned Domain Gate wiring
+// ------------------------------
+pdRenderSummary(); // initial paint
+
+if (pdConfigureBtn) {
+  pdConfigureBtn.addEventListener("click", (e) => {
+    e.preventDefault(); e.stopPropagation();
+    pdOpenModal();
+  });
+}
+
+if (pdEnabledChk) {
+  pdEnabledChk.addEventListener("change", () => {
+    c.props.pd_gate.enabled = !!pdEnabledChk.checked;
+    pdRenderSummary();
+    refreshAll();
+  });
+}
+
+if (pdCloseBtn) pdCloseBtn.addEventListener("click", pdCloseModal);
+if (pdCancelBtn) pdCancelBtn.addEventListener("click", pdCloseModal);
+
+if (pdSaveBtn) {
+  pdSaveBtn.addEventListener("click", () => {
+    pdSaveFromModal();
+  });
+}
+
+// click outside modal closes
+if (pdModal) {
+  pdModal.addEventListener("click", (e) => {
+    if (e.target === pdModal) pdCloseModal();
+  });
+}
+
+
+
+
+    [
+  simpleTitle, simpleHolder, simpleUntil, simpleNotes,
+  designLogoInput, designBgInput, designGuestPhotoInput,
+  designShowQrChk, designShowBadgeChk
+].forEach(inp => {
+  if (!inp) return;
+  const evt = (inp.tagName === 'SELECT' || inp.type === 'checkbox') ? 'change' : 'input';
+  inp.addEventListener(evt, refreshAll);
+});
+
+
+    const logoStatus = node.querySelector('[data-role="design-logo-status"]');
+const bgStatus   = node.querySelector('[data-role="design-bg-status"]');
+const guestStatus = node.querySelector('[data-role="design-guestphoto-status"]');
+
+
+if (designLogoUploadBtn) {
+  designLogoUploadBtn.addEventListener('click', () => {
+    handleImageUpload('logo', url => {
+      if (designLogoInput) designLogoInput.value = url;
+      if (logoStatus) logoStatus.textContent = 'Logo selected';
+      refreshAll();
+    });
+  });
+}
+
+if (designBgUploadBtn) {
+  designBgUploadBtn.addEventListener('click', () => {
+    handleImageUpload('background', url => {
+      if (designBgInput) designBgInput.value = url;
+      if (bgStatus) bgStatus.textContent = 'Background selected';
+      refreshAll();
+    });
+  });
+}
+
+
+
+
+   if (designGuestPhotoUploadBtn) {
+  designGuestPhotoUploadBtn.addEventListener('click', () => {
+    handleImageUpload('guest_photo', url => {
+      if (designGuestPhotoInput) designGuestPhotoInput.value = url;
+      if (guestStatus) guestStatus.textContent = 'Guest photo selected';
+      refreshAll();
+    });
+  });
+}
+
+
+
+    if (copyJsonBtn) {
+      copyJsonBtn.addEventListener('click', async () => {
+        try {
+          const meta = buildMetadata();
+          await navigator.clipboard.writeText(JSON.stringify(meta, null, 2));
+          alert('Metadata JSON copied to clipboard.');
+        } catch (e) {
+          alert('Could not copy. Please copy manually.');
+        }
+      });
+    }
+
+    if (downloadJsonBtn) {
+      downloadJsonBtn.addEventListener('click', () => {
+        const meta = buildMetadata();
+        const text = JSON.stringify(meta, null, 2);
+        const blob = new Blob([text], { type:'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (meta.name || 'nft-metadata') + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    if (batchAddRowBtn) {
+      batchAddRowBtn.addEventListener('click', () => {
+c.props.batch_rows.push({ holder_name:'', address:'', valid_until:'', notes:'', guest_photo_url:'' });
+        renderBatchTable();
+        updateBatchSummary();
+      });
+    }
+
+
+
+if (condAddBtn) {
+  condAddBtn.addEventListener('click', () => {
+    c.props.conditions.push({
+      key: '',
+      op: 'equals',
+      value: ''
+    });
+    renderConditions();
+    refreshAll();
+  });
+}
+
+
+
+
+
+    if (batchUploadCsvBtn) {
+      batchUploadCsvBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv,text/csv';
+        input.onchange = () => {
+          const file = input.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const text = String(reader.result || '');
+              const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+              const rows = [];
+              lines.forEach((line, idx) => {
+                const cols = line.split(',').map(x => x.trim());
+                if (!cols.length) return;
+                if (idx === 0 && /holder/i.test(cols[0])) return;
+const [holder, address, valid_until, notes, guest_photo_url] = cols;
+                if (!holder) return;
+                rows.push({
+  holder_name: holder,
+  address: address || '',
+  valid_until: valid_until || '',
+  notes: notes || '',
+  guest_photo_url: guest_photo_url || '',
+});
+
+              });
+              c.props.batch_rows = rows;
+              renderBatchTable();
+              updateBatchSummary();
+            } catch (e) {
+              console.error('CSV parse error', e);
+alert('Could not parse CSV. Expecting: holder_name,address,valid_until,notes,guest_photo_url');
+            }
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+      });
+    }
+
+
+
+
+
+
+
+
+
+
+
+  if (batchModalConfirm) {
+  batchModalConfirm.addEventListener('click', async () => {
+    if (!__BATCH_QUEUE) return;
+
+    try {
+      batchModalConfirm.disabled = true;
+      batchModalConfirm.textContent = 'Minting…';
+
+      const { baseMeta, rowsWithPreview } = __BATCH_QUEUE;
+
+      // ✅ Build rows payload the backend expects
+      const payloadRows = (rowsWithPreview || [])
+        .map(r => ({
+          holder_name: (r.holder_name || "").trim(),
+          address: (r.address || "").trim(),
+          valid_until: (r.valid_until || "").trim(),
+          notes: (r.notes || "").trim(),
+          guest_photo_url: (r.guest_photo_url || "").trim(),
+
+          // optional but useful
+          preview_image_url: (r.preview_image_url || r.image_url || "").trim(),
+          preview_meta: r.preview_meta || null,
+        }))
+        .filter(r => r.holder_name);
+
+      const res = await fetch('/studio/actions/nft/mint_batch_from_designer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          // ✅ IMPORTANT: backend expects base_metadata + rows
+          base_metadata: baseMeta,
+          rows: payloadRows,
+
+          custody_mode: (window.__CUSTODY_MODE__ || "custodial"),
+          vertical_id: (window.__ENGINE_VERTICAL__ || "generic"),
+        }),
+      });
+
+      const j = await res.json().catch(() => null);
+      if (!j || !j.ok) {
+        alert((j && j.error) ? j.error : 'Batch mint failed.');
+        return;
+      }
+
+      if (!j.items || !j.items.length) {
+        alert('Batch mint: no items returned from backend.');
+        return;
+      }
+
+      closeBatchModal();
+
+      const queue = j.items.slice();
+      let q = 0;
+
+      alert(`Batch mint prepared for ${queue.length} passes. XUMM will open one-by-one.`);
+
+      const next = () => {
+        if (q >= queue.length) {
+          alert('All batch mints have been queued in XUMM.');
+          return;
+        }
+        const item = queue[q++];
+        if (item.qr_png || item.deeplink) {
+          openQrModal(item.qr_png, item.uuid, item.deeplink, next);
+        } else {
+          next();
+        }
+      };
+
+      next();
+    } catch (e) {
+      console.error('Batch confirm mint error', e);
+      alert('Mint error. Check console for details.');
+    } finally {
+      batchModalConfirm.disabled = false;
+      batchModalConfirm.textContent = 'Confirm & Mint';
+      __BATCH_QUEUE = null;
+      refreshAll();
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+     // ---------------------------------------------
+    // MINT — single or batch automatically
+    // ---------------------------------------------
+    if (mintNowBtn) {
+      mintNowBtn.addEventListener('click', async () => {
+
+        const LOGGED_IN_ADDRESS =
+          (window.__USER__ && window.__USER__.address) ? window.__USER__.address : "";
+
+        if (!LOGGED_IN_ADDRESS) {
+          alert("You're not logged in. Please sign in and try again.");
+          return;
+        }
+
+        // Step 4 enforcement: block mint if required fields missing
+if (!validateForm()) {
+  alert("Please fill in the required fields highlighted in red.");
+  return;
+}
+
+
+
+        const baseMeta = buildMetadata();
+        if (!baseMeta.name || !String(baseMeta.name).trim()) {
+          alert('Please enter a Title first.');
+          return;
+        }
+
+        // Determine if we are minting batch:
+        // - include main holder if filled
+        // - include any batch rows with holder_name
+        const mainHolderName = (simpleHolder?.value || '').trim();
+
+
+        const mainRow = mainHolderName ? {
+          holder_name: mainHolderName,
+          address: '',
+          valid_until: (simpleUntil?.value || '').trim(),
+          notes: (simpleNotes?.value || '').trim(),
+        } : null;
+
+        const rowsFromTable = (Array.isArray(c.props.batch_rows) ? c.props.batch_rows : [])
+  .map(r => ({
+    holder_name: (r.holder_name || '').trim(),
+    address: (r.address || '').trim(),
+    valid_until: (r.valid_until || '').trim(),
+    notes: (r.notes || '').trim(),
+    guest_photo_url: (r.guest_photo_url || '').trim(),
+  }))
+  .filter(r => r.holder_name.length > 0);
+
+
+        // Merge (avoid duplicate main holder)
+        const finalRows = [];
+        if (mainRow) {
+          const dup = rowsFromTable.some(r => r.holder_name.toLowerCase() === mainRow.holder_name.toLowerCase());
+          if (!dup) finalRows.push(mainRow);
+        }
+        rowsFromTable.forEach(r => finalRows.push(r));
+
+        const isBatch = finalRows.length > 1 || (finalRows.length === 1 && rowsFromTable.length >= 1);
+
+        try {
+          mintNowBtn.disabled = true;
+          mintNowBtn.textContent = isBatch ? `Preparing ${finalRows.length} mints…` : 'Preparing mint…';
+
+          // Try to snapshot base preview image (optional but recommended)
+          // NOTE: For batch, individual row previews will be generated in buildBatchPreviews()
+          try {
+            if (window.html2canvas) {
+              const imgUrl = await snapshotPreviewToImage(baseMeta);
+              baseMeta.image = imgUrl;
+              if (!baseMeta.properties) baseMeta.properties = {};
+              if (!baseMeta.properties.visual) baseMeta.properties.visual = buildVisualProps();
+              baseMeta.properties.visual.preview_image = imgUrl;
+            }
+          } catch (e) {
+            console.warn('Base preview snapshot failed; continuing without base image', e);
+          }
+
+          // ----------------------------
+          // SINGLE (unchanged)
+          // ----------------------------
+          if (!isBatch) {
+            const res = await fetch('/studio/actions/nft/mint_from_designer', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({
+              metadata: baseMeta,
+              custody_mode: (window.__CUSTODY_MODE__ || "custodial"),
+              vertical_id: (window.__ENGINE_VERTICAL__ || "generic"),
+
+}),
+            });
+
+            const j = await res.json().catch(() => null);
+            if (!j || !j.ok) {
+              alert((j && j.error) ? j.error : 'Failed to prepare mint.');
+              return;
+            }
+
+            if (j.qr_png || j.deeplink) openQrModal(j.qr_png, j.uuid, j.deeplink);
+            else alert('Mint payload created.');
+            return;
+          }
+
+          // ----------------------------
+          // BATCH (NEW FLOW: preview first)
+          // ----------------------------
+          if (!window.html2canvas) {
+            alert('Batch preview requires html2canvas. Please ensure it is loaded.');
+            return;
+          }
+
+          if (batchModalSub) batchModalSub.textContent = `Preparing ${finalRows.length} previews…`;
+          if (batchModalStatus) batchModalStatus.textContent = 'Starting…';
+          if (batchModalConfirm) batchModalConfirm.textContent = `Confirm & Mint (${finalRows.length})`;
+
+
+
+        if (!batchModal || !batchPreviewGrid || !batchModalConfirm) {
+  console.error('Batch modal DOM missing', { batchModal, batchPreviewGrid, batchModalConfirm });
+  alert('Batch preview UI is missing in the DOM. Check that the modal HTML is inside the same node template.');
+  return;
+}
+
+
+
+
+          openBatchModal();
+
+          // Build previews (snapshots) for each row using the OFFSCREEN renderer
+          const rowsWithPreview = await buildBatchPreviews(baseMeta, finalRows);
+
+          // Show them in the modal grid
+          renderBatchPreviewGrid(rowsWithPreview);
+
+          // Save for confirm button (confirm handler performs the actual mint)
+          __BATCH_QUEUE = {
+            baseMeta,
+            rowsWithPreview,
+            finalRows,
+            itemsCount: rowsWithPreview.length,
+          };
+
+          if (batchModalSub) batchModalSub.textContent = `Review ${rowsWithPreview.length} passes before minting.`;
+          if (batchModalStatus) batchModalStatus.textContent = 'Ready to mint.';
+
+          return;
+
+        } catch (e) {
+          console.error('Mint error', e);
+          alert('Mint error. Check console for details.');
+          try { closeBatchModal(); } catch (e2) {}
+        } finally {
+          mintNowBtn.disabled = false;
+          mintNowBtn.textContent = 'Mint via XUMM';
+          // restore base preview after any offscreen rendering
+          refreshAll();
+        }
+      });
+    }
+
+
+    return node;
+  }
+});
+</script>
+
+<!-- ========================================================= -->
+<!--  MOUNT DESIGNER + MOVE PREVIEW INTO HERO FRAME            -->
+<!-- ========================================================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const defn = COMPONENTS['NFT.Designer'];
+  if (!defn || !defn.render) {
+    console.error("NFT.Designer not found");
+    return;
+  }
+
+  const ctx = { props: {} };
+  const node = defn.render(ctx);
+
+  // Mount full designer (form + right preview + json)
+  const formMount = document.getElementById("xertify-designer-root");
+  if (formMount) {
+    formMount.innerHTML = "";
+    formMount.appendChild(node);
+  }
+
+
+// ---------------------------------------------
+// Sidebar (Domain → Template) wiring
+// - Persists selection in localStorage
+// - Auto engine pack from template.vertical_id
+// - Supports template search filter
+// ---------------------------------------------
+const LS_DOMAIN   = "xertify:selected_domain";
+const LS_TEMPLATE = "xertify:selected_template";
+
+function setActiveTemplateButton(btn){
+  if (!btn) return;
+
+  const sidebarButtons = Array.from(document.querySelectorAll("[data-xertify-product]"));
+  const key = (btn.getAttribute("data-xertify-product") || "").trim();
+
+  // UI state
+  sidebarButtons.forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  // Domain
+  const domainId = (btn.getAttribute("data-domain-id") || "").trim();
+
+  // Vertical (engine pack) auto-select
+  let v = (btn.getAttribute("data-vertical-id") || "").trim().toLowerCase();
+
+  // fallback: try templates registry (if button lacks attribute)
+  if (!v && window.__TEMPLATE_REGISTRY__ && window.__TEMPLATE_REGISTRY__.templates) {
+    const tpl = window.__TEMPLATE_REGISTRY__.templates[key];
+    v = (tpl && (tpl.vertical_id || tpl.vertical) ? String(tpl.vertical_id || tpl.vertical) : "").trim().toLowerCase();
+  }
+
+  // Custom = generic (safest)
+  if (!v || key === "custom") v = "generic";
+
+  // Persist (domain + template)
+  try {
+    // allow blank domain for custom
+    if (domainId != null) localStorage.setItem(LS_DOMAIN, String(domainId || ""));
+    localStorage.setItem(LS_TEMPLATE, String(key || "custom"));
+  } catch(e) {}
+
+  // Canonical selection call (domain + template + vertical)
+  if (window.XERTIFY && typeof window.XERTIFY.setProduct === "function") {
+    window.XERTIFY.setProduct(key, domainId, v);
+  }
+
+  // keep global engine vertical too (other parts rely on it)
+  window.__ENGINE_VERTICAL__ = v;
+}
+
+function restoreSidebarSelection(){
+  const buttons = Array.from(document.querySelectorAll("[data-xertify-product]"));
+  if (!buttons.length) return;
+
+  let savedTemplate = null;
+  let savedDomain = null;
+
+  try {
+    savedTemplate = localStorage.getItem(LS_TEMPLATE);
+    savedDomain   = localStorage.getItem(LS_DOMAIN);
+  } catch(e) {}
+
+  // Prefer exact template match
+  let btn = savedTemplate
+    ? buttons.find(b => (b.getAttribute("data-xertify-product") || "").trim() === savedTemplate)
+    : null;
+
+  // If missing, fall back to first template in saved domain
+  if (!btn && savedDomain) {
+    btn = buttons.find(b => (b.getAttribute("data-domain-id") || "").trim() === savedDomain);
+  }
+
+  // Final fallback: first non-custom if possible
+  if (!btn) {
+    btn = buttons.find(b => (b.getAttribute("data-xertify-product") || "").trim() !== "custom") || buttons[0];
+  }
+
+  setActiveTemplateButton(btn);
+}
+
+function wireSidebarClicks(){
+  document.querySelectorAll("[data-xertify-product]").forEach(btn => {
+    btn.addEventListener("click", () => setActiveTemplateButton(btn));
+  });
+}
+
+function wireTemplateSearch(){
+  const input = document.getElementById("xertifyTemplateSearch");
+  if (!input) return;
+
+  const domainBlocks = Array.from(document.querySelectorAll(".xertify-sidebar .xertify-cat"));
+
+  input.addEventListener("input", () => {
+    const q = (input.value || "").trim().toLowerCase();
+
+    domainBlocks.forEach(block => {
+      const isAdvanced = !!block.querySelector('[data-xertify-product="custom"]');
+
+      // Advanced stays visible always
+      if (isAdvanced) {
+        block.style.display = "";
+        const btn = block.querySelector('[data-xertify-product="custom"]');
+        if (btn) btn.style.display = "";
+        return;
+      }
+
+      const buttons = Array.from(block.querySelectorAll("[data-xertify-product]"));
+      let anyVisible = false;
+
+      buttons.forEach(btn => {
+        const key   = (btn.getAttribute("data-xertify-product") || "").toLowerCase();
+        const label = (btn.textContent || "").toLowerCase();
+        const title = (btn.getAttribute("title") || "").toLowerCase();
+
+        const hit = !q || key.includes(q) || label.includes(q) || title.includes(q);
+        btn.style.display = hit ? "" : "none";
+        if (hit) anyVisible = true;
+      });
+
+      // Hide entire domain group if no matches (only when searching)
+      block.style.display = (!q || anyVisible) ? "" : "none";
+    });
+  });
+}
+
+// Boot
+wireSidebarClicks();
+wireTemplateSearch();
+restoreSidebarSelection();
+
+
+
+});
+
+
+
+function openDatePickerBySelector(sel){
+  const el = document.querySelector(sel);
+  if (!el) return;
+
+  if (typeof el.showPicker === "function") {
+    el.showPicker();
+    return;
+  }
+
+  el.focus();
+  el.click();
+}
+
+
+
+
+
+
+(function () {
+  const sidebar = document.querySelector('.xertify-sidebar');
+  const wrap = document.querySelector('.xertify-wrap');
+
+  // Prefer your explicit footer id, but fall back gracefully
+  const footer =
+    document.querySelector('#site-footer') ||
+    document.querySelector('footer');
+
+  if (!sidebar || !wrap || !footer) return;
+
+  const fixedTop = 92;   // matches your CSS top: 92px
+  const gap = 24;        // space above footer
+
+  const fixedLeft = parseFloat(getComputedStyle(sidebar).left) || 12;
+  sidebar.style.left = fixedLeft + 'px';
+
+  function dockSidebar() {
+    const scrollY = window.scrollY;
+
+    const footerTop = footer.getBoundingClientRect().top + scrollY;
+    const wrapTop = wrap.getBoundingClientRect().top + scrollY;
+
+    const sidebarHeight = sidebar.offsetHeight;
+
+    // Where the bottom of the sidebar would be if it's fixed
+    const sidebarBottomIfFixed = scrollY + fixedTop + sidebarHeight;
+
+    const shouldDock = sidebarBottomIfFixed >= (footerTop - gap);
+
+    if (shouldDock) {
+      sidebar.classList.add('is-docked');
+
+      // Place sidebar inside wrap so its bottom sits gap px above footer
+      const topInsideWrap = (footerTop - gap) - wrapTop - sidebarHeight;
+
+      sidebar.style.top = Math.max(0, topInsideWrap) + 'px';
+    } else {
+      sidebar.classList.remove('is-docked');
+
+      // Restore fixed behavior
+      sidebar.style.top = fixedTop + 'px';
+    }
+  }
+
+  window.addEventListener('scroll', dockSidebar, { passive: true });
+  window.addEventListener('resize', dockSidebar);
+  document.addEventListener('DOMContentLoaded', dockSidebar);
+  document.body.addEventListener('htmx:afterSwap', dockSidebar);
+
+  dockSidebar();
+})();
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="app-card" style="max-width: 760px; margin: 40px auto;">
+  <div class="app-card-head">
+    <h2 class="app-card-title">Not found</h2>
+    <span class="app-pill warn">404</span>
+  </div>
+
+  <div class="app-card-body">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.5;">
+      The page you tried to open doesn’t exist (or was moved).
+    </p>
+
+    <div style="margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="app-btn app-btn-solid" href="/">Go home</a>
+      <a class="app-btn app-btn-ghost" href="/verify">Verify a pass</a>
+      <a class="app-btn app-btn-ghost" href="/xertify">Open XERTIFY</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
